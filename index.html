@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael Berman — Game Director · Sony Bend</title>
+  <meta name="description" content="Michael Berman — Game Director at Sony Bend. 16+ years designing systems, leading teams, and building games people actually want to play. Progression, UX, creative direction.">
+  <meta name="author" content="Michael Berman">
+  <meta name="keywords" content="Michael Berman, Game Director, Sony Bend, Game Design, UX Design, Systems Design, Progression Design, Creative Director">
+  <meta property="og:title" content="Michael Berman — Game Director · Sony Bend">
+  <meta property="og:description" content="Game Director with 16+ years across Sony Bend, Deep Silver Volition, Pocket Gems, and more. Progression systems, UX, and creative leadership.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mberman-portfolio.netlify.app">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Michael Berman — Game Director">
+  <meta name="twitter:description" content="16+ years of game design, systems thinking, and creative leadership. Currently: Game Director at Sony Bend.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Barlow+Condensed:wght@400;600;700&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; }
+
+    /* ════════════════════════════════════════
+       BOOT SCREEN
+       ════════════════════════════════════════ */
+    #boot {
+      position: fixed;
+      inset: 0;
+      background: #0E0C08;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.7s ease, visibility 0.7s;
+      background-image: radial-gradient(circle, rgba(242,98,0,0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    #boot.fade-out { opacity: 0; visibility: hidden; }
+
+    /* Subtle scanline overlay */
+    #boot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.06) 2px,
+        rgba(0,0,0,0.06) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* monogram top-left */
+    .boot-monogram {
+      position: absolute;
+      top: 24px; left: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #3C3628;
+      z-index: 2;
+    }
+    .boot-monogram span { color: #F26200; }
+
+    /* version top-right */
+    .boot-version {
+      position: absolute;
+      top: 24px; right: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: #2C2820;
+      letter-spacing: 0.06em;
+      z-index: 2;
+    }
+
+    /* terminal frame */
+    .boot-frame {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 680px;
+      padding: 0;
+      background: #1A1610;
+      border: 1px solid #282214;
+      border-top: 2px solid #F26200;
+    }
+
+    /* title bar */
+    .boot-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      background: #201A12;
+      border-bottom: 1px solid #2A2418;
+    }
+    .boot-titlebar-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .boot-titlebar-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .boot-titlebar-dot:nth-child(1) { background: #3d3d3d; }
+    .boot-titlebar-dot:nth-child(2) { background: #3d3d3d; }
+    .boot-titlebar-dot:nth-child(3) { background: #F26200; box-shadow: 0 0 6px rgba(242,98,0,0.5); }
+    .boot-titlebar-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 400;
+      color: #3C3628;
+      letter-spacing: 0.06em;
+    }
+    .boot-titlebar-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: #5A5448;
+      letter-spacing: 0.06em;
+    }
+    .boot-led {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #3DB870;
+      box-shadow: 0 0 5px rgba(61,184,112,0.5);
+      animation: led-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes led-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* terminal output area */
+    .boot-terminal {
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.62rem, 1.6vw, 0.72rem);
+      line-height: 1;
+      min-height: 280px;
+    }
+
+    /* individual lines */
+    .bl {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      height: 22px;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.08s;
+    }
+    .bl.show { opacity: 1; }
+
+    /* cursor — appended to the active line */
+    .bl.active .bl-cursor-char { display: inline; }
+    .bl-cursor-char {
+      display: none;
+      color: #F26200;
+      animation: blink 0.7s step-end infinite;
+      margin-left: 1px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* prefix */
+    .bl-prefix {
+      color: #F26200;
+      margin-right: 6px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+    .bl-prefix.dim { color: #2C2820; }
+
+    /* label */
+    .bl-label {
+      color: #8C8478;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .bl-label.bright { color: #C8BEA8; }
+    .bl-label.dim    { color: #3A3428; }
+    .bl-label.accent { color: #F26200; }
+
+    /* dots fill */
+    .bl-fill {
+      flex: 1;
+      color: #2A2418;
+      letter-spacing: 0.08em;
+      overflow: hidden;
+      padding: 0 6px;
+      min-width: 20px;
+    }
+
+    /* status */
+    .bl-stat {
+      flex-shrink: 0;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .bl-stat.show { opacity: 1; }
+    .bl-stat.ok   { color: #3DB870; }
+    .bl-stat.dim  { color: #3A3428; }
+    .bl-stat.hi   { color: #C8BEA8; }
+    .bl-stat.acc  { color: #F26200; }
+    .bl-stat.warn { color: #d4a843; }
+
+    /* section header line */
+    .bl.bl-section {
+      height: 28px;
+      align-items: flex-end;
+      padding-top: 8px;
+    }
+    .bl-section-text {
+      font-size: clamp(0.58rem, 1.4vw, 0.64rem);
+      color: #3A3428;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      width: 100%;
+    }
+    .bl-section-text em { color: #4a4c4f; font-style: normal; }
+
+    /* divider */
+    .bl.bl-divider { height: 14px; }
+    .bl-divider-line {
+      width: 100%;
+      height: 1px;
+      background: #1E1A10;
+      align-self: center;
+    }
+
+    /* spacer */
+    .bl.bl-spacer { height: 8px; }
+
+    /* ready line */
+    .bl.bl-ready {
+      height: 24px;
+      align-items: center;
+      margin-top: 2px;
+    }
+    .bl-ready-text {
+      font-size: clamp(0.62rem, 1.6vw, 0.72rem);
+      color: #3DB870;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── HOLD-TO-LAUNCH PROMPT ── */
+    .boot-prompt {
+      padding: 16px 24px 20px;
+      border-top: 1px solid #1E1A10;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .boot-prompt.show { opacity: 1; }
+
+    /* Row: [button] [bar] [hint] all inline */
+    .boot-hold-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* The pressable button — compact, just label + cursor */
+    .boot-hold-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 9px 16px;
+      border: 1px solid rgba(242,98,0,0.35);
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+    .boot-hold-btn:hover  { border-color: rgba(242,98,0,0.6); }
+    .boot-hold-btn.holding {
+      border-color: #F26200;
+      box-shadow: 0 0 10px rgba(242,98,0,0.25);
+    }
+    .boot-hold-btn.complete {
+      border-color: #3DB870;
+      animation: flash-green 0.3s ease;
+    }
+    @keyframes flash-green {
+      0%   { background: rgba(61,184,112,0.3); }
+      100% { background: transparent; }
+    }
+
+    /* Subtle fill inside button on hold */
+    .boot-hold-fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 0%;
+      background: rgba(242,98,0,0.12);
+      transition: none;
+      pointer-events: none;
+    }
+    .boot-hold-fill.resetting {
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Button inner: bracket · label · blinking cursor · bracket */
+    .boot-hold-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.62rem, 1.5vw, 0.72rem);
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: #C8BEA8;
+      white-space: nowrap;
+    }
+    .boot-hold-bracket { color: rgba(242,98,0,0.5); }
+    .boot-hold-label {
+      margin: 0 8px;
+      transition: color 0.15s;
+    }
+    .boot-hold-label.active-hold { color: #F26200; }
+
+    /* Blinking cursor inside the button */
+    .boot-btn-cursor {
+      color: #F26200;
+      animation: blink 0.7s step-end infinite;
+      margin-right: 6px;
+    }
+
+    /* Progress bar — sibling to button, not inside */
+    .boot-hold-bar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      max-width: 140px;
+      min-width: 80px;
+    }
+    .boot-hold-bar-seg {
+      flex: 1;
+      height: 7px;
+      background: #1E1A10;
+      border: 1px solid #2A2418;
+      transition: background 0.05s, border-color 0.05s;
+    }
+    .boot-hold-bar-seg.filled {
+      background: #F26200;
+      border-color: #F26200;
+    }
+
+    .boot-hold-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: #2C2820;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* ── TRANSITION ── */
+    #transition-overlay {
+      position: fixed;
+      inset: 0;
+      background: #0E0C08;
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s;
+    }
+    #transition-overlay.active { opacity: 1; visibility: visible; }
+
+    /* ── MAIN SITE ── */
+    #site { opacity: 0; transition: opacity 0.6s ease; }
+    #site.visible { opacity: 1; }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══ BOOT SCREEN ══ -->
+<div id="boot" aria-hidden="true">
+  <div class="boot-monogram">M<span>B</span></div>
+  <div class="boot-version">berman-os v3.0.0</div>
+
+  <div class="boot-frame">
+    <!-- title bar -->
+    <div class="boot-titlebar">
+      <div class="boot-titlebar-dots">
+        <div class="boot-titlebar-dot"></div>
+        <div class="boot-titlebar-dot"></div>
+        <div class="boot-titlebar-dot"></div>
+      </div>
+      <div class="boot-titlebar-title">berman-os v3 — /bin/boot</div>
+      <div class="boot-titlebar-status">
+        <span class="boot-led"></span>LIVE
+      </div>
+    </div>
+
+    <!-- terminal output -->
+    <div class="boot-terminal" id="boot-terminal"></div>
+
+    <!-- hold-to-launch -->
+    <div class="boot-prompt" id="boot-prompt">
+      <div class="boot-hold-wrap">
+
+        <!-- Button: compact, pressable, has blinking cursor inside -->
+        <div class="boot-hold-btn" id="hold-btn" tabindex="0" role="button" aria-label="Hold to launch">
+          <div class="boot-hold-fill" id="hold-fill"></div>
+          <div class="boot-hold-inner">
+            <span class="boot-hold-bracket">[</span>
+            <span class="boot-hold-label" id="hold-label">HOLD TO LAUNCH</span>
+            <span class="boot-btn-cursor">█</span>
+            <span class="boot-hold-bracket">]</span>
+          </div>
+        </div>
+
+        <!-- Progress bar: sibling to button -->
+        <div class="boot-hold-bar" id="hold-bar">
+          <!-- segments injected by JS -->
+        </div>
+
+        <div class="boot-hold-hint">// press &amp; hold · any key or tap</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="transition-overlay"></div>
+
+<!-- ══ MAIN SITE ══ -->
+<div id="site">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">M<span>B</span></a>
+      <div class="nav-links">
+        <a href="about.html">About</a>
+        <a href="experience.html">Experience</a>
+        <a href="portfolio-game.html">Portfolio</a>
+        <a href="library.html">Library</a>
+        <a href="blog.html">Writing</a>
+        <a href="contact.html" class="nav-contact">Contact</a>
+      </div>
+      <div class="nav-hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;color:var(--accent);border:1px solid rgba(242,98,0,0.3);padding:4px 10px;">
+            <span style="width:5px;height:5px;background:var(--accent);border-radius:50%;box-shadow:0 0 6px rgba(242,98,0,0.5);animation:led-pulse 1.8s ease-in-out infinite;display:inline-block;"></span>
+            GAME DIRECTOR · SONY BEND
+          </span>
+        </div>
+        <div class="hero-label">On Design &amp; Direction</div>
+        <h1 class="hero-name">Build for<br>players,<br>not designers.</h1>
+        <p class="hero-sub">Systems that respect intelligence. Progression that earns its keep.</p>
+        <p class="hero-bio">
+          These aren't slogans — they're conclusions drawn from 16 years and five studios. The work below is the evidence.
+        </p>
+        <div class="hero-ctas">
+          <a href="#principles" class="btn btn-primary">The Principles ↓</a>
+          <a href="experience.html" class="btn btn-outline">See the Work</a>
+          <a href="contact.html" class="btn btn-outline" style="display:none;" aria-hidden="true">Get In Touch</a>
+        </div>
+        <div style="margin-top:32px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+          <a href="https://www.linkedin.com/in/bermandesign" target="_blank" style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.08em;color:var(--text-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">↗ linkedin.com/in/bermandesign</a>
+          <a href="MBerman-Resume.pdf" target="_blank" style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.08em;color:var(--text-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">↓ Download Resume</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-cut"></div>
+  </section>
+
+  <!-- PRINCIPLES (unified) -->
+  <section class="principles" id="principles">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-label">Design Thinking</div>
+        <h2 class="section-title">What I Believe</h2>
+      </div>
+
+      <!-- Top 3 — bigger, more prominent -->
+      <div class="phil-primary-grid">
+        <div class="phil-card primary fade-up">
+          <div class="phil-icon">▶</div>
+          <div class="phil-title">Ideas Are Abundant. Execution Is Scarce.</div>
+          <div class="phil-quote">"Design isn't about generating good ideas — everyone has good ideas. Great design is identifying which ones to pursue, and knowing how to make them real. The gap between concept and shipped feature is where the actual work lives."</div>
+        </div>
+        <div class="phil-card primary fade-up">
+          <div class="phil-icon">✦</div>
+          <div class="phil-title">Emergence Is the Medium's Superpower.</div>
+          <div class="phil-quote">"The most memorable gaming moments were never scripted. They happened because the systems were good enough to generate something nobody planned. No other medium produces that. That is the target."</div>
+        </div>
+        <div class="phil-card primary fade-up">
+          <div class="phil-icon">◑</div>
+          <div class="phil-title">A Game for Everyone Is a Game for No One.</div>
+          <div class="phil-quote">"Every decision to broaden appeal dilutes conviction. Define your audience with precision. Design for that person with full commitment — then go make that game."</div>
+        </div>
+      </div>
+
+      <!-- Secondary — compact, supporting -->
+      <div class="phil-secondary-grid">
+        <div class="phil-card secondary fade-up">
+          <div class="phil-icon">⬡</div>
+          <div class="phil-title">Systems Punch Above Their Weight</div>
+          <div class="phil-quote">"The best cost-to-experience ratio isn't bigger budgets — it's systems that create more than they cost."</div>
+        </div>
+        <div class="phil-card secondary fade-up">
+          <div class="phil-icon">↺</div>
+          <div class="phil-title">Validate Before You Polish</div>
+          <div class="phil-quote">"Fidelity is a reward for ideas that survive contact with reality. Find the fun first."</div>
+        </div>
+        <div class="phil-card secondary fade-up">
+          <div class="phil-icon">◎</div>
+          <div class="phil-title">Leadership Is Selection, Not Invention</div>
+          <div class="phil-quote">"Build teams smart enough to generate options you wouldn't have thought of yourself. Then make the call."</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px;" class="fade-up">
+        <a href="about.html" class="btn btn-outline">All Eight Principles →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="container">
+      <div class="fade-up">
+        <div class="stat-num">16+</div>
+        <div class="stat-label">Years Testing These Ideas</div>
+      </div>
+      <div class="fade-up">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Studios. The Ideas Held Up.</div>
+      </div>
+      <div class="fade-up">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Shipped Products</div>
+      </div>
+      <div class="fade-up">
+        <div class="stat-num">6+</div>
+        <div class="stat-label">Years Leading Teams</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE PREVIEW -->
+  <section class="experience">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-label">The Work That Shaped the Thinking</div>
+        <h2 class="section-title">Experience</h2>
+      </div>
+      <div class="timeline">
+
+        <div class="timeline-item fade-up" data-category="leadership game">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-company">Sony PlayStation · Bend Studio</span>
+            <span class="timeline-date">2022 → CURRENT</span>
+          </div>
+          <div class="timeline-role">Game Director</div>
+          <div class="timeline-project">Unannounced · PC / Console</div>
+          <ul class="timeline-bullets">
+            <li>Leading an unannounced title as Game Director — setting creative vision, aligning multidisciplinary teams, and driving the game from concept to production.</li>
+            <li>Previously: Design Manager & Product Owner — led 15+ developers across progression systems for a service-based multiplayer title.</li>
+            <li>Managed 6 direct reports; worked alongside Chief Product Owner on strategic roadmap and product framework.</li>
+          </ul>
+          <div class="timeline-tags">
+            <span class="tag">Game Direction</span>
+            <span class="tag">Creative Leadership</span>
+            <span class="tag">Progression Systems</span>
+            <span class="tag">Multiplayer</span>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-up" data-category="leadership game ux">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-company">Deep Silver Volition</span>
+            <span class="timeline-date">2019 → 2022</span>
+          </div>
+          <div class="timeline-role">Design Director</div>
+          <div class="timeline-project">Saints Row · PC / Console</div>
+          <ul class="timeline-bullets">
+            <li>Developed and communicated product strategy to modernize the Saints Row franchise for long-tail player engagement and sustainability.</li>
+            <li>Lead Systems & Principal UX Designer — led 10–13 developers on all customization suites and holistic UX.</li>
+            <li>Product Owner for "Boss Factory" pre-release demo and community sharing features.</li>
+          </ul>
+          <div class="timeline-tags">
+            <span class="tag">Design Direction</span>
+            <span class="tag">UX Design</span>
+            <span class="tag">Systems Design</span>
+            <span class="tag">Saints Row</span>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-up" data-category="leadership game ux">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-company">Outact</span>
+            <span class="timeline-date">2015 → 2019</span>
+          </div>
+          <div class="timeline-role">Lead Designer</div>
+          <div class="timeline-project">Wartide · Brave Order · Unannounced ARPG · Mobile &amp; PC</div>
+          <ul class="timeline-bullets">
+            <li>Led development of major game systems: progression, loot, content, and combat across two shipped mobile titles.</li>
+            <li>Design lead and vision holder on early-stage ARPG — created investor pitch decks and prototyped core mechanics.</li>
+            <li>Built design-data toolset for hyper-efficient ability creation. Mentored 3 designers.</li>
+          </ul>
+          <div class="timeline-tags">
+            <span class="tag">Systems Design</span>
+            <span class="tag">Progression</span>
+            <span class="tag">Mobile</span>
+            <span class="tag">Prototyping</span>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-up" data-category="game">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-company">Pocket Gems</span>
+            <span class="timeline-date">2013 → 2015</span>
+          </div>
+          <div class="timeline-role">Game Designer</div>
+          <div class="timeline-project">War Dragons · Mobile</div>
+          <ul class="timeline-bullets">
+            <li>Led cross-disciplinary pod of 10 developers on progression and gameplay systems from pre-production to live.</li>
+            <li>Redesigned primary progression and reward loops post geo-beta → <strong style="color:var(--accent)">+12% D3 retention</strong>.</li>
+          </ul>
+          <div class="timeline-tags">
+            <span class="tag">Game Design</span>
+            <span class="tag">Progression</span>
+            <span class="tag">Mobile</span>
+          </div>
+        </div>
+
+      </div>
+      <div style="margin-top: 40px;" class="fade-up">
+        <a href="experience.html" class="btn btn-outline">Full Experience →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-logo">M<span>B</span></div>
+      <div class="footer-copy">© <span>2026</span> Michael Berman · All rights reserved</div>
+      <div class="footer-links">
+        <a href="MBerman-Resume.pdf" target="_blank">Resume</a>
+        <a href="https://www.linkedin.com/in/bermandesign" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /site -->
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="nav-overlay" id="nav-overlay">
+  <span class="nav-close" id="nav-close">✕</span>
+  <a href="about.html">About</a>
+  <a href="experience.html">Experience</a>
+  <a href="portfolio-game.html">Portfolio</a>
+  <a href="library.html">Library</a>
+  <a href="blog.html">Writing</a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   BOOT SEQUENCE
+   ════════════════════════════════════════ */
+
+// Line definitions
+// type: 'section' | 'divider' | 'spacer' | 'check' | 'info' | 'ready'
+// For 'check' and 'info': label, status, cls, delay
+// checkDelay: extra ms before status resolves (simulates processing)
+const LINES = [
+  { type: 'spacer', delay: 0 },
+
+  // System init
+  { type: 'check', prefix: '$', label: 'init berman-os v3',  status: 'OK',      cls: 'ok',  delay: 80,   checkDelay: 320 },
+  { type: 'check', prefix: '$', label: 'load kernel 3.0.0',  status: 'OK',      cls: 'ok',  delay: 220,  checkDelay: 280 },
+  { type: 'check', prefix: '$', label: 'mount /dev/brain',   status: 'OK',      cls: 'ok',  delay: 380,  checkDelay: 250 },
+
+  { type: 'divider', delay: 560 },
+
+  // Capability check
+  { type: 'section', label: '// ── capability check', delay: 640 },
+  { type: 'check', prefix: '>', label: 'creative_leadership', status: '[ OK ]',  cls: 'ok',  delay: 780,  checkDelay: 220 },
+  { type: 'check', prefix: '>', label: 'game_design',         status: '[ OK ]',  cls: 'ok',  delay: 920,  checkDelay: 190 },
+  { type: 'check', prefix: '>', label: 'ux_architecture',     status: '[ OK ]',  cls: 'ok',  delay: 1040, checkDelay: 170 },
+  { type: 'check', prefix: '>', label: 'progression_systems', status: '[ OK ]',  cls: 'ok',  delay: 1150, checkDelay: 160 },
+  { type: 'check', prefix: '>', label: 'player_empathy',      status: '[ OK ]',  cls: 'ok',  delay: 1250, checkDelay: 150 },
+  { type: 'check', prefix: '>', label: 'graybox_protocol',    status: '[ OK ]',  cls: 'ok',  delay: 1340, checkDelay: 140 },
+  { type: 'check', prefix: '>', label: 'team_leadership',     status: '[ OK ]',  cls: 'ok',  delay: 1450, checkDelay: 130 },
+  { type: 'check', prefix: '>', label: 'systems_thinking',    status: '[ OK ]',  cls: 'ok',  delay: 1550, checkDelay: 120 },
+
+  { type: 'divider', delay: 1680 },
+
+  // Career index
+  { type: 'section', label: '// ── career index', delay: 1750 },
+  { type: 'info', prefix: '·', label: 'sony_bend_studio',    status: 'ACTIVE ▶', cls: 'acc', delay: 1870 },
+  { type: 'info', prefix: '·', label: 'deep_silver_volition',status: 'LOGGED',   cls: 'dim', delay: 1960 },
+  { type: 'info', prefix: '·', label: 'outact',              status: 'LOGGED',   cls: 'dim', delay: 2040 },
+  { type: 'info', prefix: '·', label: 'pocket_gems',         status: 'LOGGED',   cls: 'dim', delay: 2110 },
+  { type: 'info', prefix: '·', label: 'tencent_boston',      status: 'LOGGED',   cls: 'dim', delay: 2175 },
+  { type: 'info', prefix: '·', label: 'petroglyph_games',    status: 'LOGGED',   cls: 'dim', delay: 2235 },
+
+  { type: 'divider', delay: 2320 },
+
+  // Profile
+  { type: 'section', label: '// ── profile', delay: 2390 },
+  { type: 'info', prefix: '·', label: 'experience',   status: '16+ yrs', cls: 'hi',  delay: 2480 },
+  { type: 'info', prefix: '·', label: 'leadership',   status: '6+ yrs',  cls: 'hi',  delay: 2560 },
+  { type: 'info', prefix: '·', label: 'studios',      status: '5',       cls: 'hi',  delay: 2630 },
+  { type: 'info', prefix: '·', label: 'current_role', status: 'director',cls: 'acc', delay: 2700 },
+
+  { type: 'divider', delay: 2790 },
+
+  // Ready
+  { type: 'ready', delay: 2870 },
+  { type: 'spacer', delay: 2910 },
+];
+
+const PROMPT_DELAY  = 3060;
+const HOLD_DURATION = 1600; // ms to hold
+const BAR_SEGMENTS  = 12;
+
+const terminalEl  = document.getElementById('boot-terminal');
+const promptEl    = document.getElementById('boot-prompt');
+const holdBtn     = document.getElementById('hold-btn');
+const holdFill    = document.getElementById('hold-fill');
+const holdBarEl   = document.getElementById('hold-bar');
+const holdLabelEl = document.getElementById('hold-label');
+const siteEl      = document.getElementById('site');
+const overlayEl   = document.getElementById('transition-overlay');
+const bootEl      = document.getElementById('boot');
+
+let promptReady = false;
+let launched = false;
+
+/* ── Build bar segments ── */
+const segs = [];
+for (let i = 0; i < BAR_SEGMENTS; i++) {
+  const s = document.createElement('div');
+  s.className = 'boot-hold-bar-seg';
+  holdBarEl.appendChild(s);
+  segs.push(s);
+}
+
+/* ── Make dot fill string ── */
+function makeDots() {
+  return '·'.repeat(40);
+}
+
+/* ── Create a boot line element ── */
+function createLine(entry) {
+  const div = document.createElement('div');
+  div.className = 'bl';
+
+  if (entry.type === 'spacer') {
+    div.classList.add('bl-spacer', 'show');
+    return div;
+  }
+  if (entry.type === 'divider') {
+    div.classList.add('bl-divider', 'show');
+    const line = document.createElement('div');
+    line.className = 'bl-divider-line';
+    div.appendChild(line);
+    return div;
+  }
+  if (entry.type === 'section') {
+    div.classList.add('bl-section');
+    const t = document.createElement('span');
+    t.className = 'bl-section-text';
+    t.textContent = entry.label;
+    div.appendChild(t);
+    return div;
+  }
+  if (entry.type === 'ready') {
+    div.classList.add('bl-ready');
+    const t = document.createElement('span');
+    t.className = 'bl-ready-text';
+    t.textContent = '✓  all systems nominal — ready';
+    div.appendChild(t);
+    const cur = document.createElement('span');
+    cur.className = 'bl-cursor-char';
+    cur.textContent = '█';
+    div.appendChild(cur);
+    return div;
+  }
+
+  // check / info rows
+  const prefix = document.createElement('span');
+  prefix.className = 'bl-prefix' + (entry.prefix === '·' ? ' dim' : '');
+  prefix.textContent = (entry.prefix || '>') + ' ';
+  div.appendChild(prefix);
+
+  const label = document.createElement('span');
+  label.className = 'bl-label' + (entry.cls === 'acc' ? ' bright' : entry.cls === 'dim' ? ' dim' : '');
+  label.textContent = entry.label;
+  div.appendChild(label);
+
+  const fill = document.createElement('span');
+  fill.className = 'bl-fill';
+  fill.textContent = makeDots();
+  div.appendChild(fill);
+
+  const stat = document.createElement('span');
+  stat.className = 'bl-stat ' + (entry.cls || 'ok');
+  stat.textContent = entry.status || '';
+  div.appendChild(stat);
+
+  // cursor character (shown via .active class on parent)
+  const cur = document.createElement('span');
+  cur.className = 'bl-cursor-char';
+  cur.textContent = '█';
+  div.appendChild(cur);
+
+  return div;
+}
+
+/* ── Run the sequence ── */
+function runSequence() {
+  let prevEl = null;
+
+  LINES.forEach((entry, i) => {
+    const resolveDelay = entry.type === 'check'
+      ? (entry.checkDelay || 200)
+      : 0;
+
+    setTimeout(() => {
+      // Remove active cursor from previous line
+      if (prevEl) prevEl.classList.remove('active');
+
+      const el = createLine(entry);
+      terminalEl.appendChild(el);
+
+      // Animate in
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => el.classList.add('show'));
+      });
+
+      // Activate cursor on this line (if it's a check/info/ready type)
+      if (['check', 'info', 'ready'].includes(entry.type)) {
+        el.classList.add('active');
+        prevEl = el;
+
+        // Resolve status after checkDelay
+        if (entry.type === 'check' || entry.type === 'info') {
+          setTimeout(() => {
+            el.classList.remove('active');
+            const statEl = el.querySelector('.bl-stat');
+            if (statEl) statEl.classList.add('show');
+            prevEl = null;
+          }, resolveDelay);
+        }
+      }
+    }, entry.delay);
+  });
+
+  // Show prompt
+  setTimeout(() => {
+    if (prevEl) prevEl.classList.remove('active');
+    promptEl.classList.add('show');
+    promptReady = true;
+  }, PROMPT_DELAY);
+}
+
+/* ══════════════════════════════════════
+   HOLD-TO-LAUNCH
+   ══════════════════════════════════════ */
+let holdStart = null;
+let holdRaf   = null;
+let isHolding = false;
+
+function updateBar(progress) {
+  const filled = Math.round(progress * BAR_SEGMENTS);
+  segs.forEach((s, i) => {
+    s.classList.toggle('filled', i < filled);
+  });
+
+  // Update label text
+  if (progress < 0.5) {
+    holdLabelEl.textContent = 'HOLD TO LAUNCH';
+    holdLabelEl.classList.remove('active-hold');
+  } else if (progress < 0.9) {
+    holdLabelEl.textContent = 'INITIALIZING...';
+    holdLabelEl.classList.add('active-hold');
+  } else {
+    holdLabelEl.textContent = 'LAUNCHING...';
+    holdLabelEl.classList.add('active-hold');
+  }
+
+  // Sync fill div
+  holdFill.style.width = (progress * 100) + '%';
+}
+
+function startHold() {
+  if (!promptReady || launched || isHolding) return;
+  isHolding = true;
+  holdStart = performance.now();
+  holdBtn.classList.add('holding');
+  holdFill.classList.remove('resetting');
+  tickHold();
+}
+
+function tickHold() {
+  const elapsed  = performance.now() - holdStart;
+  const progress = Math.min(elapsed / HOLD_DURATION, 1);
+  updateBar(progress);
+  if (progress >= 1) {
+    completeHold();
+  } else {
+    holdRaf = requestAnimationFrame(tickHold);
+  }
+}
+
+function cancelHold() {
+  if (!isHolding) return;
+  isHolding = false;
+  if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
+  holdBtn.classList.remove('holding');
+  holdLabelEl.textContent = 'HOLD TO LAUNCH';
+  holdLabelEl.classList.remove('active-hold');
+  // Animate reset
+  holdFill.classList.add('resetting');
+  holdFill.style.width = '0%';
+  segs.forEach(s => s.classList.remove('filled'));
+  setTimeout(() => holdFill.classList.remove('resetting'), 350);
+}
+
+function completeHold() {
+  if (launched) return;
+  launched = true;
+  isHolding = false;
+  if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
+  holdBtn.classList.remove('holding');
+  holdBtn.classList.add('complete');
+  holdLabelEl.textContent = '[ LAUNCH ]';
+  // Haptic if supported
+  if (navigator.vibrate) navigator.vibrate(60);
+  // Transition
+  setTimeout(() => {
+    overlayEl.classList.add('active');
+    setTimeout(() => {
+      bootEl.classList.add('fade-out');
+      setTimeout(() => {
+        overlayEl.classList.remove('active');
+        siteEl.classList.add('visible');
+        bootEl.remove();
+      }, 500);
+    }, 300);
+  }, 200);
+}
+
+/* ── Input bindings ── */
+
+// Mouse
+holdBtn.addEventListener('mousedown',  (e) => { e.preventDefault(); startHold(); });
+holdBtn.addEventListener('mouseup',    cancelHold);
+holdBtn.addEventListener('mouseleave', cancelHold);
+
+// Touch
+holdBtn.addEventListener('touchstart',  (e) => { e.preventDefault(); startHold(); }, { passive: false });
+holdBtn.addEventListener('touchend',    cancelHold, { passive: true });
+holdBtn.addEventListener('touchcancel', cancelHold, { passive: true });
+
+// Keyboard (any key)
+let keyHeld = false;
+document.addEventListener('keydown', (e) => {
+  if (!promptReady || e.repeat) return;
+  if (['Tab', 'F5', 'F12'].includes(e.key)) return;
+  keyHeld = true;
+  startHold();
+});
+document.addEventListener('keyup', () => {
+  if (!keyHeld) return;
+  keyHeld = false;
+  cancelHold();
+});
+
+/* ── Start ── */
+runSequence();
+
+/* ════════════════════════════════════════
+   MAIN SITE INTERACTIONS
+   ════════════════════════════════════════ */
+const fadeObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+document.querySelectorAll('.phil-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.phil-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+  });
+});
+
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('nav-overlay').classList.add('open');
+});
+document.getElementById('nav-close').addEventListener('click', () => {
+  document.getElementById('nav-overlay').classList.remove('open');
+});
+</script>
+</body>
+</html>

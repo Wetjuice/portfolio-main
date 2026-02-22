@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Design Portfolio — Michael Berman</title>
+  <meta name="description" content="Michael Berman's UX design portfolio — Boss Factory demo, Saints Row customization suite UX, progression system UX for Sony Bend's unannounced multiplayer title.">
+  <meta name="author" content="Michael Berman">
+  <meta property="og:title" content="UX Design Portfolio — Michael Berman">
+  <meta property="og:description" content="Player-first UX design across complex feature sets. Game UX that translates to product and non-games contexts.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .port-detail { display: none; padding: 0 20px 20px; border-top: 1px solid var(--border); }
+    .port-detail.open { display: block; }
+    .port-detail-inner { margin-top: 16px; padding: 16px 18px; background: rgba(0,0,0,0.2); border-left: 2px solid var(--accent); }
+    .port-detail-label { font-family: var(--font-head); font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .port-detail-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.75; }
+    .port-detail-text strong { color: var(--text-light); font-weight: 600; }
+    .port-more { cursor: pointer; transition: color 0.2s; user-select: none; }
+    .port-more:hover { color: var(--accent); }
+    .port-more.open { color: var(--accent); }
+    .port-more.open span { transform: rotate(90deg); display: inline-block; }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">M<span>B</span></a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="experience.html">Experience</a>
+      <a href="portfolio-ux.html" class="active">Portfolio</a>
+      <a href="library.html">Library</a>
+      <a href="blog.html">Writing</a>
+      <a href="contact.html" class="nav-contact">Contact</a>
+    </div>
+    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<section style="background:var(--bg-dark);padding:140px 0 80px;">
+  <div class="container">
+    <div class="section-label fade-up">Portfolio</div>
+    <h1 class="section-title fade-up" style="font-size:clamp(3rem,6vw,5rem);margin-top:12px;">UX Design</h1>
+    <p class="fade-up" style="color:var(--text-muted);margin-top:16px;max-width:560px;line-height:1.7;">Player-first UX across complex feature sets. If you're here from a non-games UX or product role — this is your section. The same principles apply.</p>
+    <div style="display:flex;gap:16px;margin-top:32px;" class="fade-up">
+      <a href="portfolio-game.html" class="btn btn-outline">Game Design</a>
+      <a href="portfolio-ux.html" class="btn btn-primary">UX Design</a>
+    </div>
+  </div>
+</section>
+
+<section class="portfolio" style="padding-top:60px;">
+  <div class="container">
+    <div class="portfolio-grid">
+
+      <div class="port-card fade-up">
+        <div class="port-img" style="background-image:url('https://images.unsplash.com/photo-1545235617-9465d2a55698?w=800&h=450&fit=crop&auto=format&q=80')"><span class="port-img-label">Boss Factory · Pre-Release Demo</span></div>
+        <div class="port-company">Deep Silver Volition · Saints Row</div>
+        <div class="port-title">Boss Factory — Pre-Release Demo UX</div>
+        <p class="port-desc">Product Owner and UX lead for the "Boss Factory" standalone pre-release character customization demo. Designed the end-to-end user flow for character creation and community sharing features. Released ahead of launch to build player anticipation.</p>
+        <div class="port-tags"><span class="tag">UX Design</span><span class="tag">Product Ownership</span><span class="tag">Character Creator</span><span class="tag">Community Features</span></div>
+        <div class="port-more port-toggle" data-detail="detail-bossfactory">View Details <span>→</span></div>
+        <div class="port-detail" id="detail-bossfactory">
+          <div class="port-detail-inner">
+            <div class="port-detail-label">Product &amp; UX Context</div>
+            <p class="port-detail-text"><strong>The challenge:</strong> Design a standalone, pre-launch experience that captures player interest, showcases the game's identity, and drives social sharing — without giving away the full game.<br><br><strong>Scope:</strong> End-to-end character creation UX, community sharing flows, and the onboarding experience for players who had never touched Saints Row before.<br><br><strong>Outcome:</strong> The demo generated significant pre-release community engagement and social sharing. It served as both a marketing activation and a design validation exercise for the full game's character systems.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="port-card fade-up">
+        <div class="port-img" style="background-image:url('https://images.unsplash.com/photo-1561736778-92e52a7769ef?w=800&h=450&fit=crop&auto=format&q=80')"><span class="port-img-label">Saints Row · Customization UX</span></div>
+        <div class="port-company">Deep Silver Volition · Saints Row</div>
+        <div class="port-title">Customization Suite UX</div>
+        <p class="port-desc">Holistic UX design for all customization suites: Character, Vehicle, Weapon, Crew, and HQ. Goal: make deep, complex feature sets feel accessible and intuitive. Led 10–13 developers.</p>
+        <div class="port-tags"><span class="tag">UX Systems</span><span class="tag">Feature Design</span><span class="tag">Accessibility</span><span class="tag">HUD</span></div>
+        <div class="port-more port-toggle" data-detail="detail-saintrowux">View Details <span>→</span></div>
+        <div class="port-detail" id="detail-saintrowux">
+          <div class="port-detail-inner">
+            <div class="port-detail-label">UX Approach</div>
+            <p class="port-detail-text"><strong>The problem:</strong> Five distinct customization systems, each with significant depth, all needing to feel cohesive and learnable without sacrificing creative power.<br><br><strong>Design approach:</strong> Unified information architecture across all suites — consistent navigation patterns, progressive disclosure, and a visual language that communicated system depth without being overwhelming. UX prototyped in Adobe XD before engineering handoff.<br><br><strong>Transferability:</strong> This work is directly analogous to complex enterprise or consumer product UX — multi-feature systems with mixed-expertise users requiring layered disclosure and consistent mental models.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="port-card fade-up">
+        <div class="port-img" style="background-image:url('https://images.unsplash.com/photo-1542751110-97427bbecf20?w=800&h=450&fit=crop&auto=format&q=80')"><span class="port-img-label">Sony Bend · Progression UX</span></div>
+        <div class="port-company">Sony PlayStation · Bend Studio</div>
+        <div class="port-title">Progression System UX</div>
+        <p class="port-desc">Designed the UX and visual language for progression systems on an unannounced multiplayer title. Used Sony Player Segments research to inform information architecture, reward communication, and motivation loops.</p>
+        <div class="port-tags"><span class="tag">Progression UX</span><span class="tag">Research-Driven</span><span class="tag">Multiplayer</span><span class="tag">Service Game</span></div>
+        <div class="port-more port-toggle" data-detail="detail-sonyux">View Details <span>→</span></div>
+        <div class="port-detail" id="detail-sonyux">
+          <div class="port-detail-inner">
+            <div class="port-detail-label">Research-Driven UX</div>
+            <p class="port-detail-text"><strong>Process:</strong> Used Sony's Player Segments framework — a proprietary player motivation research tool — to identify the target audience's core motivations and frustration patterns.<br><br><strong>Application:</strong> Player segment insights directly informed information architecture decisions: what to show first, what to hide until earned, how to communicate reward anticipation, and how to frame progression milestones in terms that resonated with each player type.<br><br><strong>NDA note:</strong> Detailed visuals and specifics available in confidential conversations.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="port-card fade-up">
+        <div class="port-img" style="background-image:url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=450&fit=crop&auto=format&q=80')"><span class="port-img-label">Outact · Mobile UX</span></div>
+        <div class="port-company">Outact</div>
+        <div class="port-title">Mobile Game UX — Wartide &amp; Brave Order</div>
+        <p class="port-desc">Developed complete UX flows for multiple features across two mobile titles. Built a design-data toolset for hyper-efficient ability creation — bridging the gap between design intent and implementation.</p>
+        <div class="port-tags"><span class="tag">Mobile UX</span><span class="tag">Flow Design</span><span class="tag">Tooling</span><span class="tag">Systems</span></div>
+        <div class="port-more port-toggle" data-detail="detail-outactux">View Details <span>→</span></div>
+        <div class="port-detail" id="detail-outactux">
+          <div class="port-detail-inner">
+            <div class="port-detail-label">UX &amp; Tooling</div>
+            <p class="port-detail-text"><strong>UX work:</strong> Designed complete user flows for multiple feature areas including combat, inventory, progression, and store interactions — all within the constraints of small mobile screens and session-based player behavior.<br><br><strong>Design-data toolset:</strong> Built a custom tool to bridge design intent and implementation — designers could spec ability behavior in structured data format that fed directly into the game system. Eliminated translation errors and significantly reduced iteration time.<br><br>This kind of designer-built tooling is a recurring theme: understanding both the design need and the technical constraint well enough to build the bridge between them.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TRANSFERABILITY CALLOUT -->
+    <div class="ux-callout fade-up">
+      <div class="section-label" style="margin-bottom:16px;">For Non-Games Recruiters</div>
+      <h3 style="font-family:var(--font-head);font-size:1.6rem;font-weight:700;color:var(--text-light);margin-bottom:16px;">UX is UX. The Domain Changes. The Thinking Doesn't.</h3>
+      <p style="color:var(--text-muted);line-height:1.7;max-width:680px;">Player-first UX in games is among the most demanding UX discipline there is. You're designing for millions of players with wildly different skill levels, zero tolerance for friction, and immediate feedback loops. The empathy, systems thinking, and cross-disciplinary collaboration that makes great game UX — translates directly to SaaS, fintech, enterprise tools, and beyond.</p>
+      <div style="margin-top:24px;">
+        <a href="contact.html" class="btn btn-primary">Let's Talk →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-logo">M<span>B</span></div>
+    <div class="footer-copy">© <span>2026</span> Michael Berman</div>
+    <div class="footer-links">
+      <a href="MBerman-Resume.pdf" target="_blank">Resume</a>
+      <a href="https://www.linkedin.com/in/bermandesign" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<div class="nav-overlay" id="nav-overlay">
+  <span class="nav-close" id="nav-close">✕</span>
+  <a href="about.html">About</a><a href="experience.html">Experience</a><a href="portfolio-game.html">Portfolio</a><a href="library.html">Library</a>
+      <a href="blog.html">Writing</a><a href="contact.html">Contact</a>
+</div>
+<script>
+const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:0.08});
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+document.getElementById('hamburger').addEventListener('click', () => document.getElementById('nav-overlay').classList.add('open'));
+document.getElementById('nav-close').addEventListener('click', () => document.getElementById('nav-overlay').classList.remove('open'));
+document.querySelectorAll('.port-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const detail = document.getElementById(btn.dataset.detail);
+    if (!detail) return;
+    const isOpen = detail.classList.contains('open');
+    detail.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael Berman — Game Director</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+       V2 — Evidence-first. Outcomes lead.
+       ═══════════════════════════════════════════ */
+
+    /* TE OP-1 × 8BitDo warm palette */
+    :root {
+      --bg:        #0E0C08;   /* warm near-black — OP-1 dark faceplate */
+      --bg-card:   #1A1610;   /* warm dark card */
+      --bg-raised: #242018;   /* warm raised surface */
+      --accent:    #F26200;   /* OP-1 orange encoder */
+      --accent-lo: rgba(242,98,0,0.12);
+      --ok:        #3DB870;   /* OP-1 green — active/nominal states */
+      --light:     #F5EFE0;   /* OP-1 cream panel */
+      --mid:       #9A9080;   /* warm mid-gray */
+      --dim:       #58524A;   /* warm dim */
+      --border:    #2C2820;   /* warm dark border */
+      --head:      'Barlow Condensed', sans-serif;
+      --body:      'Inter', sans-serif;
+      --mono:      'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { background: var(--bg); color: var(--light); font-family: var(--body); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 40px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(14,12,8,0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--head);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--light);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      font-family: var(--head);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--light); }
+    .nav-cta {
+      padding: 6px 18px;
+      background: var(--accent);
+      color: #111 !important;
+      font-weight: 700 !important;
+      transition: opacity 0.15s !important;
+    }
+    .nav-cta:hover { opacity: 0.85; color: #111 !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding-top: 60px;
+    }
+    .hero-left {
+      padding: 80px 60px 80px 40px;
+      display: flex; flex-direction: column; justify-content: center;
+      border-right: 1px solid var(--border);
+    }
+    .hero-right {
+      padding: 80px 40px 80px 60px;
+      display: flex; flex-direction: column; justify-content: center;
+      background: var(--bg-card);
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 20px; height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-name {
+      font-family: var(--head);
+      font-size: clamp(3.5rem, 6vw, 5.5rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      color: var(--light);
+      margin-bottom: 8px;
+    }
+    .hero-name em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-role {
+      font-family: var(--head);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 400;
+      color: var(--mid);
+      letter-spacing: 0.06em;
+      margin-bottom: 36px;
+    }
+
+    .hero-bio {
+      font-size: 0.95rem;
+      color: var(--mid);
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 40px;
+    }
+
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px;
+      font-family: var(--head);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: all 0.18s;
+    }
+    .btn-primary { background: var(--accent); color: #111; }
+    .btn-primary:hover { background: #ff7243; }
+    .btn-outline { border: 1px solid var(--border); color: var(--mid); background: transparent; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Stats panel — right side of hero */
+    .hero-stats-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      color: var(--dim);
+      margin-bottom: 32px;
+      text-transform: uppercase;
+    }
+
+    .hero-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .hero-stat-cell {
+      background: var(--bg-raised);
+      padding: 28px 24px;
+    }
+    .hero-stat-n {
+      font-family: var(--head);
+      font-size: clamp(2.6rem, 4vw, 3.4rem);
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .hero-stat-l {
+      font-family: var(--head);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+    .hero-stat-s {
+      font-size: 0.72rem;
+      color: var(--dim);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .hero-current {
+      margin-top: 2px;
+      background: var(--accent-lo);
+      border: 1px solid rgba(242,98,0,0.25);
+      padding: 20px 24px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .hero-current-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(242,98,0,0.6);
+      animation: pulse 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero-current-text {
+      font-size: 0.82rem;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+    .hero-current-text strong { color: var(--light); font-weight: 500; }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--head);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      color: var(--light);
+      line-height: 1.05;
+      margin-bottom: 52px;
+    }
+
+    /* ── WORK SECTION ── */
+    .work { padding: 100px 0; border-top: 1px solid var(--border); }
+
+    .work-entry {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .work-entry:last-child { border-bottom: 1px solid var(--border); }
+    .work-entry:hover { background: var(--bg-card); }
+
+    .work-left {
+      padding: 36px 32px 36px 0;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .work-tag {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .work-company {
+      font-family: var(--head);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--light);
+      letter-spacing: 0.02em;
+    }
+    .work-role {
+      font-family: var(--head);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--mid);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .work-date {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--dim);
+      margin-top: 4px;
+    }
+
+    .work-right {
+      padding: 36px 0 36px 40px;
+    }
+    .work-context {
+      font-size: 0.9rem;
+      color: var(--mid);
+      line-height: 1.75;
+      margin-bottom: 20px;
+      max-width: 640px;
+    }
+    .work-outcomes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .work-outcome {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.88rem;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+    .work-outcome-n {
+      font-family: var(--head);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      flex-shrink: 0;
+      min-width: 48px;
+      line-height: 1;
+      padding-top: 2px;
+    }
+    .work-outcome-n.plain { font-size: 0.8rem; color: var(--dim); min-width: 16px; }
+    .work-tags {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .tag {
+      font-family: var(--head);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      background: var(--bg-raised);
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── APPROACH ── */
+    .approach { padding: 100px 0; background: var(--bg-card); border-top: 1px solid var(--border); }
+
+    .belief-list { counter-reset: beliefs; }
+    .belief {
+      counter-increment: beliefs;
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 0 32px;
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      align-items: start;
+    }
+    .belief:last-child { border-bottom: 1px solid var(--border); }
+
+    .belief-num {
+      font-family: var(--head);
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--border);
+      line-height: 1;
+      padding-top: 4px;
+      transition: color 0.2s;
+    }
+    .belief:hover .belief-num { color: var(--accent); }
+
+    .belief-body {}
+    .belief-title {
+      font-family: var(--head);
+      font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+      font-weight: 800;
+      color: var(--light);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .belief-quote {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-style: italic;
+      opacity: 0.8;
+      margin-bottom: 10px;
+      line-height: 1.65;
+    }
+    .belief-detail {
+      font-size: 0.87rem;
+      color: var(--mid);
+      line-height: 1.75;
+    }
+
+    /* ── CAREER ── */
+    .career { padding: 100px 0; border-top: 1px solid var(--border); }
+
+    .career-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .career-entry {
+      display: grid;
+      grid-template-columns: 160px 1fr auto;
+      gap: 0 32px;
+      align-items: center;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+    }
+    .career-entry:last-child { border-bottom: 1px solid var(--border); }
+    .career-dates {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--dim);
+      letter-spacing: 0.06em;
+    }
+    .career-co {
+      font-family: var(--head);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--light);
+    }
+    .career-role {
+      font-family: var(--head);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--mid);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .career-badge {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid rgba(242,98,0,0.4);
+      color: var(--accent);
+    }
+    .career-badge.dim { border-color: var(--border); color: var(--dim); }
+
+    /* ── CONTACT ── */
+    .contact {
+      padding: 120px 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .contact-headline {
+      font-family: var(--head);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      color: var(--light);
+      line-height: 1;
+      margin-bottom: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .contact-sub {
+      font-size: 0.95rem;
+      color: var(--mid);
+      max-width: 520px;
+      margin: 0 auto 44px;
+      line-height: 1.75;
+    }
+    .contact-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .contact-link {
+      font-family: var(--head);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding: 10px 22px;
+      border: 1px solid var(--border);
+      transition: all 0.18s;
+    }
+    .contact-link:hover { color: var(--light); border-color: var(--mid); }
+
+    /* ── FOOTER ── */
+    .footer {
+      padding: 24px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo { font-family: var(--head); font-size: 0.9rem; font-weight: 800; letter-spacing: 0.08em; }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy { font-size: 0.72rem; color: var(--dim); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 0.72rem; color: var(--dim); transition: color 0.15s; }
+    .footer-links a:hover { color: var(--mid); }
+
+    /* ── FADE IN ── */
+    .fade { opacity: 0; transform: translateY(16px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .fade.in { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 80px 24px 48px; border-right: none; border-bottom: 1px solid var(--border); }
+      .hero-right { padding: 40px 24px 60px; }
+      .hero-stat-grid { grid-template-columns: 1fr 1fr; }
+      .work-entry { grid-template-columns: 1fr; }
+      .work-left { border-right: none; border-bottom: 1px solid var(--border); padding: 28px 0 24px; }
+      .work-right { padding: 24px 0 36px; }
+      .belief { grid-template-columns: 48px 1fr; gap: 0 20px; }
+      .career-entry { grid-template-columns: 1fr auto; gap: 8px; }
+      .career-dates { grid-column: 1/-1; margin-bottom: -4px; }
+      .wrap { padding: 0 20px; }
+      .nav { padding: 0 20px; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .hero-stat-grid { grid-template-columns: 1fr 1fr; }
+      .hero-stat-n { font-size: 2.4rem; }
+      .belief { padding: 28px 0; }
+      .belief-num { font-size: 2rem; }
+      .work.entry { padding: 24px 0; }
+      .career-entry { grid-template-columns: 1fr; }
+      .career-badge { display: none; }
+      .contact { padding: 80px 0; }
+      .footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo">M<span>B</span></a>
+  <div class="nav-links">
+    <a href="#work">Work</a>
+    <a href="#approach">Approach</a>
+    <a href="#career">Career</a>
+    <a href="../library.html">Library</a>
+    <a href="#contact" class="nav-cta">Get in Touch</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+
+  <!-- Left: Identity + CTA -->
+  <div class="hero-left">
+    <div class="hero-eyebrow fade">Game Director · Sony Bend Studio</div>
+
+    <h1 class="hero-name fade">
+      Michael<br>Berman<em>.</em>
+    </h1>
+
+    <p class="hero-role fade">
+      I build games that respect players' intelligence.
+    </p>
+
+    <p class="hero-bio fade">
+      Sixteen years across five studios — mobile, PC, and AAA console. Systems design, progression, UX, and creative leadership. The conviction that's carried across all of it: good design earns trust by making the right choice obvious, then gets out of the way.
+    </p>
+
+    <div class="hero-ctas fade">
+      <a href="#work" class="btn btn-primary">See the Work ↓</a>
+      <a href="#contact" class="btn btn-outline">Get in Touch</a>
+    </div>
+  </div>
+
+  <!-- Right: Stats + Current status -->
+  <div class="hero-right">
+    <div class="hero-stats-label fade">// career at a glance</div>
+
+    <div class="hero-stat-grid fade">
+      <div class="hero-stat-cell">
+        <div class="hero-stat-n">16<span style="font-size:0.55em;opacity:0.7;">+</span></div>
+        <div class="hero-stat-l">Years</div>
+        <div class="hero-stat-s">Mobile → AAA Console</div>
+      </div>
+      <div class="hero-stat-cell">
+        <div class="hero-stat-n">5</div>
+        <div class="hero-stat-l">Studios</div>
+        <div class="hero-stat-s">Indie through PlayStation</div>
+      </div>
+      <div class="hero-stat-cell">
+        <div class="hero-stat-n">10<span style="font-size:0.55em;opacity:0.7;">+</span></div>
+        <div class="hero-stat-l">Shipped Products</div>
+        <div class="hero-stat-s">Across 3 platforms</div>
+      </div>
+      <div class="hero-stat-cell">
+        <div class="hero-stat-n">6<span style="font-size:0.55em;opacity:0.7;">+</span></div>
+        <div class="hero-stat-l">Years Leading</div>
+        <div class="hero-stat-s">Manager → Director</div>
+      </div>
+    </div>
+
+    <div class="hero-current fade">
+      <div class="hero-current-dot"></div>
+      <div class="hero-current-text">
+        Currently <strong>Game Director at Sony Bend Studio</strong> — leading an unannounced AAA title on PC &amp; Console.
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ SELECTED WORK ══ -->
+<section class="work" id="work">
+  <div class="wrap">
+    <div class="section-label fade">Selected Work</div>
+    <h2 class="section-title fade">The evidence<em style="color:var(--accent);">.</em></h2>
+
+    <div class="work-entries">
+
+      <!-- Sony Bend -->
+      <div class="work-entry fade">
+        <div class="work-left">
+          <span class="work-tag">AAA · Console &amp; PC</span>
+          <div class="work-company">Sony Bend Studio</div>
+          <div class="work-role">Game Director</div>
+          <div class="work-date">2022 → Present</div>
+        </div>
+        <div class="work-right">
+          <p class="work-context">
+            Set creative vision and led a large cross-disciplinary team from concept through production on an unannounced AAA title for PlayStation and PC. Before the director role, served as Design Manager &amp; Product Owner on a service-based multiplayer title — owning the progression systems design roadmap and managing six direct reports across a team of 15+ developers.
+          </p>
+          <div class="work-outcomes">
+            <div class="work-outcome">
+              <span class="work-outcome-n">15+</span>
+              <span>Developers led across progression, systems, and UX design on the multiplayer title</span>
+            </div>
+            <div class="work-outcome">
+              <span class="work-outcome-n">6</span>
+              <span>Direct reports — grew from individual contributor to manager to director within one studio</span>
+            </div>
+            <div class="work-outcome">
+              <span class="work-outcome-n plain">→</span>
+              <span>Worked alongside Chief Product Owner on strategic roadmap and product framework</span>
+            </div>
+          </div>
+          <div class="work-tags">
+            <span class="tag">Game Direction</span>
+            <span class="tag">Creative Leadership</span>
+            <span class="tag">Progression Systems</span>
+            <span class="tag">Multiplayer</span>
+            <span class="tag">Live Service</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Volition -->
+      <div class="work-entry fade">
+        <div class="work-left">
+          <span class="work-tag">AAA · Console &amp; PC</span>
+          <div class="work-company">Deep Silver Volition</div>
+          <div class="work-role">Design Director</div>
+          <div class="work-date">2019 → 2022</div>
+        </div>
+        <div class="work-right">
+          <p class="work-context">
+            Brought on to modernise the Saints Row franchise strategy for long-tail engagement. Led all UX and customisation systems across the title as Lead Systems &amp; Principal UX Designer, then promoted to Design Director. Served as Product Owner on "Boss Factory" — a pre-release character creation demo that became a major community driver ahead of launch.
+          </p>
+          <div class="work-outcomes">
+            <div class="work-outcome">
+              <span class="work-outcome-n">10–13</span>
+              <span>Developers led across all customisation suites and holistic UX design</span>
+            </div>
+            <div class="work-outcome">
+              <span class="work-outcome-n plain">→</span>
+              <span>Overhauled the full franchise UX system across Saints Row reboot (2022)</span>
+            </div>
+            <div class="work-outcome">
+              <span class="work-outcome-n plain">→</span>
+              <span>Boss Factory pre-release demo and community character-sharing pipeline — significant pre-launch engagement driver</span>
+            </div>
+          </div>
+          <div class="work-tags">
+            <span class="tag">Design Direction</span>
+            <span class="tag">UX Systems</span>
+            <span class="tag">Saints Row</span>
+            <span class="tag">Customisation</span>
+            <span class="tag">Product Ownership</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pocket Gems -->
+      <div class="work-entry fade">
+        <div class="work-left">
+          <span class="work-tag">Mobile · Live Service</span>
+          <div class="work-company">Pocket Gems</div>
+          <div class="work-role">Game Designer</div>
+          <div class="work-date">2013 → 2015</div>
+        </div>
+        <div class="work-right">
+          <p class="work-context">
+            Led a cross-disciplinary pod of 10 developers on progression and gameplay systems for War Dragons from pre-production through live operations. After geo-beta, identified and redesigned the primary progression loop and reward structure based on data — producing the most impactful single retention improvement on the title.
+          </p>
+          <div class="work-outcomes">
+            <div class="work-outcome">
+              <span class="work-outcome-n">+12%</span>
+              <span>Day-3 retention improvement post progression redesign — single largest retention gain on the title</span>
+            </div>
+            <div class="work-outcome">
+              <span class="work-outcome-n">10</span>
+              <span>Developers led across the cross-disciplinary gameplay systems pod</span>
+            </div>
+            <div class="work-outcome">
+              <span class="work-outcome-n plain">→</span>
+              <span>Systems shipped from pre-production into live — then iterated against real retention data</span>
+            </div>
+          </div>
+          <div class="work-tags">
+            <span class="tag">Game Design</span>
+            <span class="tag">Progression Systems</span>
+            <span class="tag">Mobile Live Service</span>
+            <span class="tag">Data-Driven Design</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ APPROACH ══ -->
+<section class="approach" id="approach">
+  <div class="wrap">
+    <div class="section-label fade">How I Think</div>
+    <h2 class="section-title fade">Three things I've<br>stopped arguing about<em style="color:var(--accent);">.</em></h2>
+
+    <div class="belief-list">
+
+      <div class="belief fade">
+        <div class="belief-num">01</div>
+        <div class="belief-body">
+          <div class="belief-title">Systems Over Stories</div>
+          <p class="belief-quote">"The most memorable gaming moments were never scripted — they happened because the systems were good enough to generate something nobody planned."</p>
+          <p class="belief-detail">Linear narrative is a solved problem. Every other medium does it better. What games uniquely produce — the emergent ambush, the spontaneous alliance, the story no writer wrote — only happens when the underlying systems are strong enough to surprise even their authors. That's the target.</p>
+        </div>
+      </div>
+
+      <div class="belief fade">
+        <div class="belief-num">02</div>
+        <div class="belief-body">
+          <div class="belief-title">Test Ugly. Ship Clean.</div>
+          <p class="belief-quote">"Fidelity is a reward for ideas that survive contact with reality. If you're polishing before validating, you're spending craft on faith."</p>
+          <p class="belief-detail">A graybox prototype that teaches you the core loop is working isn't broken — it's the most efficient design tool you have. The discipline is holding the line on polish until the idea has earned it. Most studios fail here not for lack of taste, but lack of process confidence.</p>
+        </div>
+      </div>
+
+      <div class="belief fade">
+        <div class="belief-num">03</div>
+        <div class="belief-body">
+          <div class="belief-title">Direction Is Recognition, Not Invention</div>
+          <p class="belief-quote">"The most valuable thing a director does isn't generate the answer — it's recognise it when the team brings it in, and commit."</p>
+          <p class="belief-detail">Leaders who insist on originating every solution bottleneck the team and signal distrust. Build teams smart enough to generate options you wouldn't have thought of yourself. Then make the call — clearly, quickly, and with enough conviction that the team can execute without second-guessing.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:40px;" class="fade">
+      <a href="../about.html" class="btn btn-outline">All Eight Principles →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CAREER ══ -->
+<section class="career" id="career">
+  <div class="wrap">
+    <div class="section-label fade">Timeline</div>
+    <h2 class="section-title fade">Career<em style="color:var(--accent);">.</em></h2>
+
+    <div class="career-grid fade">
+      <div class="career-entry">
+        <div class="career-dates">2025 → Present</div>
+        <div>
+          <div class="career-co">Sony Bend Studio</div>
+          <div class="career-role">Game Director</div>
+        </div>
+        <div class="career-badge">Active</div>
+      </div>
+      <div class="career-entry">
+        <div class="career-dates">2022 → 2025</div>
+        <div>
+          <div class="career-co">Sony Bend Studio</div>
+          <div class="career-role">Design Manager &amp; Product Owner</div>
+        </div>
+        <div class="career-badge dim">Shipped</div>
+      </div>
+      <div class="career-entry">
+        <div class="career-dates">2019 → 2022</div>
+        <div>
+          <div class="career-co">Deep Silver Volition</div>
+          <div class="career-role">Design Director → Lead Systems &amp; Principal UX</div>
+        </div>
+        <div class="career-badge dim">Shipped</div>
+      </div>
+      <div class="career-entry">
+        <div class="career-dates">2015 → 2019</div>
+        <div>
+          <div class="career-co">Tencent · Petroglyph</div>
+          <div class="career-role">Game Designer</div>
+        </div>
+        <div class="career-badge dim">Shipped</div>
+      </div>
+      <div class="career-entry">
+        <div class="career-dates">2013 → 2015</div>
+        <div>
+          <div class="career-co">Pocket Gems</div>
+          <div class="career-role">Game Designer — War Dragons</div>
+        </div>
+        <div class="career-badge dim">Shipped</div>
+      </div>
+    </div>
+
+    <div style="margin-top:36px;" class="fade">
+      <a href="../experience.html" class="btn btn-outline">Full Experience →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <h2 class="contact-headline fade">Building something<br>worth building?</h2>
+    <p class="contact-sub fade">
+      Currently heads-down as Game Director at Sony Bend. But if you're working on something ambitious — in games or adjacent — I'm happy to think through it together.
+    </p>
+    <div class="contact-links fade">
+      <a class="btn btn-primary" href="mailto:michaelberman@example.com">Send an Email →</a>
+      <a class="contact-link" href="https://linkedin.com/in/bermandesign" target="_blank">LinkedIn</a>
+      <a class="contact-link" href="../MBerman-Resume.pdf" target="_blank">Resume</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-logo">M<span>B</span></div>
+  <div class="footer-copy">© 2025 Michael Berman · All rights reserved</div>
+  <div class="footer-links">
+    <a href="https://linkedin.com/in/bermandesign" target="_blank">LinkedIn</a>
+    <a href="../MBerman-Resume.pdf" target="_blank">Resume</a>
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered fade-in
+const obs = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+  { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+);
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+// Trigger hero fades immediately
+setTimeout(() => {
+  document.querySelectorAll('.hero .fade').forEach((el, i) => {
+    setTimeout(() => el.classList.add('in'), i * 120);
+  });
+}, 100);
+</script>
+</body>
+</html>
