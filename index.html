@@ -256,12 +256,21 @@
     }
     .boot-prompt.show { opacity: 1; }
 
-    /* Row: [button] [bar] [hint] all inline */
+    /* Row: [feedback LEFT] [button RIGHT] */
     .boot-hold-wrap {
       display: flex;
       align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    /* Left panel: bar + status text — never obscured by thumb */
+    .boot-hold-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
     }
 
     /* The pressable button — compact, just label + cursor */
@@ -332,14 +341,12 @@
       margin-right: 6px;
     }
 
-    /* Progress bar — sibling to button, not inside */
+    /* Progress bar — full width of left panel */
     .boot-hold-bar {
       display: flex;
       align-items: center;
       gap: 2px;
-      flex: 1;
-      max-width: 140px;
-      min-width: 80px;
+      width: 100%;
     }
     .boot-hold-bar-seg {
       flex: 1;
@@ -353,13 +360,14 @@
       border-color: #F26200;
     }
 
-    .boot-hold-hint {
+    .boot-hold-status {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.58rem;
-      color: #2C2820;
+      color: #4A4438;
       letter-spacing: 0.06em;
-      white-space: nowrap;
+      transition: color 0.2s;
     }
+    .boot-hold-status.active { color: #F26200; }
 
     /* ── TRANSITION ── */
     #transition-overlay {
@@ -407,23 +415,25 @@
     <div class="boot-prompt" id="boot-prompt">
       <div class="boot-hold-wrap">
 
-        <!-- Button: compact, pressable, has blinking cursor inside -->
+        <!-- LEFT: all visual feedback — safe from thumb -->
+        <div class="boot-hold-left">
+          <div class="boot-hold-bar" id="hold-bar">
+            <!-- segments injected by JS -->
+          </div>
+          <div class="boot-hold-status" id="hold-status">// press &amp; hold · any key or tap</div>
+        </div>
+
+        <!-- RIGHT: input only — button stays here, thumb holds here -->
         <div class="boot-hold-btn" id="hold-btn" tabindex="0" role="button" aria-label="Hold to launch">
           <div class="boot-hold-fill" id="hold-fill"></div>
           <div class="boot-hold-inner">
             <span class="boot-hold-bracket">[</span>
-            <span class="boot-hold-label" id="hold-label">HOLD TO LAUNCH</span>
+            <span class="boot-hold-label" id="hold-label">HOLD</span>
             <span class="boot-btn-cursor">█</span>
             <span class="boot-hold-bracket">]</span>
           </div>
         </div>
 
-        <!-- Progress bar: sibling to button -->
-        <div class="boot-hold-bar" id="hold-bar">
-          <!-- segments injected by JS -->
-        </div>
-
-        <div class="boot-hold-hint">// press &amp; hold · any key or tap</div>
       </div>
     </div>
   </div>
@@ -742,10 +752,11 @@ const BAR_SEGMENTS  = 12;
 
 const terminalEl  = document.getElementById('boot-terminal');
 const promptEl    = document.getElementById('boot-prompt');
-const holdBtn     = document.getElementById('hold-btn');
-const holdFill    = document.getElementById('hold-fill');
-const holdBarEl   = document.getElementById('hold-bar');
-const holdLabelEl = document.getElementById('hold-label');
+const holdBtn      = document.getElementById('hold-btn');
+const holdFill     = document.getElementById('hold-fill');
+const holdBarEl    = document.getElementById('hold-bar');
+const holdLabelEl  = document.getElementById('hold-label');
+const holdStatusEl = document.getElementById('hold-status');
 const siteEl      = document.getElementById('site');
 const overlayEl   = document.getElementById('transition-overlay');
 const bootEl      = document.getElementById('boot');
@@ -894,16 +905,16 @@ function updateBar(progress) {
     s.classList.toggle('filled', i < filled);
   });
 
-  // Update label text
+  // Update status text (left panel — never under thumb)
   if (progress < 0.5) {
-    holdLabelEl.textContent = 'HOLD TO LAUNCH';
-    holdLabelEl.classList.remove('active-hold');
+    holdStatusEl.textContent = '// press & hold · any key or tap';
+    holdStatusEl.classList.remove('active');
   } else if (progress < 0.9) {
-    holdLabelEl.textContent = 'INITIALIZING...';
-    holdLabelEl.classList.add('active-hold');
+    holdStatusEl.textContent = '// initializing...';
+    holdStatusEl.classList.add('active');
   } else {
-    holdLabelEl.textContent = 'LAUNCHING...';
-    holdLabelEl.classList.add('active-hold');
+    holdStatusEl.textContent = '// launching...';
+    holdStatusEl.classList.add('active');
   }
 
   // Sync fill div
@@ -935,8 +946,8 @@ function cancelHold() {
   isHolding = false;
   if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
   holdBtn.classList.remove('holding');
-  holdLabelEl.textContent = 'HOLD TO LAUNCH';
-  holdLabelEl.classList.remove('active-hold');
+  holdStatusEl.textContent = '// press & hold · any key or tap';
+  holdStatusEl.classList.remove('active');
   // Animate reset
   holdFill.classList.add('resetting');
   holdFill.style.width = '0%';
@@ -951,7 +962,8 @@ function completeHold() {
   if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
   holdBtn.classList.remove('holding');
   holdBtn.classList.add('complete');
-  holdLabelEl.textContent = '[ LAUNCH ]';
+  holdStatusEl.textContent = '// access granted';
+  holdStatusEl.classList.add('active');
   // Haptic if supported
   if (navigator.vibrate) navigator.vibrate(60);
   // Transition
