@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Michael Berman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0C0E0F; --bg-panel:#111315; --bg-raised:#161819;
+      --border:#1E2224; --border-hi:#2A2D30;
+      --text:#C8C5C0; --text-muted:#6B6966; --text-dim:#323436;
+      --accent:#E76028; --green:#3DB870; --amber:#D4A027;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;overflow-x:hidden}
+
+    nav{position:sticky;top:0;z-index:100;background:rgba(12,14,15,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:48px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-family:var(--mono);font-size:.8rem;color:var(--accent);text-decoration:none}
+    .nav-logo span{color:var(--text-muted)}
+    .nav-links{display:flex;gap:4px}
+    .nav-links a{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);text-decoration:none;padding:4px 10px;border-radius:3px;letter-spacing:.04em;transition:color .15s,background .15s}
+    .nav-links a:hover{color:var(--text);background:var(--bg-raised)}
+    .nav-links a::before{content:'./';color:var(--text-dim)}
+    .nav-links a.active{color:var(--text)}
+
+    .page-header{max-width:860px;margin:0 auto;padding:48px 24px 24px}
+    .page-cmd{font-family:var(--mono);font-size:.78rem;color:var(--text-muted);margin-bottom:4px}
+    .page-cmd .ps{color:var(--accent)}
+    .page-title{font-family:var(--mono);font-size:clamp(1.2rem,3vw,1.6rem);color:#ECEAE6;letter-spacing:-.01em;font-weight:700}
+    .page-title .cmt{color:var(--text-dim);font-weight:400;font-size:.65em;margin-left:12px}
+
+    .page-body{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+    /* MAN PAGE PANEL */
+    .man-panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:24px}
+    .man-topbar{background:var(--bg-raised);border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;gap:8px}
+    .tp-dot{width:10px;height:10px;border-radius:50%}
+    .tp-dot.r{background:#4A2020}.tp-dot.y{background:#3A3010}.tp-dot.g{background:#183A28}
+    .tp-bar-label{margin-left:8px;font-family:var(--mono);font-size:.68rem;color:var(--text-dim);letter-spacing:.08em}
+
+    .man-body{padding:28px 32px;font-family:var(--mono)}
+
+    .man-section{margin-bottom:28px}
+    .man-section:last-child{margin-bottom:0}
+
+    .man-heading{font-size:.7rem;letter-spacing:.14em;color:#ECEAE6;font-weight:700;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+
+    .man-text{font-size:.78rem;color:var(--text-muted);line-height:1.7;margin-bottom:8px}
+    .man-text strong{color:var(--text)}
+
+    /* SYNOPSIS */
+    .synopsis{background:#090B0C;border:1px solid var(--border);padding:14px 18px;border-radius:3px;margin-bottom:8px}
+    .synopsis-line{font-size:.74rem;color:var(--text-muted);margin-bottom:4px}
+    .synopsis-line:last-child{margin-bottom:0}
+    .syn-cmd{color:var(--accent)}
+    .syn-flag{color:var(--green)}
+    .syn-val{color:var(--amber)}
+    .syn-opt{color:var(--text-dim)}
+
+    /* OPTIONS / PRINCIPLES */
+    .option-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+    .option-row{border-bottom:1px solid var(--border)}
+    .option-row:last-child{border-bottom:none}
+    .option-header{display:grid;grid-template-columns:auto 1fr auto;cursor:pointer;transition:background .12s}
+    .option-header:hover{background:var(--bg-raised)}
+    .option-flag{font-family:var(--mono);font-size:.72rem;color:var(--green);padding:14px 16px;border-right:1px solid var(--border);white-space:nowrap;align-self:start}
+    .option-body{padding:14px 16px}
+    .option-name{font-size:.78rem;color:var(--text);font-weight:500;margin-bottom:3px}
+    .option-brief{font-size:.78rem;color:var(--text-muted);line-height:1.5}
+    .option-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--text-dim);padding:14px 12px;white-space:nowrap;align-self:start}
+    .option-detail{display:none;background:#090B0C;border-top:1px solid var(--border);padding:14px 18px 14px 56px;font-family:var(--mono);font-size:.72rem;color:var(--text-muted);line-height:1.7;border-left:3px solid var(--green)}
+    .option-detail.open{display:block}
+
+    /* CONTACT */
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+    .contact-cell{background:var(--bg-panel);padding:14px 18px}
+    .contact-key{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--text-dim);margin-bottom:4px}
+    .contact-val{font-family:var(--mono);font-size:.78rem;color:var(--text)}
+    .contact-val a{color:var(--accent);text-decoration:none}
+    .contact-val a:hover{text-decoration:underline}
+
+    footer{border-top:1px solid var(--border);padding:28px 24px;max-width:860px;margin:0 auto}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .footer-prompt{font-family:var(--mono);font-size:.72rem;color:var(--text-muted)}
+    .footer-prompt .ps{color:var(--accent)}
+    .footer-links{display:flex;gap:20px}
+    .footer-links a{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);text-decoration:none;transition:color .15s}
+    .footer-links a:hover{color:var(--text-muted)}
+
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .cursor{animation:blink .7s step-end infinite;color:var(--accent)}
+
+    @media(max-width:600px){
+      .page-header{padding:32px 16px 20px}
+      .page-body{padding:0 16px 60px}
+      .man-body{padding:20px 16px}
+      .contact-grid{grid-template-columns:1fr}
+      .option-header{grid-template-columns:1fr}
+      .option-flag{border-right:none;border-bottom:1px solid var(--border);padding:10px 14px}
+      .option-num{display:none}
+      .option-detail{padding-left:14px}
+      nav{padding:0 16px}
+      .nav-links a{padding:4px 6px;font-size:.65rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">~/mberman <span>$</span></a>
+  <div class="nav-links">
+    <a href="about.html" class="active">about</a>
+    <a href="experience.html">experience</a>
+    <a href="library.html">library</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-cmd"><span class="ps">~/mberman $</span> man mberman</div>
+  <div class="page-title">mberman(1) <span class="cmt">// manual page</span></div>
+</div>
+
+<div class="page-body">
+  <div class="man-panel">
+    <div class="man-topbar">
+      <div class="tp-dot r"></div><div class="tp-dot y"></div><div class="tp-dot g"></div>
+      <span class="tp-bar-label">man mberman — manual page</span>
+    </div>
+    <div class="man-body">
+
+      <!-- NAME -->
+      <div class="man-section">
+        <div class="man-heading">NAME</div>
+        <div class="man-text"><strong>mberman</strong> — Game Director, Design Leader, Systems Thinker</div>
+      </div>
+
+      <!-- SYNOPSIS -->
+      <div class="man-section">
+        <div class="man-heading">SYNOPSIS</div>
+        <div class="synopsis">
+          <div class="synopsis-line"><span class="syn-cmd">mberman</span> <span class="syn-flag">--player-first</span> <span class="syn-flag">--graybox-first</span> <span class="syn-flag">--systems-driven</span></div>
+          <div class="synopsis-line"><span class="syn-opt">         </span><span class="syn-flag">--iterate-fast</span> <span class="syn-flag">--lead-by-decision</span> <span class="syn-flag">--sustainable-design</span></div>
+          <div class="synopsis-line"><span class="syn-opt">         </span><span class="syn-flag">--know-your-audience</span> <span class="syn-flag">--gameplay-clarity</span></div>
+          <div class="synopsis-line"><span class="syn-opt">         </span>[<span class="syn-val">--studio &lt;studio&gt;</span>] [<span class="syn-val">--platform &lt;pc|console|mobile&gt;</span>] [<span class="syn-val">--ship-it</span>]</div>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="man-section">
+        <div class="man-heading">DESCRIPTION</div>
+        <div class="man-text">
+          <strong>Michael Berman</strong> is a Game Director and Design Leader with 16+ years shipping games across mobile, PC, and console. Currently directing an unannounced AAA title at Sony Interactive Entertainment / Bend Studio.
+        </div>
+        <div class="man-text">
+          Specializes in systemic design, player-first thinking, and the unglamorous but essential work of turning ambiguous creative visions into shippable products. Has led teams from 2 to 15+ designers across first-party Sony, THQ Nordic, and independent studios.
+        </div>
+        <div class="man-text">
+          Operates on the principle that <strong>good design is invisible</strong> — the player should feel smart, not tutorialized; engaged, not manipulated; challenged, not frustrated.
+        </div>
+      </div>
+
+      <!-- OPTIONS / PRINCIPLES -->
+      <div class="man-section">
+        <div class="man-heading">OPTIONS / PRINCIPLES</div>
+        <div class="option-list">
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--player-first</div>
+              <div class="option-body">
+                <div class="option-name">Build for your audience, not yourself.</div>
+                <div class="option-brief">Player empathy over designer taste. Research closes the gap.</div>
+              </div>
+              <div class="option-num">01</div>
+            </div>
+            <div class="option-detail">Your preferences are a sample size of one. The target audience is not you. Research, playtesting, and data close the gap between what you think works and what actually does. It's great when your taste aligns with your players' — lean on feedback to find where it doesn't.</div>
+          </div>
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--graybox-first</div>
+              <div class="option-body">
+                <div class="option-name">Find the fun before you spend on polish.</div>
+                <div class="option-brief">Low-fidelity prototyping identifies high-confidence features early.</div>
+              </div>
+              <div class="option-num">02</div>
+            </div>
+            <div class="option-detail">There is a time and place for polish, tutorials, onboarding, and refinement. That time is not first. Keep things as low-fidelity as possible to identify high-confidence features before committing production resources. Polishing the wrong thing is the most expensive mistake in AAA development.</div>
+          </div>
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--systems-driven</div>
+              <div class="option-body">
+                <div class="option-name">Design systems, not content.</div>
+                <div class="option-brief">Content requires more content to sustain itself. Systems compound.</div>
+              </div>
+              <div class="option-num">03</div>
+            </div>
+            <div class="option-detail">Content dependency is a debt spiral — you need more content to sustain the content you already have. Systems-driven design creates experiences that generate themselves. Build the rules that produce the encounters, not the encounters themselves. Emergent gameplay is sustainable gameplay.</div>
+          </div>
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--iterate-fast</div>
+              <div class="option-body">
+                <div class="option-name">Test fast. Kill fast. Ship what survives.</div>
+                <div class="option-brief">Ideas are cheap. Validated ideas are valuable.</div>
+              </div>
+              <div class="option-num">04</div>
+            </div>
+            <div class="option-detail">The best ideas don't survive planning meetings — they survive playtests. Run experiments aggressively, kill failures quickly, and invest only in what demonstrably works. A strong opinion held loosely is more valuable than a weak opinion defended stubbornly.</div>
+          </div>
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--lead-by-decision</div>
+              <div class="option-body">
+                <div class="option-name">Leadership is making the hard call, not avoiding it.</div>
+                <div class="option-brief">Ambiguity is the enemy. Decisive direction unblocks teams.</div>
+              </div>
+              <div class="option-num">05</div>
+            </div>
+            <div class="option-detail">The most expensive thing a director can do is leave a decision unmade. Teams wait, work piles up, and options narrow. A clear decision — even an imperfect one — is almost always better than prolonged ambiguity. Own the call. Adjust when new information arrives.</div>
+          </div>
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--sustainable-design</div>
+              <div class="option-body">
+                <div class="option-name">Design for the long game, not the launch.</div>
+                <div class="option-brief">Features that require constant feeding are technical debt.</div>
+              </div>
+              <div class="option-num">06</div>
+            </div>
+            <div class="option-detail">Live service has taught the industry that launch is the beginning, not the end. Sustainable design means building systems that can grow without exponential resource cost. If a feature requires a full team to maintain after launch, it's a liability not an asset.</div>
+          </div>
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--know-your-audience</div>
+              <div class="option-body">
+                <div class="option-name">A game for everyone is a game for no one.</div>
+                <div class="option-brief">Clarity of audience is clarity of design.</div>
+              </div>
+              <div class="option-num">07</div>
+            </div>
+            <div class="option-detail">The instinct to broaden appeal by softening everything results in a product with no clear identity. Know exactly who you're building for. Make deliberate choices that serve that audience, even when those choices exclude others. Conviction about your player is the foundation of every good design decision.</div>
+          </div>
+
+          <div class="option-row">
+            <div class="option-header" onclick="toggleOption(this)">
+              <div class="option-flag">--gameplay-clarity</div>
+              <div class="option-body">
+                <div class="option-name">If it needs explaining, it needs redesigning.</div>
+                <div class="option-brief">Clarity is the first feature. Complexity is earned.</div>
+              </div>
+              <div class="option-num">08</div>
+            </div>
+            <div class="option-detail">Players shouldn't need a tutorial to understand a well-designed mechanic — the mechanic itself should communicate its rules. Complexity is a cost, not a feature. Add it deliberately, only once the foundation is clear. When a player is confused, that's a design problem, not a player problem.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="man-section">
+        <div class="man-heading">SEE ALSO / CONTACT</div>
+        <div class="contact-grid">
+          <div class="contact-cell">
+            <div class="contact-key">EMAIL</div>
+            <div class="contact-val"><a href="mailto:envyberman@gmail.com">envyberman@gmail.com</a></div>
+          </div>
+          <div class="contact-cell">
+            <div class="contact-key">LINKEDIN</div>
+            <div class="contact-val"><a href="https://linkedin.com/in/bermandesign" target="_blank">linkedin.com/in/bermandesign</a></div>
+          </div>
+          <div class="contact-cell">
+            <div class="contact-key">LOCATION</div>
+            <div class="contact-val">Pacific Northwest, WA</div>
+          </div>
+          <div class="contact-cell">
+            <div class="contact-key">STATUS</div>
+            <div class="contact-val" style="color:var(--accent)">Game Director · Sony / Bend Studio</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERSION -->
+      <div class="man-section">
+        <div class="man-heading">VERSION</div>
+        <div class="man-text" style="font-family:var(--mono);font-size:.72rem">mberman v16.0+ &nbsp;·&nbsp; Last updated: 2026 &nbsp;·&nbsp; <span style="color:var(--text-dim)">All flags subject to revision upon new evidence.</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-prompt"><span class="ps">~/mberman $</span> <span class="cursor">█</span></div>
+    <div class="footer-links">
+      <a href="index.html">← home</a>
+      <a href="experience.html">experience</a>
+      <a href="../versions.html">versions</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleOption(header) {
+  const detail = header.nextElementSibling;
+  if (detail) detail.classList.toggle('open');
+}
+</script>
+</body>
+</html>

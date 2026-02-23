@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library — Michael Berman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0C0E0F; --bg-panel:#111315; --bg-raised:#161819;
+      --border:#1E2224; --border-hi:#2A2D30;
+      --text:#C8C5C0; --text-muted:#6B6966; --text-dim:#323436;
+      --accent:#E76028; --green:#3DB870; --amber:#D4A027;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;overflow-x:hidden}
+
+    nav{position:sticky;top:0;z-index:100;background:rgba(12,14,15,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:48px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-family:var(--mono);font-size:.8rem;color:var(--accent);text-decoration:none}
+    .nav-logo span{color:var(--text-muted)}
+    .nav-links{display:flex;gap:4px}
+    .nav-links a{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);text-decoration:none;padding:4px 10px;border-radius:3px;letter-spacing:.04em;transition:color .15s,background .15s}
+    .nav-links a:hover{color:var(--text);background:var(--bg-raised)}
+    .nav-links a::before{content:'./';color:var(--text-dim)}
+    .nav-links a.active{color:var(--text)}
+
+    .page-header{max-width:860px;margin:0 auto;padding:48px 24px 24px}
+    .page-cmd{font-family:var(--mono);font-size:.78rem;color:var(--text-muted);margin-bottom:4px}
+    .page-cmd .ps{color:var(--accent)}
+    .page-title{font-family:var(--mono);font-size:clamp(1.2rem,3vw,1.6rem);color:#ECEAE6;letter-spacing:-.01em;font-weight:700}
+    .page-title .cmt{color:var(--text-dim);font-weight:400;font-size:.65em;margin-left:12px}
+
+    .page-body{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+    /* DIR TABS */
+    .dir-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .dir-tab{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);padding:10px 16px;cursor:pointer;border:1px solid transparent;border-bottom:none;white-space:nowrap;transition:color .15s,background .15s;user-select:none;letter-spacing:.03em}
+    .dir-tab::before{content:'📁 ';font-size:.7em}
+    .dir-tab:hover{color:var(--text);background:var(--bg-raised)}
+    .dir-tab.active{color:var(--text);background:var(--bg-panel);border-color:var(--border);border-bottom-color:var(--bg-panel);margin-bottom:-1px}
+    .dir-tab.active::before{content:'📂 '}
+
+    /* DIR PANEL */
+    .dir-panel{background:var(--bg-panel);border:1px solid var(--border);border-top:none;border-radius:0 0 6px 6px;overflow:hidden;display:none}
+    .dir-panel.active{display:block}
+
+    .dir-cmd-bar{background:var(--bg-raised);border-bottom:1px solid var(--border);padding:9px 16px;font-family:var(--mono);font-size:.7rem;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+    .dir-cmd-bar .ps{color:var(--accent)}
+
+    /* FILE ROWS */
+    .file-list{display:flex;flex-direction:column}
+    .file-row{border-bottom:1px solid var(--border)}
+    .file-row:last-child{border-bottom:none}
+
+    .file-header{display:grid;grid-template-columns:auto 1fr auto auto;gap:0;padding:0;cursor:pointer;transition:background .12s}
+    .file-header:hover{background:var(--bg-raised)}
+
+    .file-perm{font-family:var(--mono);font-size:.62rem;color:var(--text-dim);padding:13px 14px;border-right:1px solid var(--border);white-space:nowrap;letter-spacing:.03em}
+    .file-name{padding:13px 16px}
+    .file-title{font-family:var(--mono);font-size:.78rem;color:var(--text);font-weight:500;margin-bottom:2px}
+    .file-sub{font-family:var(--mono);font-size:.63rem;color:var(--text-muted)}
+    .file-tag{padding:13px 14px;border-left:1px solid var(--border);display:flex;align-items:flex-start;justify-content:center}
+    .file-date{padding:13px 14px;border-left:1px solid var(--border);font-family:var(--mono);font-size:.63rem;color:var(--text-dim);white-space:nowrap;align-self:start}
+
+    .badge{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;padding:2px 7px;border-radius:2px;white-space:nowrap}
+    .badge-playing{background:rgba(231,96,40,.12);color:var(--accent);border:1px solid rgba(231,96,40,.25)}
+    .badge-reading{background:rgba(61,184,112,.08);color:var(--green);border:1px solid rgba(61,184,112,.15)}
+    .badge-ref{background:rgba(50,52,54,.5);color:var(--text-muted);border:1px solid var(--border)}
+    .badge-watch{background:rgba(212,160,39,.08);color:var(--amber);border:1px solid rgba(212,160,39,.15)}
+
+    /* NOTES DRAWER */
+    .file-notes{display:none;background:#090B0C;border-top:1px solid var(--border);padding:14px 16px 14px 46px;font-family:var(--mono);font-size:.7rem;color:var(--text-muted);line-height:1.65;border-left:3px solid var(--accent)}
+    .file-notes.open{display:block}
+    .file-notes .note-label{color:var(--text-dim);margin-bottom:4px;font-size:.62rem;letter-spacing:.08em}
+
+    /* ARCHIVE */
+    .archive-toggle{font-family:var(--mono);font-size:.68rem;color:var(--text-dim);padding:11px 16px;cursor:pointer;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;user-select:none;transition:color .15s,background .15s}
+    .archive-toggle:hover{color:var(--text-muted);background:var(--bg-raised)}
+    .archive-entries{display:none}
+    .archive-entries.open{display:block}
+    .archive-entries .file-perm{color:#1E2224}
+    .archive-entries .file-title{color:var(--text-muted)}
+    .archive-entries .file-sub{color:var(--text-dim)}
+
+    /* FOOTER */
+    footer{border-top:1px solid var(--border);padding:28px 24px;max-width:860px;margin:0 auto}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .footer-prompt{font-family:var(--mono);font-size:.72rem;color:var(--text-muted)}
+    .footer-prompt .ps{color:var(--accent)}
+    .footer-links{display:flex;gap:20px}
+    .footer-links a{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);text-decoration:none;transition:color .15s}
+    .footer-links a:hover{color:var(--text-muted)}
+
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .cursor{animation:blink .7s step-end infinite;color:var(--accent)}
+
+    @media(max-width:600px){
+      .page-header{padding:32px 16px 20px}
+      .page-body{padding:0 16px 60px}
+      .dir-tab{padding:8px 12px;font-size:.65rem}
+      .file-header{grid-template-columns:1fr auto}
+      .file-perm,.file-date{display:none}
+      .file-tag{border-left:none}
+      nav{padding:0 16px}
+      .nav-links a{padding:4px 6px;font-size:.65rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">~/mberman <span>$</span></a>
+  <div class="nav-links">
+    <a href="about.html">about</a>
+    <a href="experience.html">experience</a>
+    <a href="library.html" class="active">library</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-cmd"><span class="ps">~/mberman/library $</span> ls -la</div>
+  <div class="page-title">library/ <span class="cmt">// reference material</span></div>
+</div>
+
+<div class="page-body">
+
+  <div class="dir-tabs">
+    <div class="dir-tab active" onclick="switchTab('games',this)">games</div>
+    <div class="dir-tab" onclick="switchTab('books',this)">books</div>
+    <div class="dir-tab" onclick="switchTab('talks',this)">talks</div>
+    <div class="dir-tab" onclick="switchTab('blogs',this)">blogs</div>
+    <div class="dir-tab" onclick="switchTab('videos',this)">videos</div>
+  </div>
+
+  <!-- GAMES -->
+  <div class="dir-panel active" id="tab-games">
+    <div class="dir-cmd-bar"><span class="ps">$</span> cd games &amp;&amp; ls -la</div>
+    <div class="file-list">
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Elden Ring</div><div class="file-sub">FromSoftware · 2022 · PS5/PC</div></div>
+          <div class="file-date">2022</div>
+          <div class="file-tag"><span class="badge badge-playing">PLAYING</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>The gold standard for environmental storytelling and systemic difficulty. Zero hand-holding — every mechanic is discovered through exploration and failure. The open world doesn't tell you where to go; it trusts you to figure it out.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Balatro</div><div class="file-sub">LocalThunk · 2024 · PC/Mobile</div></div>
+          <div class="file-date">2024</div>
+          <div class="file-tag"><span class="badge badge-playing">PLAYING</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>An exceptional example of emergence from minimal rules. Poker hands are the core mechanic — everything else builds on that simple foundation. The joker system creates infinite build variety from a tight ruleset. Pure systemic design.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Hades</div><div class="file-sub">Supergiant Games · 2020 · PC/Switch</div></div>
+          <div class="file-date">2020</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>The benchmark for narrative integration in a roguelite. Story progress is tied to mechanical progress — every run advances both. The relationship system makes repetition feel intentional. Supergiant solved "replay fatigue" through character investment.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Celeste</div><div class="file-sub">Maddy Thorson &amp; Noel Berry · 2018 · Multi</div></div>
+          <div class="file-date">2018</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>Perfect difficulty scaffolding. Each mechanic is introduced, tested, and then combined with others. Accessibility options (assist mode) without compromising the core experience. The design philosophy of "difficult but fair" executed flawlessly.</div>
+      </div>
+
+      <div class="archive-toggle" onclick="toggleArchive(this)">
+        <span style="color:var(--amber)">⊞</span> ls --all # show archive
+      </div>
+      <div class="archive-entries">
+        <div class="file-row">
+          <div class="file-header" onclick="toggleNotes(this)">
+            <div class="file-perm">-rw-r--r--</div>
+            <div class="file-name"><div class="file-title">The Last of Us Part II</div><div class="file-sub">Naughty Dog · 2020 · PS4</div></div>
+            <div class="file-date">2020</div>
+            <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+          </div>
+          <div class="file-notes"><div class="note-label">// notes</div>Emotional storytelling through environmental design and character action. The game makes you feel through gameplay, not just cutscenes. A counterexample to the idea that emergent storytelling can't coexist with authored narrative.</div>
+        </div>
+        <div class="file-row">
+          <div class="file-header" onclick="toggleNotes(this)">
+            <div class="file-perm">-rw-r--r--</div>
+            <div class="file-name"><div class="file-title">Dead Cells</div><div class="file-sub">Motion Twin · 2018 · Multi</div></div>
+            <div class="file-date">2018</div>
+            <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+          </div>
+          <div class="file-notes"><div class="note-label">// notes</div>Exceptional feel and responsiveness. Every mechanic is tuned to feel satisfying before complexity is added. A reminder that polish matters — great game feel makes learning forgiving.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOOKS -->
+  <div class="dir-panel" id="tab-books">
+    <div class="dir-cmd-bar"><span class="ps">$</span> cd books &amp;&amp; ls -la</div>
+    <div class="file-list">
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">The Art of Game Design</div><div class="file-sub">Jesse Schell · 2008</div></div>
+          <div class="file-date">2008</div>
+          <div class="file-tag"><span class="badge badge-reading">READING</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>The most comprehensive framework for thinking about games as designed experiences. The "lens" system is a practical toolkit for evaluating any design decision. Required reading — return to it at every stage of a project.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">A Theory of Fun for Game Design</div><div class="file-sub">Raph Koster · 2004</div></div>
+          <div class="file-date">2004</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>The foundational argument that fun = learning. Games are enjoyable because the brain is wired to find pattern recognition satisfying. Understanding this changes how you think about difficulty curves and player mastery arcs.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">The Design of Everyday Things</div><div class="file-sub">Don Norman · 1988</div></div>
+          <div class="file-date">1988</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>Norman's affordances and signifiers apply directly to game UX. Players shouldn't need a tutorial to understand a well-designed interface. When an action is unclear it's a design failure, not a player failure.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Thinking, Fast and Slow</div><div class="file-sub">Daniel Kahneman · 2011</div></div>
+          <div class="file-date">2011</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>System 1 vs System 2 thinking is directly applicable to game UI/UX. Players make most in-game decisions on autopilot — good design works with that, not against it. Cognitive load is the enemy of immersion.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TALKS -->
+  <div class="dir-panel" id="tab-talks">
+    <div class="dir-cmd-bar"><span class="ps">$</span> cd talks &amp;&amp; ls -la</div>
+    <div class="file-list">
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Cursed Problems in Game Design</div><div class="file-sub">Alex Jaffe · GDC 2020</div></div>
+          <div class="file-date">2020</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>Identifies design problems where every solution creates a new problem. The concept of "cursed problems" — constraints that make a perfect solution impossible — is essential context for directors managing stakeholder expectations.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Idle Games: The Mechanics and Monetization of Self-Playing Games</div><div class="file-sub">Anthony Pecorella · GDC 2015</div></div>
+          <div class="file-date">2015</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>Breaks down engagement loops to their atomic components. Useful for understanding why progression systems work even when stripped of all other mechanics. Core loop clarity is the foundation of any successful live service game.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">How to Explain Your Game to an Asshole</div><div class="file-sub">Tom Francis · GDC 2012</div></div>
+          <div class="file-date">2012</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>Every game director needs to pitch and re-pitch their game constantly. This talk cuts through the noise of marketing-speak and teaches you to communicate the actual experience. If you can't explain it clearly, the design isn't clear enough.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BLOGS -->
+  <div class="dir-panel" id="tab-blogs">
+    <div class="dir-cmd-bar"><span class="ps">$</span> cd blogs &amp;&amp; ls -la</div>
+    <div class="file-list">
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Lostgarden</div><div class="file-sub">Daniel Cook · lostgarden.com</div></div>
+          <div class="file-date">ongoing</div>
+          <div class="file-tag"><span class="badge badge-reading">READING</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>The most rigorous analytical writing on game design on the internet. Cook's essays on skill atoms, game loops, and design patterns are foundational. "Visualizing the Creative Process" changed how I think about iterative design.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Game Developer Magazine / Gamasutra</div><div class="file-sub">gamedeveloper.com</div></div>
+          <div class="file-date">ongoing</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>Post-mortems are the most valuable content here — developers being honest about what went wrong is rarer and more useful than any success story. Read the "what went wrong" sections of every post-mortem you can find.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Designer Notes</div><div class="file-sub">Soren Johnson · Podcast + Blog</div></div>
+          <div class="file-date">ongoing</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>Long-form interviews with game designers about their process and philosophy. The Civilization series deep dives are essential for anyone thinking about systems design at scale.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VIDEOS -->
+  <div class="dir-panel" id="tab-videos">
+    <div class="dir-cmd-bar"><span class="ps">$</span> cd videos &amp;&amp; ls -la</div>
+    <div class="file-list">
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Game Maker's Toolkit</div><div class="file-sub">Mark Brown · YouTube</div></div>
+          <div class="file-date">ongoing</div>
+          <div class="file-tag"><span class="badge badge-watch">WATCHING</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>The best video essay series on game design mechanics and systems. Accessible without being shallow. The "Boss Keys" series on dungeon design and the accessibility series are standouts. Useful for explaining design concepts to non-designers on your team.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">Design Doc</div><div class="file-sub">YouTube</div></div>
+          <div class="file-date">ongoing</div>
+          <div class="file-tag"><span class="badge badge-watch">WATCHING</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>More technically focused than GMTK. Deep dives on specific mechanics across different games — good for comparative analysis when designing similar systems. The roguelite and progression system episodes are especially sharp.</div>
+      </div>
+
+      <div class="file-row">
+        <div class="file-header" onclick="toggleNotes(this)">
+          <div class="file-perm">-rw-r--r--</div>
+          <div class="file-name"><div class="file-title">GDC Vault</div><div class="file-sub">gdcvault.com</div></div>
+          <div class="file-date">ongoing</div>
+          <div class="file-tag"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="file-notes"><div class="note-label">// notes</div>The archive of decades of industry knowledge. Free tier has enough to keep anyone busy for years. Prioritize talks by directors and leads at studios whose output you respect — process matters as much as outcome.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-prompt"><span class="ps">~/mberman/library $</span> <span class="cursor">█</span></div>
+    <div class="footer-links">
+      <a href="index.html">← home</a>
+      <a href="experience.html">experience</a>
+      <a href="../versions.html">versions</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.dir-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.dir-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+  // Update cmd bar
+  const panel = document.getElementById('tab-' + id);
+  const bar = panel.querySelector('.dir-cmd-bar');
+  if (bar) bar.innerHTML = `<span class="ps">$</span> cd ${id} &amp;&amp; ls -la`;
+}
+function toggleNotes(header) {
+  const notes = header.nextElementSibling;
+  if (notes && notes.classList.contains('file-notes')) {
+    notes.classList.toggle('open');
+  }
+}
+function toggleArchive(el) {
+  const entries = el.nextElementSibling;
+  if (entries) entries.classList.toggle('open');
+  const icon = el.querySelector('span');
+  if (icon) icon.style.color = entries.classList.contains('open') ? 'var(--green)' : 'var(--amber)';
+}
+</script>
+</body>
+</html>
