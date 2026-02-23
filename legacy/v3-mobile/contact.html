@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Michael Berman</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">M<span>B</span></a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="experience.html">Experience</a>
+      <a href="portfolio-game.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html" class="active nav-contact">Contact</a>
+    </div>
+    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<section style="background:var(--bg-dark);padding:140px 0 80px;">
+  <div class="container">
+    <div class="section-label fade-up">Get in Touch</div>
+    <h1 class="section-title fade-up" style="font-size:clamp(3rem,6vw,5rem);margin-top:12px;">Let's Talk.</h1>
+  </div>
+</section>
+
+<section class="contact" style="padding-top:40px;">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="fade-up">
+        <h2 style="font-family:var(--font-head);font-size:1.6rem;font-weight:700;color:var(--text-light);margin-bottom:20px;">Open to Conversations</h2>
+        <p style="color:var(--text-muted);line-height:1.75;margin-bottom:16px;">Whether you're exploring a game director role, a cross-industry UX or product opportunity, or just want to talk design — I'm interested.</p>
+        <p style="color:var(--text-muted);line-height:1.75;margin-bottom:40px;">I'm based in the Pacific Northwest and currently open to conversations about the right next step.</p>
+        <div class="contact-links">
+          <a href="mailto:MBerman47@gmail.com" class="contact-link">
+            <div class="contact-link-icon">✉</div>
+            <span>MBerman47@gmail.com</span>
+          </a>
+          <a href="https://linkedin.com/in/bermandesign" target="_blank" class="contact-link">
+            <div class="contact-link-icon">in</div>
+            <span>linkedin.com/in/bermandesign</span>
+          </a>
+          <a href="MBerman-Resume.pdf" target="_blank" class="contact-link">
+            <div class="contact-link-icon">↓</div>
+            <span>Download Resume (PDF)</span>
+          </a>
+        </div>
+
+        <div style="margin-top:40px;padding:clamp(20px,4vw,32px);background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--accent);">
+          <div style="font-family:var(--font-head);font-size:0.72rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Best for</div>
+          <ul style="display:flex;flex-direction:column;gap:8px;">
+            <li style="color:var(--text-muted);font-size:0.9rem;padding-left:16px;position:relative;">
+              <span style="position:absolute;left:0;color:var(--accent);">→</span> Game Director / Creative Director roles
+            </li>
+            <li style="color:var(--text-muted);font-size:0.9rem;padding-left:16px;position:relative;">
+              <span style="position:absolute;left:0;color:var(--accent);">→</span> Senior UX / Product Design (games & cross-industry)
+            </li>
+            <li style="color:var(--text-muted);font-size:0.9rem;padding-left:16px;position:relative;">
+              <span style="position:absolute;left:0;color:var(--accent);">→</span> Design leadership & team-building conversations
+            </li>
+            <li style="color:var(--text-muted);font-size:0.9rem;padding-left:16px;position:relative;">
+              <span style="position:absolute;left:0;color:var(--accent);">→</span> Advisory or consulting on game systems & UX
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="fade-up">
+        <form class="contact-form" action="#" method="POST">
+          <div class="form-group">
+            <label class="form-label" for="name">Name</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="Your name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="subject">Subject</label>
+            <input class="form-input" type="text" id="subject" name="subject" placeholder="What's this about?">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Message</label>
+            <textarea class="form-textarea" id="message" name="message" placeholder="Tell me what you're working on..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-logo">M<span>B</span></div>
+    <div class="footer-copy">© <span>2025</span> Michael Berman</div>
+    <div class="footer-links">
+      <a href="MBerman-Resume.pdf" target="_blank">Resume</a>
+      <a href="https://linkedin.com/in/bermandesign" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<div class="nav-overlay" id="nav-overlay">
+  <span class="nav-close" id="nav-close">✕</span>
+  <a href="about.html">About</a><a href="experience.html">Experience</a><a href="portfolio-game.html">Portfolio</a><a href="blog.html">Blog</a><a href="contact.html">Contact</a>
+</div>
+<script>
+const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:0.08});
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+document.getElementById('hamburger').addEventListener('click', () => document.getElementById('nav-overlay').classList.add('open'));
+document.getElementById('nav-close').addEventListener('click', () => document.getElementById('nav-overlay').classList.remove('open'));
+</script>
+</body>
+</html>

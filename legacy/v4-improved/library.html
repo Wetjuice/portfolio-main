@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library — Michael Berman · Games · Books · GDC Talks</title>
+  <meta name="description" content="Michael Berman's curated reading list — games being played, books worth reading, GDC talks, portfolio references, and design resources from a 16-year game industry career.">
+  <meta name="author" content="Michael Berman">
+  <meta property="og:title" content="Library — Michael Berman · Curated Resources">
+  <meta property="og:description" content="Curated games, books, GDC talks, and portfolio references from a Game Director's perspective.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Library page ── */
+
+    /* Tab bar */
+    .lib-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .lib-tab {
+      padding: 10px 20px 12px;
+      font-family: var(--font-head);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      margin-bottom: -1px;
+    }
+    .lib-tab:hover { color: var(--text-light); }
+    .lib-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* Tab panels */
+    .lib-panel { display: none; }
+    .lib-panel.active { display: block; }
+
+    /* Item list */
+    .lib-list { display: flex; flex-direction: column; gap: 2px; }
+
+    /* Single item */
+    .lib-item {
+      background: var(--bg-card);
+      border: 1px solid transparent;
+      border-left: 2px solid transparent;
+      transition: border-color 0.18s;
+    }
+    .lib-item:hover { border-color: var(--border); border-left-color: var(--accent); }
+
+    .lib-item-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 20px;
+    }
+
+    .lib-item-title {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-light);
+      margin-bottom: 5px;
+    }
+    .lib-item-meta {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .lib-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .lib-item-link {
+      font-family: var(--font-head);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      white-space: nowrap;
+      padding: 5px 10px;
+      border: 1px solid rgba(231,96,40,0.3);
+      transition: all 0.18s;
+    }
+    .lib-item-link:hover { background: rgba(231,96,40,0.1); border-color: var(--accent); }
+
+    .lib-notes-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .lib-notes-toggle:hover { color: var(--text-light); border-color: var(--text-muted); }
+    .lib-notes-toggle.open { color: var(--accent); border-color: var(--accent); background: rgba(231,96,40,0.06); }
+    .lib-notes-toggle .chevron {
+      display: inline-block;
+      transition: transform 0.2s;
+      font-style: normal;
+    }
+    .lib-notes-toggle.open .chevron { transform: rotate(180deg); }
+
+    /* Notes drawer */
+    .lib-notes-drawer {
+      display: none;
+      padding: 0 20px 20px 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 0;
+    }
+    .lib-notes-drawer.open { display: block; }
+    .lib-notes-inner {
+      margin-top: 16px;
+      padding: 16px 18px;
+      background: rgba(0,0,0,0.2);
+      border-left: 2px solid var(--accent);
+    }
+    .lib-notes-label {
+      font-family: var(--font-head);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lib-notes-label::before {
+      content: '';
+      display: inline-block;
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .lib-notes-text {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .lib-notes-text.empty {
+      color: var(--gray-mid);
+      font-style: italic;
+      opacity: 0.6;
+    }
+
+    /* Games "currently playing" badge */
+    .lib-item-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-head);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .lib-item-badge .led {
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 5px rgba(231,96,40,0.6);
+      animation: led-pulse 2s ease-in-out infinite;
+    }
+    .lib-item-badge.archived { color: var(--text-muted); }
+    .lib-item-badge.archived .led { background: var(--text-muted); box-shadow: none; animation: none; }
+
+    @keyframes led-pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Archive block */
+    .lib-archive {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 2px;
+    }
+    .lib-archive.open { display: flex; }
+
+    .lib-archive-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px 20px;
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-style: dashed;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .lib-archive-btn:hover { color: var(--text-light); border-color: var(--text-muted); border-style: solid; }
+    .lib-archive-btn.open { color: var(--accent); border-color: var(--accent); border-style: solid; }
+    .lib-archive-btn .chevron { display: inline-block; transition: transform 0.2s; }
+    .lib-archive-btn.open .chevron { transform: rotate(180deg); }
+
+    /* Archive year label */
+    .lib-archive-year {
+      font-family: var(--font-head);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 12px 20px 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      opacity: 0.7;
+    }
+    .lib-archive-year::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .lib-item-top { grid-template-columns: 1fr; gap: 12px; }
+      .lib-item-actions { justify-content: flex-start; }
+      .lib-tab { padding: 8px 14px 10px; font-size: 0.68rem; }
+    }
+    @media (max-width: 480px) {
+      .lib-item-actions { flex-wrap: wrap; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">M<span>B</span></a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="experience.html">Experience</a>
+      <a href="portfolio-game.html">Portfolio</a>
+      <a href="library.html" class="active">Library</a>
+      <a href="blog.html">Writing</a>
+      <a href="contact.html" class="nav-contact">Contact</a>
+    </div>
+    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section style="background:var(--bg-dark);padding:140px 0 60px;">
+  <div class="container">
+    <div class="section-label fade-up">Always Learning</div>
+    <h1 class="section-title fade-up" style="font-size:clamp(2.4rem,6vw,4rem);margin-top:12px;">Approaching every day<br>as an opportunity to learn.</h1>
+    <p class="fade-up" style="color:var(--text-muted);max-width:580px;margin-top:20px;line-height:1.8;font-size:0.97rem;">Not to push what I know — but to find what I don't. What's here: games I'm playing right now, books worth reading, talks worth watching, and an archive of past obsessions. Each item comes with my notes on why it earned its place.</p>
+  </div>
+</section>
+
+<!-- LIBRARY -->
+<section style="background:var(--bg-dark);padding:0 0 60px;">
+  <div class="container">
+
+    <!-- Tabs -->
+    <div class="lib-tabs fade-up">
+      <button class="lib-tab active" data-panel="games">Games I'm Playing</button>
+      <button class="lib-tab" data-panel="books">Books</button>
+      <button class="lib-tab" data-panel="talks">GDC Talks</button>
+      <button class="lib-tab" data-panel="blogs">Blogs &amp; Links</button>
+      <button class="lib-tab" data-panel="videos">Videos</button>
+      <button class="lib-tab" data-panel="portrefs">Portfolio References</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PANEL: GAMES I'M PLAYING               -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="lib-panel active" id="panel-games">
+      <div class="lib-list">
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-badge"><span class="led"></span> Now Playing</div>
+              <div class="lib-item-title">Add Your Current Game</div>
+              <div class="lib-item-meta">Studio · Platform · Genre</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-g1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-g1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet — add your observations about what this game is doing well or poorly from a design perspective.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-badge"><span class="led"></span> Now Playing</div>
+              <div class="lib-item-title">Add Your Current Game</div>
+              <div class="lib-item-meta">Studio · Platform · Genre</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-g2">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-g2">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet — what systems are working? What isn't? What's worth stealing?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-badge"><span class="led"></span> Now Playing</div>
+              <div class="lib-item-title">Add Your Current Game</div>
+              <div class="lib-item-meta">Studio · Platform · Genre</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-g3">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-g3">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Archive: recent past games -->
+      <div class="lib-archive" id="archive-games">
+        <div class="lib-archive-year">2024</div>
+
+        <div class="lib-item">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-badge archived"><span class="led"></span> 2024</div>
+              <div class="lib-item-title">Placeholder Past Game</div>
+              <div class="lib-item-meta">Studio · Platform</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-ag1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-ag1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">Design notes on what this taught — good systems, bad systems, what surprised you.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-badge archived"><span class="led"></span> 2024</div>
+              <div class="lib-item-title">Placeholder Past Game</div>
+              <div class="lib-item-meta">Studio · Platform</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-ag2">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-ag2">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-archive-year">2023</div>
+
+        <div class="lib-item">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-badge archived"><span class="led"></span> 2023</div>
+              <div class="lib-item-title">Placeholder Past Game</div>
+              <div class="lib-item-meta">Studio · Platform</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-ag3">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-ag3">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="lib-archive-btn" data-archive="archive-games">
+        <span class="chevron">▾</span> Archive — Past Games
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PANEL: BOOKS                           -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="lib-panel" id="panel-books">
+      <div class="lib-list">
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">A Theory of Fun for Game Design</div>
+              <div class="lib-item-meta">Raph Koster · The foundational argument for why games work — pattern recognition, mastery, and boredom.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.amazon.com/Theory-Fun-Game-Design/dp/1449363210" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-b1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-b1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet — add why this one mattered to you.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">The Art of Game Design: A Book of Lenses</div>
+              <div class="lib-item-meta">Jesse Schell · 100+ frameworks for looking at the same design problem from different angles. More useful as a thinking tool than a rulebook.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.amazon.com/Art-Game-Design-Book-Lenses/dp/0123694965" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-b2">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-b2">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Thinking in Systems</div>
+              <div class="lib-item-meta">Donella Meadows · The best book on systems thinking in any field. Read this and you'll see feedback loops everywhere — which is the point.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.amazon.com/Thinking-Systems-Donella-H-Meadows/dp/1603580557" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-b3">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-b3">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">The Design of Everyday Things</div>
+              <div class="lib-item-meta">Don Norman · The UX canon. Affordances, feedback, conceptual models — the vocabulary for talking about why design works or fails.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-b4">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-b4">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Originals: How Non-Conformists Move the World</div>
+              <div class="lib-item-meta">Adam Grant · On how original ideas get championed, why procrastination can be a creative asset, and how to promote ideas rather than yourself.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.amazon.com/Originals-How-Non-Conformists-Move-World/dp/0525429565" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-b5">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-b5">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Archive: more books -->
+      <div class="lib-archive" id="archive-books">
+
+        <div class="lib-item">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Add More Books Here</div>
+              <div class="lib-item-meta">Author · Brief description of what it covers and why it's relevant.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">View →</a>
+              <button class="lib-notes-toggle" data-target="notes-ba1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-ba1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="lib-archive-btn" data-archive="archive-books">
+        <span class="chevron">▾</span> Archive — More Books
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PANEL: GDC TALKS                       -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="lib-panel" id="panel-talks">
+      <div class="lib-list">
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">The Chemistry of Game Design</div>
+              <div class="lib-item-meta">David Perry · GDC 2008 · On engagement, achievement loops, and what keeps players coming back. Still one of the best talks on the fundamentals of motivation.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.gdcvault.com/play/1016640/How-I-Got-My-Mom" target="_blank">Watch →</a>
+              <button class="lib-notes-toggle" data-target="notes-t1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-t1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet — what from this talk changed how you think?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Dynamics: The State of the Art</div>
+              <div class="lib-item-meta">Clint Hocking · GDC 2010 · One of the clearest articulations of emergent systems design and why authored narrative and systemic design pull in different directions.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.gdcvault.com/play/1015256/Dynamics-The-State-of-the" target="_blank">Watch →</a>
+              <button class="lib-notes-toggle" data-target="notes-t2">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-t2">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Designing Progression Systems for Live Service Games</div>
+              <div class="lib-item-meta">GDC · The practical talk on reward structures, player motivation tiers, and the traps that live service games fall into.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.gdcvault.com/play/1021791/Uncharted-4-A-Thief-s" target="_blank">Watch →</a>
+              <button class="lib-notes-toggle" data-target="notes-t3">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-t3">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Archive: more talks -->
+      <div class="lib-archive" id="archive-talks">
+
+        <div class="lib-item">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Add More GDC Talks Here</div>
+              <div class="lib-item-meta">Speaker · Year · Brief description of what the talk covers and why it earned a place here.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">Watch →</a>
+              <button class="lib-notes-toggle" data-target="notes-ta1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-ta1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="lib-archive-btn" data-archive="archive-talks">
+        <span class="chevron">▾</span> Archive — More Talks
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PANEL: BLOGS & LINKS                   -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="lib-panel" id="panel-blogs">
+      <div class="lib-list">
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Game Developer (formerly Gamasutra)</div>
+              <div class="lib-item-meta">gamedeveloper.com · The industry trade publication. Postmortems alone are worth the bookmark — more honest design analysis than most academic writing.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.gamedeveloper.com" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-bl1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-bl1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet — what do you read here? Postmortems? Specific columnists?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Game Maker's Toolkit (GMTK)</div>
+              <div class="lib-item-meta">Mark Brown · Consistently the best design analysis channel for games. Accessible, well-researched, covers both indie and AAA with equal rigour.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.youtube.com/@GMTK" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-bl2">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-bl2">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Liminal</div>
+              <div class="lib-item-meta">liminal.gg · A studio thinking carefully about UGC and emergent storytelling in games. Their mission statement is a useful articulation of why emergence matters in the medium.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.liminal.gg/hello-and-welcome-to-liminal/" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-bl3">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-bl3">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Archive: more blogs -->
+      <div class="lib-archive" id="archive-blogs">
+
+        <div class="lib-item">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Add More Blogs & Links Here</div>
+              <div class="lib-item-meta">Source · Brief description of what you get from it and why it's useful.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-bla1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-bla1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="lib-archive-btn" data-archive="archive-blogs">
+        <span class="chevron">▾</span> Archive — More Blogs &amp; Links
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PANEL: VIDEOS                          -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="lib-panel" id="panel-videos">
+      <div class="lib-list">
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Noclip Documentary Channel</div>
+              <div class="lib-item-meta">noclip.video · Behind-the-scenes game dev documentaries. The Hades, Doom Eternal, and FFXIV docs are required viewing for understanding what AAA production actually looks like.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.youtube.com/@Noclip" target="_blank">Watch →</a>
+              <button class="lib-notes-toggle" data-target="notes-v1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-v1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet — which docs hit hardest for you?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Game Maker's Toolkit — GMTK Game Jam</div>
+              <div class="lib-item-meta">Mark Brown · Watching the jam entries is a rapid-fire course in constraint-driven design. Small scope, clear ideas, fast iteration — everything AAA forgets.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.youtube.com/@GMTK" target="_blank">Watch →</a>
+              <button class="lib-notes-toggle" data-target="notes-v2">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-v2">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Archive: more videos -->
+      <div class="lib-archive" id="archive-videos">
+
+        <div class="lib-item">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Add More Videos Here</div>
+              <div class="lib-item-meta">Channel or creator · Brief description of what you get from watching their content.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="#" target="_blank">Watch →</a>
+              <button class="lib-notes-toggle" data-target="notes-va1">
+                My Notes <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-va1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">My Notes</div>
+              <p class="lib-notes-text empty">No notes yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="lib-archive-btn" data-archive="archive-videos">
+        <span class="chevron">▾</span> Archive — More Videos
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PANEL: PORTFOLIO REFERENCES            -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="lib-panel" id="panel-portrefs">
+      <p style="color:var(--text-muted);font-size:0.88rem;line-height:1.75;margin-bottom:28px;max-width:640px;">Portfolios worth studying — curated by craft, not credential. Game directors, UX designers, and creative leads who've figured out how to present senior-level work without overselling it.</p>
+
+      <!-- Section: Game Director / Creative Director Portfolios -->
+      <div class="lib-archive-year" style="display:flex;margin-bottom:12px;">Game Director &amp; Creative Director</div>
+      <div class="lib-list" style="margin-bottom:32px;">
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Jenova Chen — thatgamecompany</div>
+              <div class="lib-item-meta">jenovachen.info · Journey, Flower, Sky. Minimalist layout, elegant typography, narrative-driven presentation. Clean and authoritative — lets the work speak without decoration.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://jenovachen.info" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr1">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr1">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">A masterclass in restraint. When the work is this good, the site just needs to get out of the way. Every page choice is invisible, which means every design decision was correct.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Dean Tate — Valve</div>
+              <div class="lib-item-meta">iamdeantate.com · BioShock, Half-Life: Alyx. Dark theme, parallax scrolling, strong case study structure. Good example of a senior designer leading with project context and detailed role breakdowns.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="http://www.iamdeantate.com" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr2">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr2">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">The case study structure is worth stealing — project context first, then role, then outcomes. Dark theme done right: not stylistic darkness, but darkness that makes the work pop.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">David Shaver — Epic Games</div>
+              <div class="lib-item-meta">davidshaver.net · The Last of Us II, Titanfall, Fortnite. Interactive grid layout, modern and browsable. Clean navigation with project images leading to detailed case studies.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.davidshaver.net" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr3">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr3">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">The interactive grid makes breadth of work browsable without being overwhelming. Good reference for how to handle multiple AAA titles without the page becoming a list of logos.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Ephraim Joseph — DEPT® Agency</div>
+              <div class="lib-item-meta">ephraimjoseph.com · Switchable dark/light theme, interactive text, vertical menu. 20+ years of experience — good reference for senior-level positioning and breadth of work presentation.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://www.ephraimjoseph.com" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr4">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr4">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">How to position breadth without losing identity. The dark/light theme toggle is a subtle signal: "I think about the user experience of my own portfolio." Noted.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Gavin Strange — Aardman</div>
+              <div class="lib-item-meta">jinkys.co · Neon accents, bold personality-forward aesthetic. Strong creative identity without sacrificing legibility. Shows how aesthetic can itself be a portfolio piece.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://jinkys.co" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr5">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr5">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">Proof that personality-forward doesn't mean unprofessional. The site IS the creative statement. Not right for every director's positioning — but worth understanding why it works here.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Section: Product Manager & Product Designer Portfolios -->
+      <div class="lib-archive-year" style="display:flex;margin-bottom:12px;">Product Manager &amp; Product Designer</div>
+      <div class="lib-list" style="margin-bottom:32px;">
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Simon Pan</div>
+              <div class="lib-item-meta">simonpan.com · Case study-driven, typography-led, zero visual noise. Sets the standard for PM/PD portfolios — focuses on problem-solution narratives over flashy visuals.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://simonpan.com" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr6">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr6">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">The gold standard. Every case study is a problem-solution narrative, not a feature showcase. Transferable to any cross-industry UX pitch — this is the format that reads as "senior."</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Jordan Jenkins</div>
+              <div class="lib-item-meta">jordanjenkins.co.uk · Large-scale visuals, generous whitespace, crisp typography. One of the cleanest modern product design sites. Complex workflows presented clearly.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://jordanjenkins.co.uk" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr7">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr7">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">Whitespace as a design choice, not a lack of content. The generous breathing room signals confidence — "the work needs no decoration."</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">William Bout — Vercel</div>
+              <div class="lib-item-meta">williambout.me · Vertical scroll feed — project images zoom into focus as you scroll. Slick, frictionless, lets the work reveal itself naturally without forced navigation.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://williambout.me" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr8">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr8">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">The scroll-to-zoom interaction is clever without being gimmicky — it serves discovery, not decoration. Good lesson: interactions earn their place by improving comprehension.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-item fade-up">
+          <div class="lib-item-top">
+            <div>
+              <div class="lib-item-title">Bradley Ziffer</div>
+              <div class="lib-item-meta">bradleyziffer.com · Subtle animations, storytelling-forward. Calls projects "recent adventures" — personality through copy, not just design. Clean layout with bouncy hover states.</div>
+            </div>
+            <div class="lib-item-actions">
+              <a class="lib-item-link" href="https://bradleyziffer.com" target="_blank">Visit →</a>
+              <button class="lib-notes-toggle" data-target="notes-pr9">Notes <span class="chevron">▾</span></button>
+            </div>
+          </div>
+          <div class="lib-notes-drawer" id="notes-pr9">
+            <div class="lib-notes-inner">
+              <div class="lib-notes-label">Why It's Here</div>
+              <p class="lib-notes-text">"Recent adventures" instead of "projects" — one copy choice that makes the whole site feel warmer. Small decisions that compound into a distinctive voice.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SUGGEST SOMETHING -->
+<section style="background:var(--bg-section);padding:56px 0 80px;">
+  <div class="container">
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-top:2px solid var(--accent);padding:48px;" class="fade-up">
+      <div class="section-label" style="margin-bottom:12px;">Open to Recommendations</div>
+      <h2 style="font-family:var(--font-head);font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:var(--text-light);margin-bottom:16px;">Playing something worth sharing?</h2>
+      <p style="color:var(--text-muted);max-width:520px;line-height:1.75;margin-bottom:0;">The best way to learn is to have smart people point you toward things you haven't encountered yet. If something here resonated — drop it below.</p>
+
+      <form action="#" method="POST" style="margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group">
+          <label class="form-label" for="sug-title">Title</label>
+          <input class="form-input" type="text" id="sug-title" name="title" placeholder="Game, book, talk, or article...">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="sug-type">Type</label>
+          <select class="form-input" id="sug-type" name="type" style="cursor:pointer;">
+            <option value="">Select type</option>
+            <option>Game</option>
+            <option>Book</option>
+            <option>GDC Talk</option>
+            <option>Video / Channel</option>
+            <option>Blog / Article</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label" for="sug-reason">Why does it belong here?</label>
+          <textarea class="form-textarea" id="sug-reason" name="reason" style="min-height:90px;" placeholder="What makes it worth the time — especially if it connects to something on this site..."></textarea>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary">Send Recommendation →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-logo">M<span>B</span></div>
+    <div class="footer-copy">© <span>2026</span> Michael Berman</div>
+    <div class="footer-links">
+      <a href="MBerman-Resume.pdf" target="_blank">Resume</a>
+      <a href="https://www.linkedin.com/in/bermandesign" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<div class="nav-overlay" id="nav-overlay">
+  <span class="nav-close" id="nav-close">✕</span>
+  <a href="about.html">About</a>
+  <a href="experience.html">Experience</a>
+  <a href="portfolio-game.html">Portfolio</a>
+  <a href="library.html">Library</a>
+  <a href="blog.html">Writing</a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<script>
+// Fade-in observer
+const observer = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+  { threshold: 0.06 }
+);
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Tab switching
+document.querySelectorAll('.lib-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.lib-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.lib-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+  });
+});
+
+// Notes toggle (per item)
+document.querySelectorAll('.lib-notes-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.target);
+    if (!target) return;
+    const isOpen = target.classList.contains('open');
+    target.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+  });
+});
+
+// Archive expand/collapse
+document.querySelectorAll('.lib-archive-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const archive = document.getElementById(btn.dataset.archive);
+    if (!archive) return;
+    const isOpen = archive.classList.contains('open');
+    archive.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+    // Update button label
+    const panelLabel = btn.textContent.replace('▾', '').trim().replace('▲', '').trim();
+    btn.innerHTML = `<span class="chevron">${isOpen ? '▾' : '▲'}</span> ${panelLabel}`;
+  });
+});
+
+// Mobile nav
+document.getElementById('hamburger').addEventListener('click', () => document.getElementById('nav-overlay').classList.add('open'));
+document.getElementById('nav-close').addEventListener('click', () => document.getElementById('nav-overlay').classList.remove('open'));
+</script>
+</body>
+</html>
