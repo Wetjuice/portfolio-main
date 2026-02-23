@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library — Michael Berman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0C0E0F;
+      --bg-panel:  #111315;
+      --bg-raised: #161819;
+      --border:    #1E2224;
+      --border-hi: #2A2D30;
+      --text:      #C8C5C0;
+      --text-muted:#6B6966;
+      --text-dim:  #323436;
+      --accent:    #E76028;
+      --green:     #3DB870;
+      --amber:     #D4A027;
+      --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --sans:      'Inter', -apple-system, system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(12,14,15,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 48px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); text-decoration: none; letter-spacing: 0.04em; }
+    .nav-logo span { color: var(--text-muted); }
+    .nav-links { display: flex; gap: 2px; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-muted); text-decoration: none;
+      padding: 6px 12px; border-radius: 4px; letter-spacing: 0.04em;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg-raised); }
+    .nav-links a::before { content: './'; color: var(--text-dim); }
+    .nav-links a.active { color: var(--text); }
+
+    /* PAGE HEADER */
+    .page-header {
+      max-width: 880px; margin: 0 auto;
+      padding: 52px 24px 32px;
+    }
+    .page-cmd {
+      font-family: var(--mono); font-size: 0.78rem;
+      color: var(--text-muted); margin-bottom: 6px;
+    }
+    .page-cmd .ps { color: var(--accent); }
+    .page-title {
+      font-family: var(--mono); font-size: clamp(1.2rem, 3vw, 1.6rem);
+      color: #ECEAE6; letter-spacing: -0.01em; font-weight: 700;
+    }
+    .page-title .cmt { color: var(--text-dim); font-weight: 400; font-size: 0.65em; margin-left: 12px; }
+
+    /* MAIN */
+    .page-body { max-width: 880px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* TERMINAL PANEL */
+    .terminal-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 40px rgba(0,0,0,0.3);
+    }
+    .tp-bar {
+      background: var(--bg-raised); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .tp-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .tp-dot.r { background: #4A2020; }
+    .tp-dot.y { background: #3A3010; }
+    .tp-dot.g { background: #183A28; }
+    .tp-bar-label { margin-left: 8px; font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.06em; }
+
+    /* TABS */
+    .tab-bar {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-raised);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      font-family: var(--mono); font-size: 0.68rem;
+      color: var(--text-muted); letter-spacing: 0.04em;
+      padding: 11px 18px;
+      background: none; border: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* TAB COMMAND LINE */
+    .tab-cmd {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-panel);
+    }
+    .tab-cmd .ps { color: var(--accent); }
+
+    /* TAB PANELS */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* COLUMN HEADER */
+    .col-header {
+      display: grid;
+      grid-template-columns: 140px 1fr 90px 90px;
+      gap: 0;
+      padding: 9px 16px;
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 0.6rem;
+      color: var(--text-dim); letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ITEM ROWS */
+    .lib-item { border-bottom: 1px solid var(--border); }
+    .lib-item:last-child { border-bottom: none; }
+
+    .lib-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 90px 90px;
+      gap: 0;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .lib-row:hover { background: var(--bg-raised); }
+
+    .lib-perms {
+      font-family: var(--mono); font-size: 0.62rem;
+      color: var(--text-dim);
+      padding: 14px 16px;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .lib-main { padding: 14px 18px; }
+    .lib-title {
+      font-family: var(--mono); font-size: 0.76rem;
+      color: var(--text); font-weight: 500; margin-bottom: 2px;
+    }
+    .lib-subtitle {
+      font-family: var(--mono); font-size: 0.62rem; color: var(--text-muted);
+    }
+    .lib-date {
+      font-family: var(--mono); font-size: 0.62rem; color: var(--text-muted);
+      padding: 14px 12px; border-left: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .lib-badge-cell {
+      padding: 14px 14px; border-left: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+
+    /* BADGES */
+    .badge {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      padding: 3px 8px; border-radius: 3px; white-space: nowrap;
+    }
+    .badge-playing  { background: rgba(231,96,40,0.12); color: var(--accent); border: 1px solid rgba(231,96,40,0.25); }
+    .badge-reading  { background: rgba(61,184,112,0.08); color: var(--green); border: 1px solid rgba(61,184,112,0.15); }
+    .badge-watching { background: rgba(212,160,39,0.1); color: var(--amber); border: 1px solid rgba(212,160,39,0.2); }
+    .badge-ref      { background: rgba(50,52,54,0.5); color: var(--text-muted); border: 1px solid var(--border); }
+
+    /* NOTES DRAWER */
+    .lib-notes {
+      display: none;
+      background: #080A0B;
+      border-top: 1px solid var(--border);
+      padding: 16px 24px 16px 140px;
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-muted);
+      border-left: 3px solid var(--accent);
+      line-height: 1.6;
+    }
+    .lib-notes.open {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ARCHIVE TOGGLE */
+    .archive-toggle {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-dim); cursor: pointer;
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 10px;
+      border-top: 1px solid var(--border);
+      transition: color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .archive-toggle:hover { color: var(--text-muted); background: var(--bg-raised); }
+    .archive-icon { transition: color 0.2s; }
+    .archive-entries {
+      display: none;
+      border-top: 1px solid var(--border);
+    }
+    .archive-entries.open { display: block; }
+    .archive-row {
+      display: grid; grid-template-columns: 140px 1fr 90px;
+      border-bottom: 1px solid var(--border);
+      background: #090B0C;
+      transition: background 0.12s;
+    }
+    .archive-row:last-child { border-bottom: none; }
+    .archive-row:hover { background: var(--bg-raised); }
+    .archive-row .lib-title { color: var(--text-muted); }
+    .archive-row .lib-date { color: var(--text-dim); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 32px 24px; max-width: 880px; margin: 0 auto; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-prompt { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .footer-prompt .ps { color: var(--accent); }
+    .footer-cursor { color: var(--accent); animation: blink 0.8s step-end infinite; }
+    .footer-links { display: flex; gap: 20px; align-items: center; }
+    .footer-links a { font-family: var(--mono); font-size: 0.66rem; color: var(--text-dim); text-decoration: none; letter-spacing: 0.06em; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text-muted); }
+    .footer-sep { width: 1px; height: 12px; background: var(--border); }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* SCROLL FADE */
+    .fade-in {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .col-header { grid-template-columns: 100px 1fr 80px; }
+      .col-header > :last-child { display: none; }
+      .lib-row { grid-template-columns: 100px 1fr 80px; }
+      .lib-badge-cell { display: none; }
+      .lib-notes { padding-left: 20px; }
+      .archive-row { grid-template-columns: 100px 1fr; }
+      .archive-row .lib-date { display: none; }
+    }
+    @media (max-width: 600px) {
+      .page-header { padding: 36px 16px 24px; }
+      .page-body { padding: 0 16px 60px; }
+      nav { padding: 0 16px; }
+      .nav-links a { padding: 6px 8px; font-size: 0.65rem; }
+      .nav-links a::before { display: none; }
+      footer { padding: 24px 16px; }
+      .tab-btn { padding: 10px 12px; font-size: 0.62rem; }
+    }
+    @media (max-width: 480px) {
+      .col-header { display: none; }
+      .lib-row { grid-template-columns: 1fr auto; }
+      .lib-perms { display: none; }
+      .lib-date { border-left: none; padding: 14px 12px 14px 0; }
+      .lib-notes { padding-left: 16px; }
+      .archive-row { grid-template-columns: 1fr; }
+      .archive-row .lib-perms { display: none; }
+    }
+    @media (max-width: 375px) {
+      .page-header { padding: 28px 14px 20px; }
+      .page-body { padding: 0 14px 50px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">~/mberman <span>$</span></a>
+  <div class="nav-links">
+    <a href="about.html">about</a>
+    <a href="experience.html">experience</a>
+    <a href="library.html" class="active">library</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-cmd"><span class="ps">~/mberman/library $</span> ls -la</div>
+  <div class="page-title">library/ <span class="cmt">// reference shelf</span></div>
+</div>
+
+<div class="page-body">
+  <div class="terminal-panel fade-in">
+    <div class="tp-bar">
+      <div class="tp-dot r"></div><div class="tp-dot y"></div><div class="tp-dot g"></div>
+      <span class="tp-bar-label">~/mberman/library &mdash; bash</span>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('games')">games/</button>
+      <button class="tab-btn" onclick="switchTab('books')">books/</button>
+      <button class="tab-btn" onclick="switchTab('talks')">talks/</button>
+      <button class="tab-btn" onclick="switchTab('blogs')">blogs/</button>
+      <button class="tab-btn" onclick="switchTab('videos')">videos/</button>
+    </div>
+
+    <!-- ═══════════ GAMES ═══════════ -->
+    <div class="tab-panel active" id="panel-games">
+      <div class="tab-cmd"><span class="ps">$</span> cd games/ && ls -la</div>
+      <div class="col-header">
+        <span>PERMISSIONS</span>
+        <span>TITLE</span>
+        <span>DATE</span>
+        <span>STATUS</span>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-rw-r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Elden Ring</div>
+            <div class="lib-subtitle">FromSoftware</div>
+          </div>
+          <div class="lib-date">2022</div>
+          <div class="lib-badge-cell"><span class="badge badge-playing">PLAYING</span></div>
+        </div>
+        <div class="lib-notes">Gold standard environmental storytelling, zero hand-holding, trusts the player completely, every mechanic discovered through exploration.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-rw-r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Balatro</div>
+            <div class="lib-subtitle">LocalThunk</div>
+          </div>
+          <div class="lib-date">2024</div>
+          <div class="lib-badge-cell"><span class="badge badge-playing">PLAYING</span></div>
+        </div>
+        <div class="lib-notes">Perfect emergence from minimal rules, poker hands as core mechanic, infinite build variety from tight ruleset, pure systemic design.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Hades</div>
+            <div class="lib-subtitle">Supergiant</div>
+          </div>
+          <div class="lib-date">2020</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Benchmark for narrative integration in roguelite, story progress tied to mechanical progress, relationship system makes repetition feel intentional.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Celeste</div>
+            <div class="lib-subtitle">Maddy Thorson</div>
+          </div>
+          <div class="lib-date">2018</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Perfect difficulty scaffolding, each mechanic introduced then tested then combined, accessibility options without compromising core experience.</div>
+      </div>
+
+      <!-- ARCHIVE -->
+      <div class="archive-toggle" onclick="toggleArchive(this)">
+        <span class="archive-icon" style="color:var(--amber)">&#8862;</span>
+        <span>ls --all</span>
+        <span style="color:var(--text-dim); font-size:0.65rem; margin-left:auto"># show archive</span>
+      </div>
+      <div class="archive-entries">
+        <div class="archive-row">
+          <div class="lib-perms">-r--------</div>
+          <div class="lib-main">
+            <div class="lib-title">The Last of Us Part II</div>
+            <div class="lib-subtitle">Naughty Dog &mdash; emotional storytelling through gameplay not just cutscenes</div>
+          </div>
+          <div class="lib-date">2020</div>
+        </div>
+        <div class="archive-row">
+          <div class="lib-perms">-r--------</div>
+          <div class="lib-main">
+            <div class="lib-title">Dead Cells</div>
+            <div class="lib-subtitle">Motion Twin &mdash; exceptional feel and responsiveness</div>
+          </div>
+          <div class="lib-date">2018</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ BOOKS ═══════════ -->
+    <div class="tab-panel" id="panel-books">
+      <div class="tab-cmd"><span class="ps">$</span> cd books/ && ls -la</div>
+      <div class="col-header">
+        <span>PERMISSIONS</span>
+        <span>TITLE</span>
+        <span>DATE</span>
+        <span>STATUS</span>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-rw-r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">The Art of Game Design</div>
+            <div class="lib-subtitle">Jesse Schell</div>
+          </div>
+          <div class="lib-date">2008</div>
+          <div class="lib-badge-cell"><span class="badge badge-reading">READING</span></div>
+        </div>
+        <div class="lib-notes">Most comprehensive framework for thinking about games as designed experiences, the lens system is a practical design toolkit.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">A Theory of Fun</div>
+            <div class="lib-subtitle">Raph Koster</div>
+          </div>
+          <div class="lib-date">2004</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Fun = learning, games enjoyable because brain is wired for pattern recognition, changes how you think about difficulty curves.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">The Design of Everyday Things</div>
+            <div class="lib-subtitle">Don Norman</div>
+          </div>
+          <div class="lib-date">1988</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Affordances and signifiers apply directly to game UX, when action is unclear it's a design failure not a player failure.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Thinking, Fast and Slow</div>
+            <div class="lib-subtitle">Daniel Kahneman</div>
+          </div>
+          <div class="lib-date">2011</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">System 1 vs System 2 applies to game UI/UX, players make most decisions on autopilot, cognitive load is the enemy of immersion.</div>
+      </div>
+    </div>
+
+    <!-- ═══════════ TALKS ═══════════ -->
+    <div class="tab-panel" id="panel-talks">
+      <div class="tab-cmd"><span class="ps">$</span> cd talks/ && ls -la</div>
+      <div class="col-header">
+        <span>PERMISSIONS</span>
+        <span>TITLE</span>
+        <span>DATE</span>
+        <span>STATUS</span>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Cursed Problems in Game Design</div>
+            <div class="lib-subtitle">Alex Jaffe &middot; GDC 2020</div>
+          </div>
+          <div class="lib-date">2020</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Design problems where every solution creates a new problem, essential context for managing stakeholder expectations.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Idle Games: Mechanics and Monetization</div>
+            <div class="lib-subtitle">Anthony Pecorella &middot; GDC 2015</div>
+          </div>
+          <div class="lib-date">2015</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Breaks down engagement loops to atomic components, core loop clarity is foundation of any live service game.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">How to Explain Your Game to an Asshole</div>
+            <div class="lib-subtitle">Tom Francis &middot; GDC 2012</div>
+          </div>
+          <div class="lib-date">2012</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Every director needs to pitch constantly, teaches you to communicate the actual experience not marketing-speak.</div>
+      </div>
+    </div>
+
+    <!-- ═══════════ BLOGS ═══════════ -->
+    <div class="tab-panel" id="panel-blogs">
+      <div class="tab-cmd"><span class="ps">$</span> cd blogs/ && ls -la</div>
+      <div class="col-header">
+        <span>PERMISSIONS</span>
+        <span>TITLE</span>
+        <span>DATE</span>
+        <span>STATUS</span>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-rw-r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Lostgarden</div>
+            <div class="lib-subtitle">Daniel Cook &middot; lostgarden.com</div>
+          </div>
+          <div class="lib-date">ongoing</div>
+          <div class="lib-badge-cell"><span class="badge badge-reading">READING</span></div>
+        </div>
+        <div class="lib-notes">Most rigorous analytical game design writing online, skill atoms and game loop essays are foundational.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Game Developer / Gamasutra</div>
+            <div class="lib-subtitle">gamedeveloper.com</div>
+          </div>
+          <div class="lib-date">ongoing</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Post-mortems are the most valuable, read the &ldquo;what went wrong&rdquo; sections of every post-mortem.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Designer Notes</div>
+            <div class="lib-subtitle">Soren Johnson</div>
+          </div>
+          <div class="lib-date">ongoing</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Long-form interviews with designers, Civilization deep dives essential for systems design at scale.</div>
+      </div>
+    </div>
+
+    <!-- ═══════════ VIDEOS ═══════════ -->
+    <div class="tab-panel" id="panel-videos">
+      <div class="tab-cmd"><span class="ps">$</span> cd videos/ && ls -la</div>
+      <div class="col-header">
+        <span>PERMISSIONS</span>
+        <span>TITLE</span>
+        <span>DATE</span>
+        <span>STATUS</span>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-rw-r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Game Maker&rsquo;s Toolkit</div>
+            <div class="lib-subtitle">Mark Brown &middot; YouTube</div>
+          </div>
+          <div class="lib-date">ongoing</div>
+          <div class="lib-badge-cell"><span class="badge badge-watching">WATCHING</span></div>
+        </div>
+        <div class="lib-notes">Best video essay series on game design, accessible without being shallow, useful for explaining concepts to non-designers.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-rw-r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">Design Doc</div>
+            <div class="lib-subtitle">YouTube</div>
+          </div>
+          <div class="lib-date">ongoing</div>
+          <div class="lib-badge-cell"><span class="badge badge-watching">WATCHING</span></div>
+        </div>
+        <div class="lib-notes">More technical than GMTK, deep dives on specific mechanics, roguelite and progression episodes especially sharp.</div>
+      </div>
+
+      <div class="lib-item">
+        <div class="lib-row" onclick="toggleNotes(this)">
+          <div class="lib-perms">-r--r--r--</div>
+          <div class="lib-main">
+            <div class="lib-title">GDC Vault</div>
+            <div class="lib-subtitle">gdcvault.com</div>
+          </div>
+          <div class="lib-date">ongoing</div>
+          <div class="lib-badge-cell"><span class="badge badge-ref">REFERENCE</span></div>
+        </div>
+        <div class="lib-notes">Archive of decades of industry knowledge, prioritize talks by directors at studios whose output you respect.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-prompt">
+      <span class="ps">~/mberman/library $</span>
+      <span class="footer-cursor">&#9608;</span>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:envyberman@gmail.com">email</a>
+      <a href="https://linkedin.com/in/bermandesign" target="_blank" rel="noopener">linkedin</a>
+      <div class="footer-sep"></div>
+      <a href="index.html">&larr; home</a>
+      <a href="../versions.html">&larr; versions</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Tab switching */
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('panel-' + name).classList.add('active');
+  // Highlight active tab
+  document.querySelectorAll('.tab-btn').forEach(function(b) {
+    if (b.textContent.trim() === name + '/') b.classList.add('active');
+  });
+}
+
+/* Notes expand/collapse */
+function toggleNotes(row) {
+  var notes = row.nextElementSibling;
+  if (!notes || !notes.classList.contains('lib-notes')) return;
+  var isOpen = notes.classList.contains('open');
+  // Close all notes in this panel
+  row.closest('.tab-panel').querySelectorAll('.lib-notes.open').forEach(function(n) { n.classList.remove('open'); });
+  if (!isOpen) notes.classList.add('open');
+}
+
+/* Archive toggle */
+function toggleArchive(el) {
+  var entries = el.nextElementSibling;
+  if (!entries) return;
+  entries.classList.toggle('open');
+  var icon = el.querySelector('.archive-icon');
+  if (icon) icon.style.color = entries.classList.contains('open') ? 'var(--green)' : 'var(--amber)';
+}
+
+/* Scroll fade */
+var fadeEls = document.querySelectorAll('.fade-in');
+var io = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(function(el) { io.observe(el); });
+</script>
+</body>
+</html>

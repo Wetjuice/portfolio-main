@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Michael Berman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0C0E0F;
+      --bg-panel:  #111315;
+      --bg-raised: #161819;
+      --border:    #1E2224;
+      --border-hi: #2A2D30;
+      --text:      #C8C5C0;
+      --text-muted:#6B6966;
+      --text-dim:  #323436;
+      --accent:    #E76028;
+      --green:     #3DB870;
+      --amber:     #D4A027;
+      --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --sans:      'Inter', -apple-system, system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(12,14,15,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 48px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); text-decoration: none; letter-spacing: 0.04em; }
+    .nav-logo span { color: var(--text-muted); }
+    .nav-links { display: flex; gap: 2px; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-muted); text-decoration: none;
+      padding: 6px 12px; border-radius: 4px; letter-spacing: 0.04em;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg-raised); }
+    .nav-links a::before { content: './'; color: var(--text-dim); }
+    .nav-links a.active { color: var(--text); }
+
+    /* PAGE HEADER */
+    .page-header {
+      max-width: 880px; margin: 0 auto;
+      padding: 52px 24px 32px;
+    }
+    .page-cmd {
+      font-family: var(--mono); font-size: 0.78rem;
+      color: var(--text-muted); margin-bottom: 6px;
+    }
+    .page-cmd .ps { color: var(--accent); }
+    .page-title {
+      font-family: var(--mono); font-size: clamp(1.2rem, 3vw, 1.6rem);
+      color: #ECEAE6; letter-spacing: -0.01em; font-weight: 700;
+    }
+    .page-title .cmt { color: var(--text-dim); font-weight: 400; font-size: 0.65em; margin-left: 12px; }
+
+    /* MAIN */
+    .page-body { max-width: 880px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* TERMINAL PANEL */
+    .terminal-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 40px rgba(0,0,0,0.3);
+    }
+    .tp-bar {
+      background: var(--bg-raised); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .tp-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .tp-dot.r { background: #4A2020; }
+    .tp-dot.y { background: #3A3010; }
+    .tp-dot.g { background: #183A28; }
+    .tp-bar-label { margin-left: 8px; font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.06em; }
+
+    /* MAN PAGE BODY */
+    .man-body {
+      padding: 32px 32px 36px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.7;
+    }
+
+    /* SECTION HEADERS */
+    .man-section {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .man-section:first-child { margin-top: 0; }
+
+    /* NAME */
+    .man-name {
+      font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+      color: #ECEAE6;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .man-name-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* SYNOPSIS */
+    .man-synopsis {
+      background: #080A0B;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 18px 20px;
+      font-size: 0.72rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      overflow-x: auto;
+    }
+    .man-synopsis .cmd { color: var(--text); font-weight: 500; }
+    .man-synopsis .flag { color: var(--accent); }
+    .man-synopsis .opt { color: var(--text-dim); }
+
+    /* DESCRIPTION */
+    .man-desc {
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: var(--sans);
+      line-height: 1.7;
+    }
+    .man-desc p { margin-bottom: 10px; }
+    .man-desc p:last-child { margin-bottom: 0; }
+
+    /* OPTIONS / PRINCIPLES */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .option-row {
+      background: var(--bg-panel);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .option-row:hover { background: var(--bg-raised); }
+
+    .option-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0;
+      padding: 0;
+    }
+    .option-flag {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--accent);
+      padding: 16px 18px;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      align-self: center;
+    }
+    .option-brief {
+      padding: 16px 18px;
+      font-family: var(--mono); font-size: 0.76rem;
+      color: var(--text);
+      align-self: center;
+    }
+    .option-chevron {
+      padding: 16px 16px;
+      color: var(--text-dim);
+      font-size: 0.65rem;
+      align-self: center;
+      transition: transform 0.2s;
+    }
+    .option-row.expanded .option-chevron { transform: rotate(90deg); color: var(--accent); }
+
+    .option-detail {
+      display: none;
+      background: #080A0B;
+      border-top: 1px solid var(--border);
+      padding: 18px 24px 18px 24px;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      border-left: 3px solid var(--accent);
+    }
+    .option-detail.open {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SEE ALSO / CONTACT */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .contact-cell {
+      background: var(--bg-panel);
+      padding: 18px 20px;
+      transition: background 0.15s;
+    }
+    .contact-cell:hover { background: var(--bg-raised); }
+    .contact-label {
+      font-family: var(--mono); font-size: 0.58rem;
+      letter-spacing: 0.12em; color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .contact-val {
+      font-family: var(--mono); font-size: 0.76rem;
+      color: var(--text);
+    }
+    .contact-val a {
+      color: var(--text); text-decoration: none;
+      transition: color 0.15s;
+    }
+    .contact-val a:hover { color: var(--accent); }
+    .contact-val.status { color: var(--accent); }
+
+    /* VERSION */
+    .man-version {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 32px 24px; max-width: 880px; margin: 0 auto; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-prompt { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .footer-prompt .ps { color: var(--accent); }
+    .footer-cursor { color: var(--accent); animation: blink 0.8s step-end infinite; }
+    .footer-links { display: flex; gap: 20px; align-items: center; }
+    .footer-links a { font-family: var(--mono); font-size: 0.66rem; color: var(--text-dim); text-decoration: none; letter-spacing: 0.06em; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text-muted); }
+    .footer-sep { width: 1px; height: 12px; background: var(--border); }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* SCROLL FADE */
+    .fade-in {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .man-body { padding: 24px 20px 28px; }
+      .option-header { grid-template-columns: 1fr auto; }
+      .option-flag {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        grid-column: 1 / -1;
+        padding: 12px 18px;
+      }
+      .option-brief { padding: 12px 18px; }
+      .option-chevron { padding: 12px 16px; }
+      .man-synopsis { font-size: 0.65rem; }
+    }
+    @media (max-width: 600px) {
+      .page-header { padding: 36px 16px 24px; }
+      .page-body { padding: 0 16px 60px; }
+      nav { padding: 0 16px; }
+      .nav-links a { padding: 6px 8px; font-size: 0.65rem; }
+      .nav-links a::before { display: none; }
+      footer { padding: 24px 16px; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .option-detail { padding-left: 18px; }
+    }
+    @media (max-width: 375px) {
+      .page-header { padding: 28px 14px 20px; }
+      .page-body { padding: 0 14px 50px; }
+      .man-body { padding: 20px 14px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">~/mberman <span>$</span></a>
+  <div class="nav-links">
+    <a href="about.html" class="active">about</a>
+    <a href="experience.html">experience</a>
+    <a href="library.html">library</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-cmd"><span class="ps">~/mberman $</span> man mberman</div>
+  <div class="page-title">MBERMAN(1) <span class="cmt">// user manual</span></div>
+</div>
+
+<div class="page-body">
+  <div class="terminal-panel fade-in">
+    <div class="tp-bar">
+      <div class="tp-dot r"></div><div class="tp-dot y"></div><div class="tp-dot g"></div>
+      <span class="tp-bar-label">man mberman &mdash; manual page</span>
+    </div>
+
+    <div class="man-body">
+
+      <!-- NAME -->
+      <div class="man-section">NAME</div>
+      <div class="man-name">mberman</div>
+      <div class="man-name-sub">&mdash; Game Director, Design Leader, Systems Thinker</div>
+
+      <!-- SYNOPSIS -->
+      <div class="man-section">SYNOPSIS</div>
+      <div class="man-synopsis">
+        <span class="cmd">mberman</span> <span class="flag">--player-first</span> <span class="flag">--graybox-first</span> <span class="flag">--systems-driven</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">--iterate-fast</span> <span class="flag">--lead-by-decision</span> <span class="flag">--sustainable-design</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">--know-your-audience</span> <span class="flag">--gameplay-clarity</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="opt">[--studio &lt;studio&gt;]</span> <span class="opt">[--platform &lt;pc|console|mobile&gt;]</span> <span class="opt">[--ship-it]</span>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="man-section">DESCRIPTION</div>
+      <div class="man-desc">
+        <p>Michael Berman is a Game Director with 16+ years shipping games across mobile, PC, and console. Currently directing an unannounced AAA title at Sony Interactive Entertainment / Bend Studio.</p>
+        <p>Specializes in systemic design, player-first thinking, and turning ambiguous creative visions into shippable products. Has led teams from 2 to 15+ designers across first-party Sony, THQ Nordic, and independent studios.</p>
+        <p>Operates on the principle that good design is invisible &mdash; the player should feel smart, not tutorialized.</p>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="man-section">OPTIONS</div>
+      <div class="options-list">
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--player-first</div>
+            <div class="option-brief">Build for your audience, not yourself.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">Your preferences are a sample size of one. Research, playtesting, and data close the gap between what you think works and what actually does. It&rsquo;s great when your taste aligns with your players&rsquo; &mdash; lean on feedback to find where it doesn&rsquo;t.</div>
+        </div>
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--graybox-first</div>
+            <div class="option-brief">Find the fun before you spend on polish.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">There is a time and place for polish, tutorials, and refinement. That time is not first. Keep things as low-fidelity as possible to identify high-confidence features before committing production resources. Polishing the wrong thing is the most expensive mistake in AAA development.</div>
+        </div>
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--systems-driven</div>
+            <div class="option-brief">Design systems, not content.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">Content dependency is a debt spiral &mdash; you need more content to sustain what you have. Systems-driven design creates experiences that generate themselves. Build the rules that produce the encounters, not the encounters themselves.</div>
+        </div>
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--iterate-fast</div>
+            <div class="option-brief">Test fast. Kill fast. Ship what survives.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">The best ideas don&rsquo;t survive planning meetings &mdash; they survive playtests. Run experiments aggressively, kill failures quickly, invest only in what demonstrably works. A strong opinion held loosely beats a weak opinion defended stubbornly.</div>
+        </div>
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--lead-by-decision</div>
+            <div class="option-brief">Leadership is making the hard call, not avoiding it.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">The most expensive thing a director can do is leave a decision unmade. Teams wait, work piles up, options narrow. A clear decision &mdash; even an imperfect one &mdash; is almost always better than prolonged ambiguity. Own the call. Adjust when new information arrives.</div>
+        </div>
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--sustainable-design</div>
+            <div class="option-brief">Design for the long game, not the launch.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">Live service taught the industry that launch is the beginning, not the end. Sustainable design means building systems that can grow without exponential resource cost. If a feature requires a full team to maintain after launch, it&rsquo;s a liability not an asset.</div>
+        </div>
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--know-your-audience</div>
+            <div class="option-brief">A game for everyone is a game for no one.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">The instinct to broaden appeal by softening everything results in no clear identity. Know exactly who you&rsquo;re building for. Make deliberate choices that serve that audience, even when those choices exclude others. Conviction about your player is the foundation of every good design decision.</div>
+        </div>
+
+        <div class="option-row" onclick="toggleOption(this)">
+          <div class="option-header">
+            <div class="option-flag">--gameplay-clarity</div>
+            <div class="option-brief">If it needs explaining, it needs redesigning.</div>
+            <div class="option-chevron">&#9654;</div>
+          </div>
+          <div class="option-detail">Players shouldn&rsquo;t need a tutorial to understand a well-designed mechanic &mdash; the mechanic itself communicates its rules. Complexity is a cost, not a feature. Add it deliberately, only once the foundation is clear. When a player is confused, that&rsquo;s a design problem, not a player problem.</div>
+        </div>
+
+      </div>
+
+      <!-- SEE ALSO -->
+      <div class="man-section">SEE ALSO</div>
+      <div class="contact-grid">
+        <div class="contact-cell">
+          <div class="contact-label">EMAIL</div>
+          <div class="contact-val"><a href="mailto:envyberman@gmail.com">envyberman@gmail.com</a></div>
+        </div>
+        <div class="contact-cell">
+          <div class="contact-label">LINKEDIN</div>
+          <div class="contact-val"><a href="https://linkedin.com/in/bermandesign" target="_blank" rel="noopener">linkedin.com/in/bermandesign</a></div>
+        </div>
+        <div class="contact-cell">
+          <div class="contact-label">LOCATION</div>
+          <div class="contact-val">Pacific Northwest, WA</div>
+        </div>
+        <div class="contact-cell">
+          <div class="contact-label">STATUS</div>
+          <div class="contact-val status">Game Director &middot; Sony / Bend Studio</div>
+        </div>
+      </div>
+
+      <!-- VERSION -->
+      <div class="man-version">mberman v16.0+ &nbsp;&middot;&nbsp; Last updated: 2026 &nbsp;&middot;&nbsp; All flags subject to revision upon new evidence.</div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-prompt">
+      <span class="ps">~/mberman/about $</span>
+      <span class="footer-cursor">&#9608;</span>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:envyberman@gmail.com">email</a>
+      <a href="https://linkedin.com/in/bermandesign" target="_blank" rel="noopener">linkedin</a>
+      <div class="footer-sep"></div>
+      <a href="index.html">&larr; home</a>
+      <a href="../versions.html">&larr; versions</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Option expand/collapse */
+function toggleOption(row) {
+  var detail = row.querySelector('.option-detail');
+  if (!detail) return;
+  var isOpen = detail.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.option-detail.open').forEach(function(d) {
+    d.classList.remove('open');
+    d.closest('.option-row').classList.remove('expanded');
+  });
+  if (!isOpen) {
+    detail.classList.add('open');
+    row.classList.add('expanded');
+  }
+}
+
+/* Scroll fade */
+var fadeEls = document.querySelectorAll('.fade-in');
+var io = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(function(el) { io.observe(el); });
+</script>
+</body>
+</html>
