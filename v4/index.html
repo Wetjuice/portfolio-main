@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael Berman — Game Director</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0C0E0F;
+      --bg-panel:  #111315;
+      --bg-raised: #161819;
+      --border:    #1E2224;
+      --border-hi: #2A2D30;
+      --text:      #C8C5C0;
+      --text-muted:#6B6966;
+      --text-dim:  #323436;
+      --accent:    #E76028;
+      --green:     #3DB870;
+      --amber:     #D4A027;
+      --red:       #E05252;
+      --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --sans:      'Inter', -apple-system, system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ══════════════════════════════
+       BOOT SCREEN
+    ══════════════════════════════ */
+    #boot {
+      position: fixed;
+      inset: 0;
+      background: #060808;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: var(--mono);
+    }
+    #boot.fade-out {
+      animation: bootFade 0.6s ease forwards;
+    }
+    @keyframes bootFade {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    /* Scanlines */
+    #boot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.12) 2px,
+        rgba(0,0,0,0.12) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+    /* Subtle vignette */
+    #boot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .boot-terminal {
+      width: 100%;
+      max-width: 700px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.02),
+        0 4px 60px rgba(0,0,0,0.7),
+        0 0 120px rgba(231,96,40,0.03);
+    }
+
+    .boot-titlebar {
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .boot-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      transition: opacity 0.3s;
+    }
+    .boot-dot.r { background: #E05252; opacity: 0.45; }
+    .boot-dot.y { background: #D4A027; opacity: 0.45; }
+    .boot-dot.g { background: #3DB870; opacity: 0.45; }
+    .boot-titlebar-label {
+      margin-left: auto;
+      margin-right: auto;
+      transform: translateX(-18px);
+      font-size: 0.68rem;
+      color: #2A2D30;
+      letter-spacing: 0.1em;
+    }
+
+    .boot-body {
+      background: #060808;
+      padding: 28px 24px 24px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .boot-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: baseline;
+      font-size: clamp(0.62rem, 1.8vw, 0.74rem);
+      letter-spacing: 0.03em;
+      color: #3A3836;
+      margin-bottom: 6px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .boot-line.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .boot-line-label { color: #4A4844; }
+    .boot-line-dots {
+      color: #1A1C1D;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .boot-line-status {
+      font-weight: 700;
+      font-size: clamp(0.58rem, 1.4vw, 0.66rem);
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      text-align: right;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .boot-line-status.revealed { opacity: 1; }
+    .boot-line-status.ok      { color: var(--green); }
+    .boot-line-status.active  { color: var(--accent); }
+    .boot-line-status.warn    { color: var(--amber); }
+    .boot-line-status.confirm { color: var(--green); }
+    .boot-line-status.verify  { color: var(--green); }
+    .boot-line-status.ready   { color: var(--green); }
+
+    .boot-line.header-row .boot-line-label {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: clamp(0.68rem, 2vw, 0.8rem);
+      letter-spacing: 0.14em;
+    }
+
+    .boot-divider {
+      border: none;
+      border-top: 1px solid #131516;
+      margin: 10px 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .boot-divider.show { opacity: 1; }
+
+    /* Hold-to-launch */
+    .boot-prompt {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid #131516;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .boot-prompt.show { opacity: 1; }
+
+    .boot-hold-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .boot-hold-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+    .boot-hold-bar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      width: 100%;
+    }
+    .boot-hold-bar-seg {
+      flex: 1;
+      height: 5px;
+      background: #0E1011;
+      border: 1px solid #1A1C1D;
+      transition: background 0.06s, border-color 0.06s;
+    }
+    .boot-hold-bar-seg.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 4px rgba(231,96,40,0.3);
+    }
+
+    .boot-hold-status {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+    .boot-hold-status.active { color: var(--accent); }
+
+    .boot-hold-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 10px 18px;
+      border: 1px solid rgba(231,96,40,0.25);
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .boot-hold-btn:hover,
+    .boot-hold-btn:focus-visible {
+      border-color: rgba(231,96,40,0.5);
+    }
+    .boot-hold-btn.holding {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(231,96,40,0.15);
+    }
+    .boot-hold-btn.complete {
+      border-color: var(--green);
+      animation: flashGreen 0.35s ease;
+    }
+    @keyframes flashGreen {
+      0% { background: rgba(61,184,112,0.2); }
+      100% { background: transparent; }
+    }
+    .boot-hold-fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 0%;
+      background: rgba(231,96,40,0.08);
+      pointer-events: none;
+    }
+    .boot-hold-fill.resetting {
+      transition: width 0.35s ease;
+    }
+    .boot-hold-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+      letter-spacing: 0.12em;
+      color: #7A7774;
+      white-space: nowrap;
+      gap: 6px;
+    }
+    .boot-bracket { color: rgba(231,96,40,0.45); }
+    .boot-cursor-blink {
+      color: var(--accent);
+      animation: cursorBlink 0.8s step-end infinite;
+    }
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    #transition-overlay {
+      position: fixed;
+      inset: 0;
+      background: #060808;
+      z-index: 8999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    #transition-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ══════════════════════════════
+       SITE (after boot)
+    ══════════════════════════════ */
+    #site {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    #site.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(12,14,15,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-logo span { color: var(--text-muted); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--bg-raised);
+    }
+    .nav-links a::before { content: './'; color: var(--text-dim); }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    .hero {
+      padding: 72px 24px 48px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .terminal-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 40px rgba(0,0,0,0.3);
+    }
+    .tp-bar {
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tp-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .tp-dot.r { background: #4A2020; }
+    .tp-dot.y { background: #3A3010; }
+    .tp-dot.g { background: #183A28; }
+    .tp-bar-label {
+      margin-left: 8px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+    .tp-body {
+      padding: 32px 32px 36px;
+      font-family: var(--mono);
+    }
+
+    .prompt-line {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .prompt-line .ps { color: var(--accent); }
+    .prompt-line .cmd { color: var(--text); }
+
+    .hero-name {
+      font-family: var(--sans);
+      font-size: clamp(2rem, 5.5vw, 3rem);
+      font-weight: 700;
+      color: #ECEAE6;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+    .hero-title {
+      font-family: var(--mono);
+      font-size: clamp(0.7rem, 2vw, 0.82rem);
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 24px;
+    }
+    .hero-tagline {
+      font-family: var(--mono);
+      font-size: clamp(0.88rem, 2.5vw, 1.05rem);
+      color: var(--text);
+      border-left: 2px solid var(--accent);
+      padding-left: 16px;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    .hero-tagline .cmt { color: var(--text-muted); font-style: normal; }
+
+    .stats-cmd {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stats-cmd .ps { color: var(--accent); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .stat-cell {
+      background: var(--bg-panel);
+      padding: 16px 18px;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .stat-cell:hover { background: var(--bg-raised); }
+    .stat-val {
+      font-family: var(--mono);
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+    .stat-key {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: #ECEAE6;
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 10px 22px;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover {
+      background: #F27040;
+      box-shadow: 0 0 20px rgba(231,96,40,0.25);
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-ghost {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border-hi);
+      padding: 10px 22px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--text-muted);
+      background: var(--bg-raised);
+    }
+
+    /* ══════════════════════════════
+       SECTION WRAPPER
+    ══════════════════════════════ */
+    .section {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 24px 72px;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .section-prompt {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+    }
+    .section-cmd {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════
+       PRINCIPLES
+    ══════════════════════════════ */
+    .principles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .principle-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0;
+      background: var(--bg-panel);
+      transition: background 0.15s;
+    }
+    .principle-row:hover { background: var(--bg-raised); }
+    .principle-flag {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      padding: 18px 20px;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      align-self: start;
+    }
+    .principle-body { padding: 18px 20px; }
+    .principle-name {
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .principle-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .principle-status {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      padding: 18px 16px;
+      white-space: nowrap;
+      align-self: start;
+    }
+    .principles-more {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .principles-more .ps {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+    }
+    .principles-more a {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .principles-more a:hover { color: var(--text); }
+
+    /* ══════════════════════════════
+       EXPERIENCE PREVIEW
+    ══════════════════════════════ */
+    .exp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .exp-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 0;
+      background: var(--bg-panel);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .exp-row:hover { background: var(--bg-raised); }
+    .exp-hash {
+      padding: 16px 16px;
+      color: var(--text-dim);
+      border-right: 1px solid var(--border);
+      font-size: 0.65rem;
+      align-self: start;
+    }
+    .exp-role {
+      padding: 16px 18px;
+      align-self: start;
+    }
+    .exp-role-title { color: var(--text); font-weight: 500; margin-bottom: 3px; }
+    .exp-role-studio { color: var(--text-muted); font-size: 0.65rem; }
+    .exp-period {
+      padding: 16px 18px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      align-self: start;
+      font-size: 0.65rem;
+    }
+    .exp-badge {
+      padding: 16px 16px;
+      align-self: start;
+      white-space: nowrap;
+    }
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+    .badge-active {
+      background: rgba(231,96,40,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(231,96,40,0.25);
+    }
+    .badge-done {
+      background: rgba(61,184,112,0.08);
+      color: var(--green);
+      border: 1px solid rgba(61,184,112,0.15);
+    }
+
+    .exp-detail {
+      display: none;
+      background: #090B0C;
+      border-top: 1px solid var(--border);
+      padding: 18px 24px 18px 64px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border-left: 3px solid var(--accent);
+    }
+    .exp-detail.open {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .exp-detail-line { margin-bottom: 4px; }
+    .exp-detail-key { color: var(--text-dim); }
+    .exp-detail-val { color: var(--text); }
+    .exp-detail-metric { color: var(--green); }
+
+    .exp-more {
+      margin-top: 16px;
+    }
+    .exp-more a {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.15s;
+    }
+    .exp-more a:hover { color: var(--accent); }
+    .exp-more .ps { color: var(--accent); }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-prompt {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-prompt .ps { color: var(--accent); }
+    .footer-cursor {
+      color: var(--accent);
+      animation: cursorBlink 0.8s step-end infinite;
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text-muted); }
+    .footer-sep {
+      width: 1px;
+      height: 12px;
+      background: var(--border);
+    }
+
+    /* ══════════════════════════════
+       SCROLL FADE
+    ══════════════════════════════ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
+    @media (max-width: 1024px) {
+      .hero { padding: 56px 24px 40px; }
+    }
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .exp-row { grid-template-columns: auto 1fr auto; }
+      .exp-badge { display: none; }
+      .principle-row { grid-template-columns: 1fr; }
+      .principle-flag {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 12px 18px;
+      }
+      .principle-status { display: none; }
+      .nav-links a::before { display: none; }
+      .tp-body { padding: 24px 20px 28px; }
+    }
+    @media (max-width: 600px) {
+      .hero { padding: 40px 16px 32px; }
+      .section { padding: 0 16px 56px; }
+      .exp-row { grid-template-columns: auto 1fr; }
+      .exp-period { display: none; }
+      .exp-detail { padding-left: 20px; }
+      .hero-ctas { flex-direction: column; }
+      .btn-primary, .btn-ghost { text-align: center; }
+      .tp-body { padding: 20px 16px 24px; }
+      nav { padding: 0 16px; }
+      .nav-links { gap: 0; }
+      .nav-links a { padding: 6px 8px; font-size: 0.65rem; }
+      footer { padding: 24px 16px; }
+    }
+    @media (max-width: 375px) {
+      .hero-name { font-size: 1.6rem; }
+      .boot-body { padding: 20px 14px 18px; }
+      .boot-hold-wrap { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ BOOT SCREEN ═══════════════ -->
+<div id="boot">
+  <div class="boot-terminal">
+    <div class="boot-titlebar">
+      <div class="boot-dot r"></div>
+      <div class="boot-dot y"></div>
+      <div class="boot-dot g"></div>
+      <span class="boot-titlebar-label">mberman.portfolio — bash</span>
+    </div>
+    <div class="boot-body" id="boot-body">
+
+      <div class="boot-line header-row" id="bl-0">
+        <span class="boot-line-label">CREATIVE LEADER SEARCH PROTOCOL v4.0</span>
+        <span class="boot-line-status active"></span>
+      </div>
+      <hr class="boot-divider" id="bd-0">
+
+      <div class="boot-line" id="bl-1">
+        <span class="boot-line-label">Initializing search protocol<span class="boot-line-dots"> ················································· </span></span>
+        <span class="boot-line-status ok" data-text="[ OK ]"></span>
+      </div>
+      <div class="boot-line" id="bl-2">
+        <span class="boot-line-label">Scanning for creative leader<span class="boot-line-dots"> ················································· </span></span>
+        <span class="boot-line-status warn" data-text="[ SEARCHING ]"></span>
+      </div>
+      <div class="boot-line" id="bl-3">
+        <span class="boot-line-label">Signal detected &middot; human identified<span class="boot-line-dots"> ·········································· </span></span>
+        <span class="boot-line-status ok" data-text="[ FOUND ]"></span>
+      </div>
+      <div class="boot-line" id="bl-4">
+        <span class="boot-line-label">Loading human profile<span class="boot-line-dots"> ··················································· </span></span>
+        <span class="boot-line-status ok" data-text="[ OK ]"></span>
+      </div>
+
+      <hr class="boot-divider" id="bd-1">
+
+      <div class="boot-line" id="bl-5">
+        <span class="boot-line-label">Name: Michael Berman<span class="boot-line-dots"> ······················································ </span></span>
+        <span class="boot-line-status confirm" data-text="[ CONFIRMED ]"></span>
+      </div>
+      <div class="boot-line" id="bl-6">
+        <span class="boot-line-label">Title: Game Director &middot; Sony / Bend Studio<span class="boot-line-dots"> ······························· </span></span>
+        <span class="boot-line-status active" data-text="[ ACTIVE &#9654; ]"></span>
+      </div>
+      <div class="boot-line" id="bl-7">
+        <span class="boot-line-label">Experience: 16+ years &middot; 5 studios &middot; 10+ shipped products<span class="boot-line-dots"> ·········· </span></span>
+        <span class="boot-line-status verify" data-text="[ VERIFIED ]"></span>
+      </div>
+      <div class="boot-line" id="bl-8">
+        <span class="boot-line-label">Design philosophy: player-first &middot; graybox-first &middot; systems-driven<span class="boot-line-dots"> ·· </span></span>
+        <span class="boot-line-status ok" data-text="[ LOADED ]"></span>
+      </div>
+
+      <hr class="boot-divider" id="bd-2">
+
+      <div class="boot-line" id="bl-9">
+        <span class="boot-line-label">Portfolio ready &middot; launching<span class="boot-line-dots"> ················································· </span></span>
+        <span class="boot-line-status ready" data-text="[ READY ]"></span>
+      </div>
+
+      <div class="boot-prompt" id="boot-prompt">
+        <div class="boot-hold-wrap">
+          <div class="boot-hold-left">
+            <div class="boot-hold-bar" id="hold-bar"></div>
+            <div class="boot-hold-status" id="hold-status">// press &amp; hold</div>
+          </div>
+          <div class="boot-hold-btn" id="hold-btn" tabindex="0" role="button" aria-label="Hold to launch portfolio">
+            <div class="boot-hold-fill" id="hold-fill"></div>
+            <div class="boot-hold-inner">
+              <span class="boot-bracket">[</span>
+              <span id="hold-label">HOLD</span>
+              <span class="boot-cursor-blink">&#9608;</span>
+              <span class="boot-bracket">]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="transition-overlay"></div>
+
+<!-- ═══════════════ MAIN SITE ═══════════════ -->
+<div id="site">
+
+  <nav>
+    <a href="#" class="nav-logo">~/mberman <span>$</span></a>
+    <div class="nav-links">
+      <a href="about.html">about</a>
+      <a href="experience.html">experience</a>
+      <a href="library.html">library</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="terminal-panel fade-in">
+      <div class="tp-bar">
+        <div class="tp-dot r"></div>
+        <div class="tp-dot y"></div>
+        <div class="tp-dot g"></div>
+        <span class="tp-bar-label">~/mberman — bash</span>
+      </div>
+      <div class="tp-body">
+
+        <div class="prompt-line">
+          <span class="ps">~/mberman $</span>
+          <span class="cmd">whoami</span>
+        </div>
+
+        <div class="hero-name">Michael Berman</div>
+        <div class="hero-title">GAME DIRECTOR &middot; SONY INTERACTIVE / BEND STUDIO</div>
+        <div class="hero-tagline">
+          <span class="cmt">// </span>Build for players, not designers.
+        </div>
+
+        <div class="stats-cmd">
+          <span class="ps">~/mberman $</span>
+          <span>cat stats.txt</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-cell">
+            <span class="stat-val">16+</span>
+            <span class="stat-key">--years</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val">5</span>
+            <span class="stat-key">--studios</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val">10+</span>
+            <span class="stat-key">--products</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val">6+</span>
+            <span class="stat-key">--yrs-leading</span>
+          </div>
+        </div>
+
+        <div class="hero-ctas">
+          <a href="experience.html" class="btn-primary">./experience</a>
+          <a href="about.html" class="btn-ghost">./about</a>
+          <a href="library.html" class="btn-ghost">./library</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINCIPLES -->
+  <div class="section">
+    <div class="section-header fade-in">
+      <span class="section-prompt">~/mberman $</span>
+      <span class="section-cmd">cat principles.conf | head -3</span>
+    </div>
+    <div class="principles-list fade-in">
+      <div class="principle-row">
+        <div class="principle-flag">--player-first</div>
+        <div class="principle-body">
+          <div class="principle-name">Build for your audience, not yourself.</div>
+          <div class="principle-desc">Player empathy over designer taste. Research and playtesting close the gap between what you think works and what actually does. Your preferences are a sample size of one.</div>
+        </div>
+        <div class="principle-status">[ ACTIVE ]</div>
+      </div>
+      <div class="principle-row">
+        <div class="principle-flag">--graybox-first</div>
+        <div class="principle-body">
+          <div class="principle-name">Find the fun before you spend on polish.</div>
+          <div class="principle-desc">Low-fidelity prototyping identifies high-confidence features before costly production begins. The most expensive mistake in AAA is polishing the wrong thing.</div>
+        </div>
+        <div class="principle-status">[ ACTIVE ]</div>
+      </div>
+      <div class="principle-row">
+        <div class="principle-flag">--systems-driven</div>
+        <div class="principle-body">
+          <div class="principle-name">Design systems, not content.</div>
+          <div class="principle-desc">Content requires more content to sustain itself. Systems compound. Build the rules that generate the experiences, not the experiences themselves.</div>
+        </div>
+        <div class="principle-status">[ ACTIVE ]</div>
+      </div>
+    </div>
+    <div class="principles-more fade-in">
+      <span class="ps">~/mberman $</span>
+      <a href="about.html">cat principles.conf <span style="color:var(--text-dim)"># view all 8 &rarr;</span></a>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE PREVIEW -->
+  <div class="section">
+    <div class="section-header fade-in">
+      <span class="section-prompt">~/mberman $</span>
+      <span class="section-cmd">git log --oneline --all</span>
+    </div>
+    <div class="exp-list fade-in">
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">e7a3f1c</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Game Director</div>
+          <div class="exp-role-studio">Sony Interactive Entertainment / Bend Studio</div>
+        </div>
+        <div class="exp-period">Feb 2025 &rarr; present</div>
+        <div class="exp-badge"><span class="badge badge-active">ACTIVE</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">role: </span><span class="exp-detail-val">Game Director &mdash; unannounced AAA PC/Console title</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">team: </span><span class="exp-detail-val">15+ developers &middot; 6 direct reports</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">focus: </span><span class="exp-detail-val">Creative vision, design direction, cross-discipline leadership</span></div>
+      </div>
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">b2d8a90</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Design Manager &amp; Product Owner</div>
+          <div class="exp-role-studio">Sony Interactive Entertainment / Bend Studio</div>
+        </div>
+        <div class="exp-period">May 2022 &rarr; Feb 2025</div>
+        <div class="exp-badge"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">role: </span><span class="exp-detail-val">Design Manager &amp; Product Owner</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">team: </span><span class="exp-detail-val">10+ designers &middot; cross-functional product ownership</span></div>
+      </div>
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">9f1c2e4</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Design Director</div>
+          <div class="exp-role-studio">Deep Silver Volition</div>
+        </div>
+        <div class="exp-period">2021 &rarr; 2022</div>
+        <div class="exp-badge"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">title: </span><span class="exp-detail-val">Saints Row (2022 reboot)</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">team: </span><span class="exp-detail-val">10&ndash;13 designers</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">highlight: </span><span class="exp-detail-val">"Boss Factory" pre-release character creation demo</span></div>
+      </div>
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">4a7b3d2</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Lead UX Designer / Product Manager</div>
+          <div class="exp-role-studio">Pocket Gems &mdash; War Dragons</div>
+        </div>
+        <div class="exp-period">2017 &rarr; 2021</div>
+        <div class="exp-badge"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">outcome: </span><span class="exp-detail-metric">+12% D3 retention</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">scope: </span><span class="exp-detail-val">UX design, product management, live service features</span></div>
+      </div>
+
+    </div>
+    <div class="exp-more fade-in">
+      <a href="experience.html"><span class="ps">$</span> git log --all <span style="color:var(--text-dim)"># full history &rarr;</span></a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-prompt">
+        <span class="ps">~/mberman $</span>
+        <span class="footer-cursor">&#9608;</span>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:envyberman@gmail.com">email</a>
+        <a href="https://linkedin.com/in/bermandesign" target="_blank" rel="noopener">linkedin</a>
+        <div class="footer-sep"></div>
+        <a href="../versions.html">&larr; versions</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /site -->
+
+<script>
+/* ═══════════════════════════════════════
+   BOOT SEQUENCE
+═══════════════════════════════════════ */
+const HOLD_DURATION = 1600;
+const BAR_SEGMENTS  = 18;
+const PROMPT_DELAY  = 350;
+
+const bootEl    = document.getElementById('boot');
+const siteEl    = document.getElementById('site');
+const overlayEl = document.getElementById('transition-overlay');
+const promptEl  = document.getElementById('boot-prompt');
+const holdBtn   = document.getElementById('hold-btn');
+const holdFill  = document.getElementById('hold-fill');
+const holdBarEl = document.getElementById('hold-bar');
+const holdStatusEl = document.getElementById('hold-status');
+
+// Build bar segments
+const segs = [];
+for (let i = 0; i < BAR_SEGMENTS; i++) {
+  const s = document.createElement('div');
+  s.className = 'boot-hold-bar-seg';
+  holdBarEl.appendChild(s);
+  segs.push(s);
+}
+
+// Animate boot lines
+const LINES = [
+  { el: 'bl-0', delay: 0,    statusDelay: 0 },
+  { el: 'bd-0', delay: 180,  statusDelay: 0 },
+  { el: 'bl-1', delay: 300,  statusDelay: 450 },
+  { el: 'bl-2', delay: 700,  statusDelay: 500 },
+  { el: 'bl-3', delay: 1150, statusDelay: 350 },
+  { el: 'bl-4', delay: 1450, statusDelay: 400 },
+  { el: 'bd-1', delay: 1800, statusDelay: 0 },
+  { el: 'bl-5', delay: 1950, statusDelay: 300 },
+  { el: 'bl-6', delay: 2250, statusDelay: 280 },
+  { el: 'bl-7', delay: 2520, statusDelay: 320 },
+  { el: 'bl-8', delay: 2820, statusDelay: 350 },
+  { el: 'bd-2', delay: 3150, statusDelay: 0 },
+  { el: 'bl-9', delay: 3300, statusDelay: 400 },
+];
+
+let promptReady = false;
+let launched    = false;
+let holdStart   = null;
+let holdRaf     = null;
+let isHolding   = false;
+
+LINES.forEach(function(item) {
+  var elem = document.getElementById(item.el);
+  if (!elem) return;
+  setTimeout(function() {
+    elem.classList.add('show');
+    var statusEl = elem.querySelector('.boot-line-status');
+    if (statusEl && statusEl.dataset.text && item.statusDelay > 0) {
+      statusEl.textContent = '';
+      setTimeout(function() {
+        statusEl.textContent = statusEl.dataset.text;
+        statusEl.classList.add('revealed');
+      }, item.statusDelay);
+    }
+  }, item.delay);
+});
+
+// Show prompt after last line
+setTimeout(function() {
+  promptEl.classList.add('show');
+  setTimeout(function() { promptReady = true; }, PROMPT_DELAY);
+}, 4000);
+
+// Hold mechanic
+function updateBar(progress) {
+  var filled = Math.round(progress * BAR_SEGMENTS);
+  segs.forEach(function(s, i) { s.classList.toggle('filled', i < filled); });
+  holdFill.style.width = (progress * 100) + '%';
+
+  if (progress < 0.01) {
+    holdStatusEl.textContent = '// press & hold';
+    holdStatusEl.classList.remove('active');
+  } else if (progress < 0.5) {
+    holdStatusEl.textContent = '// initializing...';
+    holdStatusEl.classList.add('active');
+  } else if (progress < 0.9) {
+    holdStatusEl.textContent = '// launching...';
+    holdStatusEl.classList.add('active');
+  } else {
+    holdStatusEl.textContent = '// access granted';
+    holdStatusEl.classList.add('active');
+  }
+}
+
+function startHold() {
+  if (!promptReady || launched || isHolding) return;
+  isHolding = true;
+  holdStart = performance.now();
+  holdBtn.classList.add('holding');
+  holdFill.classList.remove('resetting');
+  tickHold();
+}
+
+function tickHold() {
+  var elapsed  = performance.now() - holdStart;
+  var progress = Math.min(elapsed / HOLD_DURATION, 1);
+  updateBar(progress);
+  if (progress >= 1) {
+    completeHold();
+  } else {
+    holdRaf = requestAnimationFrame(tickHold);
+  }
+}
+
+function cancelHold() {
+  if (!isHolding) return;
+  isHolding = false;
+  if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
+  holdBtn.classList.remove('holding');
+  holdStatusEl.textContent = '// press & hold';
+  holdStatusEl.classList.remove('active');
+  holdFill.classList.add('resetting');
+  holdFill.style.width = '0%';
+  segs.forEach(function(s) { s.classList.remove('filled'); });
+  setTimeout(function() { holdFill.classList.remove('resetting'); }, 350);
+}
+
+function completeHold() {
+  if (launched) return;
+  launched = true;
+  isHolding = false;
+  if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
+  holdBtn.classList.remove('holding');
+  holdBtn.classList.add('complete');
+  holdStatusEl.textContent = '// access granted';
+  holdStatusEl.classList.add('active');
+  if (navigator.vibrate) navigator.vibrate(50);
+  setTimeout(function() {
+    overlayEl.classList.add('active');
+    setTimeout(function() {
+      bootEl.classList.add('fade-out');
+      siteEl.classList.add('visible');
+      setTimeout(function() {
+        bootEl.style.display = 'none';
+        overlayEl.classList.remove('active');
+      }, 600);
+    }, 300);
+  }, 200);
+}
+
+// Mouse / Touch
+holdBtn.addEventListener('mousedown', startHold);
+holdBtn.addEventListener('touchstart', function(e) { e.preventDefault(); startHold(); }, { passive: false });
+document.addEventListener('mouseup', cancelHold);
+document.addEventListener('touchend', cancelHold);
+document.addEventListener('touchcancel', cancelHold);
+
+// Keyboard
+var keyHolding = false;
+document.addEventListener('keydown', function(e) {
+  if (e.repeat || keyHolding) return;
+  if (launched || !promptReady) return;
+  keyHolding = true;
+  startHold();
+});
+document.addEventListener('keyup', function() {
+  keyHolding = false;
+  cancelHold();
+});
+
+/* ═══════════════════════════════════════
+   EXPERIENCE EXPAND/COLLAPSE
+═══════════════════════════════════════ */
+function toggleExp(row) {
+  var detail = row.nextElementSibling;
+  if (!detail || !detail.classList.contains('exp-detail')) return;
+  var isOpen = detail.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.exp-detail.open').forEach(function(d) { d.classList.remove('open'); });
+  if (!isOpen) detail.classList.add('open');
+}
+
+/* ═══════════════════════════════════════
+   SCROLL FADE-IN
+═══════════════════════════════════════ */
+var fadeEls = document.querySelectorAll('.fade-in');
+var io = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(function(el) { io.observe(el); });
+</script>
+</body>
+</html>

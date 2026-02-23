@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experience — Michael Berman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0C0E0F;
+      --bg-panel:  #111315;
+      --bg-raised: #161819;
+      --border:    #1E2224;
+      --border-hi: #2A2D30;
+      --text:      #C8C5C0;
+      --text-muted:#6B6966;
+      --text-dim:  #323436;
+      --accent:    #E76028;
+      --green:     #3DB870;
+      --amber:     #D4A027;
+      --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --sans:      'Inter', -apple-system, system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(12,14,15,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 48px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); text-decoration: none; letter-spacing: 0.04em; }
+    .nav-logo span { color: var(--text-muted); }
+    .nav-links { display: flex; gap: 2px; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-muted); text-decoration: none;
+      padding: 6px 12px; border-radius: 4px; letter-spacing: 0.04em;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg-raised); }
+    .nav-links a::before { content: './'; color: var(--text-dim); }
+    .nav-links a.active { color: var(--text); }
+
+    /* PAGE HEADER */
+    .page-header {
+      max-width: 880px; margin: 0 auto;
+      padding: 52px 24px 32px;
+    }
+    .page-cmd {
+      font-family: var(--mono); font-size: 0.78rem;
+      color: var(--text-muted); margin-bottom: 6px;
+    }
+    .page-cmd .ps { color: var(--accent); }
+    .page-title {
+      font-family: var(--mono); font-size: clamp(1.2rem, 3vw, 1.6rem);
+      color: #ECEAE6; letter-spacing: -0.01em; font-weight: 700;
+    }
+    .page-title .cmt { color: var(--text-dim); font-weight: 400; font-size: 0.65em; margin-left: 12px; }
+
+    /* MAIN */
+    .page-body { max-width: 880px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* TERMINAL PANEL */
+    .terminal-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 40px rgba(0,0,0,0.3);
+    }
+    .tp-bar {
+      background: var(--bg-raised); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .tp-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .tp-dot.r { background: #4A2020; }
+    .tp-dot.y { background: #3A3010; }
+    .tp-dot.g { background: #183A28; }
+    .tp-bar-label { margin-left: 8px; font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.06em; }
+
+    /* GIT LOG HEADER */
+    .git-log-header {
+      display: grid;
+      grid-template-columns: 80px 1fr 140px 80px;
+      gap: 0;
+      padding: 9px 16px;
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 0.6rem;
+      color: var(--text-dim); letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* COMMIT ROWS */
+    .commit { border-bottom: 1px solid var(--border); }
+    .commit:last-child { border-bottom: none; }
+
+    .commit-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 140px 80px;
+      gap: 0; padding: 0;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .commit-row:hover { background: var(--bg-raised); }
+
+    .commit-hash {
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--text-dim);
+      padding: 16px 16px;
+      border-right: 1px solid var(--border);
+    }
+    .commit-main { padding: 16px 18px; }
+    .commit-subject {
+      font-family: var(--mono); font-size: 0.78rem;
+      color: var(--text); font-weight: 500; margin-bottom: 3px;
+    }
+    .commit-studio {
+      font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted);
+    }
+    .commit-date {
+      font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted);
+      padding: 16px 16px; border-left: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .commit-tag {
+      padding: 16px 14px; border-left: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    .badge {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      padding: 3px 8px; border-radius: 3px; white-space: nowrap;
+    }
+    .badge-active { background: rgba(231,96,40,0.12); color: var(--accent); border: 1px solid rgba(231,96,40,0.25); }
+    .badge-done   { background: rgba(61,184,112,0.08); color: var(--green); border: 1px solid rgba(61,184,112,0.15); }
+    .badge-stash  { background: rgba(50,52,54,0.5); color: var(--text-dim); border: 1px solid var(--border); }
+
+    /* GIT SHOW (expanded) */
+    .git-show {
+      display: none;
+      background: #080A0B;
+      border-top: 1px solid var(--border);
+      padding: 22px 28px 22px 80px;
+      font-family: var(--mono); font-size: 0.72rem;
+      border-left: 3px solid var(--accent);
+    }
+    .git-show.open {
+      display: block;
+      animation: showSlide 0.2s ease;
+    }
+    @keyframes showSlide {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .gs-line { margin-bottom: 4px; color: var(--text-muted); }
+    .gs-key { color: var(--text-dim); }
+    .gs-val { color: var(--text); }
+    .gs-metric { color: var(--green); }
+    .gs-accent { color: var(--accent); }
+    .gs-section {
+      margin-top: 14px; margin-bottom: 8px;
+      font-size: 0.62rem; letter-spacing: 0.12em; color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .gs-bullet { padding-left: 16px; margin-bottom: 4px; color: var(--text-muted); }
+    .gs-bullet::before { content: '\25B8 '; color: var(--text-dim); }
+
+    /* STASH SECTION */
+    .stash-toggle {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-dim); cursor: pointer;
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 10px;
+      border-top: 1px solid var(--border);
+      transition: color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .stash-toggle:hover { color: var(--text-muted); background: var(--bg-raised); }
+    .stash-icon { transition: color 0.2s; }
+    .stash-entries {
+      display: none;
+      border-top: 1px solid var(--border);
+    }
+    .stash-entries.open { display: block; }
+    .stash-row {
+      display: grid; grid-template-columns: 80px 1fr 140px;
+      border-bottom: 1px solid var(--border);
+      background: #090B0C;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .stash-row:hover { background: var(--bg-raised); }
+    .stash-row:last-child { border-bottom: none; }
+    .stash-row .commit-hash { color: var(--text-dim); }
+    .stash-row .commit-main .commit-subject { color: var(--text-muted); }
+    .stash-row .commit-date { color: var(--text-dim); }
+
+    /* Stash git show */
+    .stash-show {
+      display: none;
+      background: #070909;
+      border-top: 1px solid var(--border);
+      padding: 18px 24px 18px 80px;
+      font-family: var(--mono); font-size: 0.72rem;
+      border-left: 3px solid var(--amber);
+    }
+    .stash-show.open {
+      display: block;
+      animation: showSlide 0.2s ease;
+    }
+
+    /* SKILLS PANEL */
+    .skills-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      box-shadow: 0 2px 40px rgba(0,0,0,0.3);
+    }
+    .skills-header {
+      background: var(--bg-raised); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; font-family: var(--mono); font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .skills-header .ps { color: var(--accent); }
+    .skills-body { padding: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .skill-group h3 {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .skill-tag {
+      display: inline-block;
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.05em;
+      color: var(--text-muted); background: var(--bg-raised);
+      border: 1px solid var(--border); padding: 3px 10px;
+      margin: 0 5px 7px 0; border-radius: 3px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .skill-tag:hover { border-color: var(--border-hi); color: var(--text); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 32px 24px; max-width: 880px; margin: 0 auto; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-prompt { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .footer-prompt .ps { color: var(--accent); }
+    .footer-cursor { color: var(--accent); animation: blink 0.8s step-end infinite; }
+    .footer-links { display: flex; gap: 20px; align-items: center; }
+    .footer-links a { font-family: var(--mono); font-size: 0.66rem; color: var(--text-dim); text-decoration: none; letter-spacing: 0.06em; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text-muted); }
+    .footer-sep { width: 1px; height: 12px; background: var(--border); }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* SCROLL FADE */
+    .fade-in {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .git-log-header { grid-template-columns: 60px 1fr 100px; }
+      .git-log-header > :last-child { display: none; }
+      .commit-row { grid-template-columns: 60px 1fr 100px; }
+      .commit-tag { display: none; }
+      .commit-hash { padding: 14px 12px; }
+      .skills-body { grid-template-columns: 1fr 1fr; }
+      .git-show { padding-left: 20px; }
+    }
+    @media (max-width: 600px) {
+      .page-header { padding: 36px 16px 24px; }
+      .page-body { padding: 0 16px 60px; }
+      .skills-body { grid-template-columns: 1fr; }
+      nav { padding: 0 16px; }
+      .nav-links a { padding: 6px 8px; font-size: 0.65rem; }
+      .nav-links a::before { display: none; }
+      footer { padding: 24px 16px; }
+    }
+    @media (max-width: 480px) {
+      .git-log-header { display: none; }
+      .commit-row { grid-template-columns: 1fr auto; }
+      .commit-hash { display: none; }
+      .commit-date { border-left: none; padding: 14px 12px 14px 0; }
+      .stash-row { grid-template-columns: 1fr; }
+      .stash-row .commit-date { display: none; }
+      .git-show { padding-left: 16px; }
+      .stash-show { padding-left: 16px; }
+    }
+    @media (max-width: 375px) {
+      .page-header { padding: 28px 14px 20px; }
+      .page-body { padding: 0 14px 50px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">~/mberman <span>$</span></a>
+  <div class="nav-links">
+    <a href="about.html">about</a>
+    <a href="experience.html" class="active">experience</a>
+    <a href="library.html">library</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-cmd"><span class="ps">~/mberman $</span> git log --format="%h  %s  (%cd)" --date=short --all</div>
+  <div class="page-title">experience.log <span class="cmt">// career history</span></div>
+</div>
+
+<div class="page-body">
+
+  <!-- GIT LOG TABLE -->
+  <div class="terminal-panel fade-in">
+    <div class="tp-bar">
+      <div class="tp-dot r"></div><div class="tp-dot y"></div><div class="tp-dot g"></div>
+      <span class="tp-bar-label">~/mberman &mdash; git log</span>
+    </div>
+
+    <div class="git-log-header">
+      <span>HASH</span>
+      <span>ROLE &middot; STUDIO</span>
+      <span>PERIOD</span>
+      <span>STATUS</span>
+    </div>
+
+    <!-- Sony Bend — Game Director -->
+    <div class="commit">
+      <div class="commit-row" onclick="toggleCommit(this)">
+        <div class="commit-hash">e7a3f1c</div>
+        <div class="commit-main">
+          <div class="commit-subject">Game Director</div>
+          <div class="commit-studio">Sony Interactive Entertainment / Bend Studio</div>
+        </div>
+        <div class="commit-date">Feb 2025 &rarr; present</div>
+        <div class="commit-tag"><span class="badge badge-active">ACTIVE</span></div>
+      </div>
+      <div class="git-show">
+        <div class="gs-line"><span class="gs-key">commit </span><span class="gs-val">e7a3f1c</span></div>
+        <div class="gs-line"><span class="gs-key">Author: </span><span class="gs-val">Michael Berman</span></div>
+        <div class="gs-line"><span class="gs-key">Date:   </span><span class="gs-val">February 2025 &rarr; present</span></div>
+        <div class="gs-section">DESCRIPTION</div>
+        <div class="gs-bullet">Game Director on an unannounced AAA PC/Console title</div>
+        <div class="gs-bullet">Leading a team of 15+ developers across design disciplines</div>
+        <div class="gs-bullet">6 direct reports &mdash; managing designers, leads, and cross-functional partners</div>
+        <div class="gs-bullet">Responsible for creative vision, design direction, and execution oversight</div>
+        <div class="gs-section">CONTEXT</div>
+        <div class="gs-line"><span class="gs-key">studio:   </span><span class="gs-val">Sony Interactive Entertainment / Bend Studio</span></div>
+        <div class="gs-line"><span class="gs-key">platform: </span><span class="gs-val">PC / Console (unannounced)</span></div>
+        <div class="gs-line"><span class="gs-key">scope:    </span><span class="gs-val">AAA, first-party Sony</span></div>
+      </div>
+    </div>
+
+    <!-- Sony Bend — Design Manager -->
+    <div class="commit">
+      <div class="commit-row" onclick="toggleCommit(this)">
+        <div class="commit-hash">b2d8a90</div>
+        <div class="commit-main">
+          <div class="commit-subject">Design Manager &amp; Product Owner</div>
+          <div class="commit-studio">Sony Interactive Entertainment / Bend Studio</div>
+        </div>
+        <div class="commit-date">May 2022 &rarr; Feb 2025</div>
+        <div class="commit-tag"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="git-show">
+        <div class="gs-line"><span class="gs-key">commit </span><span class="gs-val">b2d8a90</span></div>
+        <div class="gs-line"><span class="gs-key">Date:   </span><span class="gs-val">May 2022 &rarr; February 2025</span></div>
+        <div class="gs-section">DESCRIPTION</div>
+        <div class="gs-bullet">Design Manager responsible for growing and managing a team of 10+ designers</div>
+        <div class="gs-bullet">Product Owner bridging design and production pipelines</div>
+        <div class="gs-bullet">Cross-functional collaboration across engineering, art, and production</div>
+        <div class="gs-section">CONTEXT</div>
+        <div class="gs-line"><span class="gs-key">studio: </span><span class="gs-val">Sony Interactive Entertainment / Bend Studio</span></div>
+        <div class="gs-line"><span class="gs-key">scope:  </span><span class="gs-val">AAA console development, first-party Sony</span></div>
+      </div>
+    </div>
+
+    <!-- Volition -->
+    <div class="commit">
+      <div class="commit-row" onclick="toggleCommit(this)">
+        <div class="commit-hash">9f1c2e4</div>
+        <div class="commit-main">
+          <div class="commit-subject">Design Director</div>
+          <div class="commit-studio">Deep Silver Volition</div>
+        </div>
+        <div class="commit-date">2021 &rarr; 2022</div>
+        <div class="commit-tag"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="git-show">
+        <div class="gs-line"><span class="gs-key">commit </span><span class="gs-val">9f1c2e4</span></div>
+        <div class="gs-line"><span class="gs-key">Date:   </span><span class="gs-val">2021 &rarr; 2022</span></div>
+        <div class="gs-section">DESCRIPTION</div>
+        <div class="gs-bullet">Design Director on Saints Row (2022 reboot)</div>
+        <div class="gs-bullet">Led a team of 10&ndash;13 designers across gameplay systems and progression</div>
+        <div class="gs-bullet">&ldquo;Boss Factory&rdquo; &mdash; pre-release character creation demo drove significant community engagement</div>
+        <div class="gs-section">SHIPPED</div>
+        <div class="gs-line"><span class="gs-key">title:    </span><span class="gs-accent">Saints Row (2022)</span></div>
+        <div class="gs-line"><span class="gs-key">platform: </span><span class="gs-val">PC, PS4, PS5, Xbox, Stadia</span></div>
+        <div class="gs-line"><span class="gs-key">studio:   </span><span class="gs-val">Deep Silver Volition</span></div>
+      </div>
+    </div>
+
+    <!-- Pocket Gems -->
+    <div class="commit">
+      <div class="commit-row" onclick="toggleCommit(this)">
+        <div class="commit-hash">4a7b3d2</div>
+        <div class="commit-main">
+          <div class="commit-subject">Lead UX Designer / Product Manager</div>
+          <div class="commit-studio">Pocket Gems &mdash; War Dragons</div>
+        </div>
+        <div class="commit-date">2017 &rarr; 2021</div>
+        <div class="commit-tag"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="git-show">
+        <div class="gs-line"><span class="gs-key">commit </span><span class="gs-val">4a7b3d2</span></div>
+        <div class="gs-line"><span class="gs-key">Date:   </span><span class="gs-val">2017 &rarr; 2021</span></div>
+        <div class="gs-section">DESCRIPTION</div>
+        <div class="gs-bullet">Lead UX Designer and Product Manager on War Dragons (live service mobile)</div>
+        <div class="gs-bullet">Drove UX strategy across acquisition, onboarding, retention, and monetization funnels</div>
+        <div class="gs-bullet">Owned product roadmap for core UX initiatives</div>
+        <div class="gs-section">OUTCOME</div>
+        <div class="gs-line"><span class="gs-key">metric: </span><span class="gs-metric">+12% Day-3 retention</span></div>
+        <div class="gs-line"><span class="gs-key">title:  </span><span class="gs-val">War Dragons (iOS / Android)</span></div>
+      </div>
+    </div>
+
+    <!-- Stash / earlier -->
+    <div class="stash-toggle" onclick="toggleStash(this)">
+      <span class="stash-icon" style="color:var(--amber)">&#8862;</span>
+      <span>git stash list</span>
+      <span style="color:var(--text-dim); font-size:0.65rem; margin-left:auto"># earlier commits &mdash; click to expand</span>
+    </div>
+    <div class="stash-entries">
+      <div class="stash-row" onclick="toggleStashShow(this)">
+        <div class="commit-hash">c3e9b12</div>
+        <div class="commit-main">
+          <div class="commit-subject" style="color:var(--text-muted)">Lead Game Designer / UX</div>
+          <div class="commit-studio">Outact</div>
+        </div>
+        <div class="commit-date" style="color:var(--text-dim)">2015 &rarr; 2017</div>
+      </div>
+      <div class="stash-show">
+        <div class="gs-line"><span class="gs-key">commit </span><span class="gs-val">c3e9b12</span></div>
+        <div class="gs-line"><span class="gs-key">Date:   </span><span class="gs-val">2015 &rarr; 2017</span></div>
+        <div class="gs-section">DESCRIPTION</div>
+        <div class="gs-bullet">Lead Game Designer / UX at Outact</div>
+        <div class="gs-bullet">Designed core game systems and UX flows for mobile titles</div>
+      </div>
+
+      <div class="stash-row" onclick="toggleStashShow(this)">
+        <div class="commit-hash">a1f4c88</div>
+        <div class="commit-main">
+          <div class="commit-subject" style="color:var(--text-muted)">Game Designer</div>
+          <div class="commit-studio">Tencent</div>
+        </div>
+        <div class="commit-date" style="color:var(--text-dim)">2013 &rarr; 2015</div>
+      </div>
+      <div class="stash-show">
+        <div class="gs-line"><span class="gs-key">commit </span><span class="gs-val">a1f4c88</span></div>
+        <div class="gs-line"><span class="gs-key">Date:   </span><span class="gs-val">2013 &rarr; 2015</span></div>
+        <div class="gs-section">DESCRIPTION</div>
+        <div class="gs-bullet">Game Designer at Tencent</div>
+        <div class="gs-bullet">Worked on game design and systems for large-scale online titles</div>
+      </div>
+
+      <div class="stash-row" onclick="toggleStashShow(this)">
+        <div class="commit-hash">f7d2e01</div>
+        <div class="commit-main">
+          <div class="commit-subject" style="color:var(--text-muted)">Game Designer</div>
+          <div class="commit-studio">Petroglyph Games</div>
+        </div>
+        <div class="commit-date" style="color:var(--text-dim)">2008 &rarr; 2013</div>
+      </div>
+      <div class="stash-show">
+        <div class="gs-line"><span class="gs-key">commit </span><span class="gs-val">f7d2e01</span></div>
+        <div class="gs-line"><span class="gs-key">Date:   </span><span class="gs-val">2008 &rarr; 2013</span></div>
+        <div class="gs-section">DESCRIPTION</div>
+        <div class="gs-bullet">Game Designer at Petroglyph Games</div>
+        <div class="gs-bullet">RTS and strategy game design &mdash; systems, balancing, and level design</div>
+        <div class="gs-bullet">Early career foundation in systemic game design</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SKILLS -->
+  <div class="skills-panel fade-in">
+    <div class="skills-header">
+      <span class="ps">~/mberman $</span> cat skills.json
+    </div>
+    <div class="skills-body">
+      <div class="skill-group">
+        <h3>// LEADERSHIP</h3>
+        <span class="skill-tag">Game Direction</span>
+        <span class="skill-tag">Design Management</span>
+        <span class="skill-tag">Product Ownership</span>
+        <span class="skill-tag">Cross-functional</span>
+        <span class="skill-tag">Mentorship</span>
+        <span class="skill-tag">Roadmapping</span>
+      </div>
+      <div class="skill-group">
+        <h3>// DESIGN</h3>
+        <span class="skill-tag">Systems Design</span>
+        <span class="skill-tag">UX / UI</span>
+        <span class="skill-tag">Graybox / Prototype</span>
+        <span class="skill-tag">Progression</span>
+        <span class="skill-tag">Live Service</span>
+        <span class="skill-tag">FTUE / Onboarding</span>
+      </div>
+      <div class="skill-group">
+        <h3>// TOOLS</h3>
+        <span class="skill-tag">Unreal Engine</span>
+        <span class="skill-tag">Unity</span>
+        <span class="skill-tag">Figma</span>
+        <span class="skill-tag">Jira</span>
+        <span class="skill-tag">Confluence</span>
+        <span class="skill-tag">Miro</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-prompt">
+      <span class="ps">~/mberman/experience $</span>
+      <span class="footer-cursor">&#9608;</span>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:envyberman@gmail.com">email</a>
+      <a href="https://linkedin.com/in/bermandesign" target="_blank" rel="noopener">linkedin</a>
+      <div class="footer-sep"></div>
+      <a href="index.html">&larr; home</a>
+      <a href="../versions.html">&larr; versions</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleCommit(row) {
+  var show = row.nextElementSibling;
+  if (!show || !show.classList.contains('git-show')) return;
+  var isOpen = show.classList.contains('open');
+  // Close all main commit shows
+  document.querySelectorAll('.git-show.open').forEach(function(s) { s.classList.remove('open'); });
+  if (!isOpen) show.classList.add('open');
+}
+
+function toggleStash(el) {
+  var entries = el.nextElementSibling;
+  if (!entries) return;
+  entries.classList.toggle('open');
+  var icon = el.querySelector('.stash-icon');
+  if (icon) icon.style.color = entries.classList.contains('open') ? 'var(--green)' : 'var(--amber)';
+}
+
+function toggleStashShow(row) {
+  var show = row.nextElementSibling;
+  if (!show || !show.classList.contains('stash-show')) return;
+  var isOpen = show.classList.contains('open');
+  document.querySelectorAll('.stash-show.open').forEach(function(s) { s.classList.remove('open'); });
+  if (!isOpen) show.classList.add('open');
+}
+
+// Scroll fade
+var fadeEls = document.querySelectorAll('.fade-in');
+var io = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(function(el) { io.observe(el); });
+</script>
+</body>
+</html>
