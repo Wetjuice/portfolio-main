@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael Berman — Game Director</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0C0E0F;
+      --bg-panel:  #111315;
+      --bg-raised: #161819;
+      --border:    #1E2224;
+      --border-hi: #2A2D30;
+      --text:      #C8C5C0;
+      --text-muted:#6B6966;
+      --text-dim:  #323436;
+      --accent:    #E76028;
+      --green:     #3DB870;
+      --amber:     #D4A027;
+      --red:       #E05252;
+      --mono:      'JetBrains Mono', 'Fira Code', monospace;
+      --sans:      'Inter', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════
+       BOOT SCREEN
+    ══════════════════════════════ */
+    #boot {
+      position: fixed;
+      inset: 0;
+      background: #080909;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: var(--mono);
+    }
+    #boot.fade-out {
+      animation: bootFade 0.6s ease forwards;
+    }
+    @keyframes bootFade {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    /* Scanlines */
+    #boot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.15) 2px,
+        rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .boot-terminal {
+      width: 100%;
+      max-width: 680px;
+      border: 1px solid #1E2224;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03);
+    }
+
+    .boot-titlebar {
+      background: #161819;
+      border-bottom: 1px solid #1E2224;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .boot-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .boot-dot.r { background: #E05252; }
+    .boot-dot.y { background: #D4A027; }
+    .boot-dot.g { background: #3DB870; }
+    .boot-titlebar-label {
+      margin-left: auto;
+      margin-right: auto;
+      transform: translateX(-24px);
+      font-size: 0.7rem;
+      color: #3A3836;
+      letter-spacing: 0.1em;
+    }
+
+    .boot-body {
+      background: #080909;
+      padding: 24px 20px 20px;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .boot-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: baseline;
+      font-size: clamp(0.65rem, 1.8vw, 0.75rem);
+      letter-spacing: 0.03em;
+      color: #3A3836;
+      margin-bottom: 5px;
+      opacity: 0;
+    }
+    .boot-line.show { opacity: 1; }
+    .boot-line-label {
+      color: #4A4844;
+    }
+    .boot-line-dots {
+      color: #232526;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .boot-line-status {
+      font-weight: 700;
+      font-size: clamp(0.6rem, 1.5vw, 0.68rem);
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .boot-line-status.ok     { color: var(--green); }
+    .boot-line-status.active { color: var(--accent); }
+    .boot-line-status.warn   { color: var(--amber); }
+    .boot-line-status.pending{ color: #3A3836; }
+
+    .boot-line.header-row .boot-line-label {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: clamp(0.7rem, 2vw, 0.82rem);
+      letter-spacing: 0.15em;
+    }
+
+    .boot-divider {
+      border: none;
+      border-top: 1px solid #161819;
+      margin: 10px 0;
+      opacity: 0;
+    }
+    .boot-divider.show { opacity: 1; }
+
+    /* Prompt section */
+    .boot-prompt {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid #161819;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .boot-prompt.show { opacity: 1; }
+
+    .boot-hold-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .boot-hold-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .boot-hold-bar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      width: 100%;
+    }
+    .boot-hold-bar-seg {
+      flex: 1;
+      height: 6px;
+      background: #111315;
+      border: 1px solid #1E2224;
+      transition: background 0.05s, border-color 0.05s;
+    }
+    .boot-hold-bar-seg.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .boot-hold-status {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+    .boot-hold-status.active { color: var(--accent); }
+
+    .boot-hold-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 9px 16px;
+      border: 1px solid rgba(231,96,40,0.3);
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .boot-hold-btn:hover { border-color: rgba(231,96,40,0.6); }
+    .boot-hold-btn.holding {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(231,96,40,0.2);
+    }
+    .boot-hold-btn.complete {
+      border-color: var(--green);
+      animation: flashGreen 0.3s ease;
+    }
+    @keyframes flashGreen {
+      0% { background: rgba(61,184,112,0.25); }
+      100% { background: transparent; }
+    }
+    .boot-hold-fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 0%;
+      background: rgba(231,96,40,0.1);
+      pointer-events: none;
+    }
+    .boot-hold-fill.resetting {
+      transition: width 0.35s ease;
+    }
+    .boot-hold-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+      letter-spacing: 0.12em;
+      color: #8A8784;
+      white-space: nowrap;
+      gap: 6px;
+    }
+    .boot-bracket { color: rgba(231,96,40,0.5); }
+    .boot-cursor-blink {
+      color: var(--accent);
+      animation: blink 0.7s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    #transition-overlay {
+      position: fixed;
+      inset: 0;
+      background: #080909;
+      z-index: 8999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    #transition-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ══════════════════════════════
+       SITE (revealed after boot)
+    ══════════════════════════════ */
+    #site {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    #site.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(12,14,15,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--text-muted); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--bg-raised);
+    }
+    .nav-links a::before { content: './'; color: var(--text-dim); }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    .hero {
+      padding: 64px 24px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .terminal-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .tp-bar {
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tp-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .tp-dot.r { background: #4A2020; }
+    .tp-dot.y { background: #3A3010; }
+    .tp-dot.g { background: #183A28; }
+    .tp-bar-label {
+      margin-left: 8px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+    }
+    .tp-body {
+      padding: 28px 28px 32px;
+      font-family: var(--mono);
+    }
+
+    .prompt-line {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .prompt-line .ps { color: var(--accent); }
+    .prompt-line .cmd { color: var(--text); }
+
+    .hero-name {
+      font-family: var(--sans);
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 600;
+      color: #ECEAE6;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .hero-title {
+      font-family: var(--mono);
+      font-size: clamp(0.72rem, 2vw, 0.82rem);
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+    .hero-tagline {
+      font-family: var(--mono);
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      color: var(--text);
+      border-left: 2px solid var(--accent);
+      padding-left: 14px;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .hero-tagline .cmt { color: var(--text-muted); font-style: normal; }
+
+    .stats-cmd {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stats-cmd .ps { color: var(--accent); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+    .stat-cell {
+      background: var(--bg-panel);
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .stat-val {
+      font-family: var(--mono);
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+    .stat-key {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+      display: block;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: #ECEAE6;
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 8px 18px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      background: #F27040;
+      box-shadow: 0 0 16px rgba(231,96,40,0.3);
+    }
+    .btn-ghost {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border-hi);
+      padding: 8px 18px;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
+
+    /* ══════════════════════════════
+       SECTION WRAPPER
+    ══════════════════════════════ */
+    .section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .section-prompt {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+    }
+    .section-cmd {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════
+       PRINCIPLES
+    ══════════════════════════════ */
+    .principles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .principle-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0;
+      background: var(--bg-panel);
+      transition: background 0.15s;
+    }
+    .principle-row:hover { background: var(--bg-raised); }
+    .principle-flag {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      padding: 16px 20px;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      align-self: start;
+    }
+    .principle-body {
+      padding: 16px 20px;
+    }
+    .principle-name {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .principle-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .principle-status {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      padding: 16px 16px;
+      white-space: nowrap;
+      align-self: start;
+    }
+    .principles-more {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .principles-more .ps { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); }
+    .principles-more a {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .principles-more a:hover { color: var(--text); }
+
+    /* ══════════════════════════════
+       EXPERIENCE PREVIEW
+    ══════════════════════════════ */
+    .exp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .exp-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 0;
+      background: var(--bg-panel);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .exp-row:hover { background: var(--bg-raised); }
+    .exp-hash {
+      padding: 14px 14px;
+      color: var(--text-dim);
+      border-right: 1px solid var(--border);
+      font-size: 0.65rem;
+      align-self: start;
+    }
+    .exp-role {
+      padding: 14px 16px;
+      color: var(--text);
+      align-self: start;
+    }
+    .exp-role-title { color: var(--text); font-weight: 500; margin-bottom: 2px; }
+    .exp-role-studio { color: var(--text-muted); font-size: 0.65rem; }
+    .exp-period {
+      padding: 14px 16px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      align-self: start;
+      font-size: 0.65rem;
+    }
+    .exp-badge {
+      padding: 14px 14px;
+      align-self: start;
+      white-space: nowrap;
+    }
+    .badge { font-size: 0.6rem; letter-spacing: 0.1em; padding: 2px 7px; border-radius: 2px; }
+    .badge-active { background: rgba(231,96,40,0.15); color: var(--accent); border: 1px solid rgba(231,96,40,0.3); }
+    .badge-done   { background: rgba(61,184,112,0.1); color: var(--green); border: 1px solid rgba(61,184,112,0.2); }
+
+    .exp-detail {
+      display: none;
+      background: #0A0C0D;
+      border-top: 1px solid var(--border);
+      padding: 16px 20px 16px 60px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .exp-detail.open { display: block; }
+    .exp-detail-line { margin-bottom: 4px; }
+    .exp-detail-key { color: var(--text-dim); }
+    .exp-detail-val { color: var(--text); }
+    .exp-detail-metric { color: var(--green); }
+
+    .exp-more {
+      margin-top: 16px;
+    }
+    .exp-more a {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .exp-more a:hover { color: var(--accent); }
+    .exp-more .ps { color: var(--accent); }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-prompt {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-prompt .ps { color: var(--accent); }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text-muted); }
+    .back-link {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .back-link:hover { color: var(--text-muted); }
+
+    /* ══════════════════════════════
+       SCROLL FADE
+    ══════════════════════════════ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .exp-row { grid-template-columns: auto 1fr auto; }
+      .exp-badge { display: none; }
+      .principle-row { grid-template-columns: 1fr; }
+      .principle-flag { border-right: none; border-bottom: 1px solid var(--border); padding: 10px 16px; }
+      .principle-status { display: none; }
+      .nav-links a::before { display: none; }
+    }
+    @media (max-width: 480px) {
+      .hero { padding: 40px 16px; }
+      .section { padding: 0 16px 48px; }
+      .tp-body { padding: 20px 16px 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-ctas { flex-direction: column; }
+      .btn-primary, .btn-ghost { text-align: center; }
+      .exp-row { grid-template-columns: auto 1fr; }
+      .exp-period { display: none; }
+      nav { padding: 0 16px; }
+      .nav-links { gap: 0; }
+      .nav-links a { padding: 4px 6px; font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ BOOT SCREEN ═══════════════ -->
+<div id="boot">
+  <div class="boot-terminal">
+    <div class="boot-titlebar">
+      <div class="boot-dot r"></div>
+      <div class="boot-dot y"></div>
+      <div class="boot-dot g"></div>
+      <span class="boot-titlebar-label">mberman.portfolio — bash</span>
+    </div>
+    <div class="boot-body" id="boot-body">
+
+      <div class="boot-line header-row" id="bl-0">
+        <span class="boot-line-label">MB.SYS v3.0 — PORTFOLIO RUNTIME</span>
+        <span class="boot-line-status active"></span>
+      </div>
+      <hr class="boot-divider" id="bd-0">
+
+      <div class="boot-line" id="bl-1">
+        <span class="boot-line-label">Loading identity module<span class="boot-line-dots"> ····················································· </span></span>
+        <span class="boot-line-status ok" data-text="[ OK ]"></span>
+      </div>
+      <div class="boot-line" id="bl-2">
+        <span class="boot-line-label">Verifying career history (16+ years)<span class="boot-line-dots"> ··········································· </span></span>
+        <span class="boot-line-status ok" data-text="[ OK ]"></span>
+      </div>
+      <div class="boot-line" id="bl-3">
+        <span class="boot-line-label">Mounting experience index<span class="boot-line-dots"> ················································· </span></span>
+        <span class="boot-line-status ok" data-text="[ OK ]"></span>
+      </div>
+      <div class="boot-line" id="bl-4">
+        <span class="boot-line-label">Importing design philosophy<span class="boot-line-dots"> ··············································· </span></span>
+        <span class="boot-line-status ok" data-text="[ OK ]"></span>
+      </div>
+
+      <hr class="boot-divider" id="bd-1">
+
+      <div class="boot-line" id="bl-5">
+        <span class="boot-line-label">Sony Interactive Entertainment / Bend Studio<span class="boot-line-dots"> ··················· </span></span>
+        <span class="boot-line-status active" data-text="[ ACTIVE ▶ ]"></span>
+      </div>
+      <div class="boot-line" id="bl-6">
+        <span class="boot-line-label">Deep Silver Volition · Saints Row (2022)<span class="boot-line-dots"> ······················· </span></span>
+        <span class="boot-line-status ok" data-text="[ SHIPPED ]"></span>
+      </div>
+      <div class="boot-line" id="bl-7">
+        <span class="boot-line-label">Pocket Gems · War Dragons · D3 retention +12%<span class="boot-line-dots"> ··················· </span></span>
+        <span class="boot-line-status ok" data-text="[ SHIPPED ]"></span>
+      </div>
+      <div class="boot-line" id="bl-8">
+        <span class="boot-line-label">Principle engine: player-first, graybox-first, systems-driven<span class="boot-line-dots"> ···· </span></span>
+        <span class="boot-line-status ok" data-text="[ LOADED ]"></span>
+      </div>
+
+      <hr class="boot-divider" id="bd-2">
+
+      <div class="boot-line" id="bl-9">
+        <span class="boot-line-label">Rendering portfolio<span class="boot-line-dots"> ······················································ </span></span>
+        <span class="boot-line-status ok" data-text="[ READY ]"></span>
+      </div>
+
+      <div class="boot-prompt" id="boot-prompt">
+        <div class="boot-hold-wrap">
+          <div class="boot-hold-left">
+            <div class="boot-hold-bar" id="hold-bar"></div>
+            <div class="boot-hold-status" id="hold-status">// press &amp; hold · any key or tap</div>
+          </div>
+          <div class="boot-hold-btn" id="hold-btn" tabindex="0" role="button" aria-label="Hold to launch">
+            <div class="boot-hold-fill" id="hold-fill"></div>
+            <div class="boot-hold-inner">
+              <span class="boot-bracket">[</span>
+              <span id="hold-label">HOLD</span>
+              <span class="boot-cursor-blink">█</span>
+              <span class="boot-bracket">]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="transition-overlay"></div>
+
+<!-- ═══════════════ MAIN SITE ═══════════════ -->
+<div id="site">
+
+  <nav>
+    <a href="#" class="nav-logo">~/mberman <span>$</span></a>
+    <div class="nav-links">
+      <a href="about.html">about</a>
+      <a href="experience.html">experience</a>
+      <a href="library.html">library</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="terminal-panel fade-in">
+      <div class="tp-bar">
+        <div class="tp-dot r"></div>
+        <div class="tp-dot y"></div>
+        <div class="tp-dot g"></div>
+        <span class="tp-bar-label">~/mberman — bash</span>
+      </div>
+      <div class="tp-body">
+
+        <div class="prompt-line">
+          <span class="ps">~/mberman $</span>
+          <span class="cmd">whoami</span>
+        </div>
+
+        <div class="hero-name">Michael Berman</div>
+        <div class="hero-title">GAME_DIRECTOR · SONY_INTERACTIVE / BEND_STUDIO</div>
+        <div class="hero-tagline">
+          <span class="cmt">// </span>Build for players, not designers.
+        </div>
+
+        <div class="stats-cmd">
+          <span class="ps">~/mberman $</span>
+          <span>cat stats.txt</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-cell">
+            <span class="stat-val">16+</span>
+            <span class="stat-key">--years</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val">5</span>
+            <span class="stat-key">--studios</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val">10+</span>
+            <span class="stat-key">--products</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val">6+</span>
+            <span class="stat-key">--yrs-leading</span>
+          </div>
+        </div>
+
+        <div class="hero-ctas">
+          <a href="experience.html" class="btn-primary">./experience</a>
+          <a href="about.html" class="btn-ghost">./about</a>
+          <a href="library.html" class="btn-ghost">./library</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINCIPLES -->
+  <div class="section">
+    <div class="section-header fade-in">
+      <span class="section-prompt">~/mberman $</span>
+      <span class="section-cmd">cat principles.conf | head -3</span>
+    </div>
+    <div class="principles-list fade-in">
+      <div class="principle-row">
+        <div class="principle-flag">--player-first</div>
+        <div class="principle-body">
+          <div class="principle-name">Build for your audience, not yourself.</div>
+          <div class="principle-desc">Player empathy over designer taste. Research and playtesting close the gap between what you think works and what actually does. Your preferences are a sample size of one.</div>
+        </div>
+        <div class="principle-status">[ ACTIVE ]</div>
+      </div>
+      <div class="principle-row">
+        <div class="principle-flag">--graybox-first</div>
+        <div class="principle-body">
+          <div class="principle-name">Find the fun before you spend on polish.</div>
+          <div class="principle-desc">Low-fidelity prototyping identifies high-confidence features before costly production begins. The most expensive mistake in AAA is polishing the wrong thing.</div>
+        </div>
+        <div class="principle-status">[ ACTIVE ]</div>
+      </div>
+      <div class="principle-row">
+        <div class="principle-flag">--systems-driven</div>
+        <div class="principle-body">
+          <div class="principle-name">Design systems, not content.</div>
+          <div class="principle-desc">Content requires more content to sustain itself. Systems compound. Build the rules that generate the experiences, not the experiences themselves.</div>
+        </div>
+        <div class="principle-status">[ ACTIVE ]</div>
+      </div>
+    </div>
+    <div class="principles-more fade-in">
+      <span class="ps">~/mberman $</span>
+      <a href="about.html">cat principles.conf <span style="color:var(--text-dim)"># view all 8 →</span></a>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE PREVIEW -->
+  <div class="section">
+    <div class="section-header fade-in">
+      <span class="section-prompt">~/mberman $</span>
+      <span class="section-cmd">git log --oneline --all</span>
+    </div>
+    <div class="exp-list fade-in">
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">e7a3f1c</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Game Director</div>
+          <div class="exp-role-studio">Sony Interactive Entertainment / Bend Studio</div>
+        </div>
+        <div class="exp-period">Feb 2025 → present</div>
+        <div class="exp-badge"><span class="badge badge-active">ACTIVE</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">role: </span><span class="exp-detail-val">Game Director — unannounced AAA PC/Console title</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">team: </span><span class="exp-detail-val">15+ developers · 6 direct reports</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">focus: </span><span class="exp-detail-val">Direction, creative vision, cross-discipline leadership</span></div>
+      </div>
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">b2d8a90</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Design Manager &amp; Product Owner</div>
+          <div class="exp-role-studio">Sony Interactive Entertainment / Bend Studio</div>
+        </div>
+        <div class="exp-period">May 2022 → Feb 2025</div>
+        <div class="exp-badge"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">role: </span><span class="exp-detail-val">Design Manager &amp; Product Owner</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">team: </span><span class="exp-detail-val">10+ designers · cross-functional product ownership</span></div>
+      </div>
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">9f1c2e4</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Design Director</div>
+          <div class="exp-role-studio">Deep Silver Volition</div>
+        </div>
+        <div class="exp-period">2021 → 2022</div>
+        <div class="exp-badge"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">title: </span><span class="exp-detail-val">Saints Row (2022 reboot)</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">team: </span><span class="exp-detail-val">10–13 designers</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">highlight: </span><span class="exp-detail-val">"Boss Factory" pre-release character creation demo — major community engagement driver</span></div>
+      </div>
+
+      <div class="exp-row" onclick="toggleExp(this)">
+        <div class="exp-hash">4a7b3d2</div>
+        <div class="exp-role">
+          <div class="exp-role-title">Lead UX Designer / Product Manager</div>
+          <div class="exp-role-studio">Pocket Gems — War Dragons</div>
+        </div>
+        <div class="exp-period">2017 → 2021</div>
+        <div class="exp-badge"><span class="badge badge-done">SHIPPED</span></div>
+      </div>
+      <div class="exp-detail">
+        <div class="exp-detail-line"><span class="exp-detail-key">outcome: </span><span class="exp-detail-metric">+12% D3 retention</span></div>
+        <div class="exp-detail-line"><span class="exp-detail-key">scope: </span><span class="exp-detail-val">UX design, product management, live service features</span></div>
+      </div>
+
+    </div>
+    <div class="exp-more fade-in">
+      <a href="experience.html"><span class="ps">$</span> git log --all <span style="color:var(--text-dim)"># full history →</span></a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-prompt">
+        <span class="ps">~/mberman $</span>
+        <span class="boot-cursor-blink">█</span>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:envyberman@gmail.com">email</a>
+        <a href="https://linkedin.com/in/bermandesign" target="_blank">linkedin</a>
+        <a href="../versions.html" class="back-link">← versions</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /site -->
+
+<script>
+/* ═══════════════════════════════════════
+   BOOT SEQUENCE
+═══════════════════════════════════════ */
+const HOLD_DURATION = 1600;
+const BAR_SEGMENTS  = 16;
+const PROMPT_DELAY  = 400;
+
+const bootEl    = document.getElementById('boot');
+const siteEl    = document.getElementById('site');
+const overlayEl = document.getElementById('transition-overlay');
+const promptEl  = document.getElementById('boot-prompt');
+const holdBtn   = document.getElementById('hold-btn');
+const holdFill  = document.getElementById('hold-fill');
+const holdBarEl = document.getElementById('hold-bar');
+const holdStatusEl = document.getElementById('hold-status');
+
+// Build bar segments
+const segs = [];
+for (let i = 0; i < BAR_SEGMENTS; i++) {
+  const s = document.createElement('div');
+  s.className = 'boot-hold-bar-seg';
+  holdBarEl.appendChild(s);
+  segs.push(s);
+}
+
+// Animate boot lines
+const LINES = [
+  { el: 'bl-0', delay: 0,    statusDelay: 0 },
+  { el: 'bd-0', delay: 200,  statusDelay: 0 },
+  { el: 'bl-1', delay: 350,  statusDelay: 500 },
+  { el: 'bl-2', delay: 750,  statusDelay: 400 },
+  { el: 'bl-3', delay: 1100, statusDelay: 380 },
+  { el: 'bl-4', delay: 1430, statusDelay: 420 },
+  { el: 'bd-1', delay: 1800, statusDelay: 0 },
+  { el: 'bl-5', delay: 1900, statusDelay: 350 },
+  { el: 'bl-6', delay: 2250, statusDelay: 320 },
+  { el: 'bl-7', delay: 2560, statusDelay: 340 },
+  { el: 'bl-8', delay: 2870, statusDelay: 380 },
+  { el: 'bd-2', delay: 3220, statusDelay: 0 },
+  { el: 'bl-9', delay: 3350, statusDelay: 450 },
+];
+
+let promptReady = false;
+let launched    = false;
+let holdStart   = null;
+let holdRaf     = null;
+let isHolding   = false;
+
+LINES.forEach(({ el, delay, statusDelay }) => {
+  const elem = document.getElementById(el);
+  if (!elem) return;
+  setTimeout(() => {
+    elem.classList.add('show');
+    const statusEl = elem.querySelector('.boot-line-status');
+    if (statusEl && statusEl.dataset.text && statusDelay > 0) {
+      statusEl.textContent = '';
+      setTimeout(() => {
+        statusEl.textContent = statusEl.dataset.text;
+      }, statusDelay);
+    }
+  }, delay);
+});
+
+// Show prompt after last line
+setTimeout(() => {
+  promptEl.classList.add('show');
+  setTimeout(() => { promptReady = true; }, PROMPT_DELAY);
+}, 4200);
+
+// Hold mechanic
+function updateBar(progress) {
+  const filled = Math.round(progress * BAR_SEGMENTS);
+  segs.forEach((s, i) => s.classList.toggle('filled', i < filled));
+  holdFill.style.width = (progress * 100) + '%';
+
+  if (progress < 0.5) {
+    holdStatusEl.textContent = '// press & hold · any key or tap';
+    holdStatusEl.classList.remove('active');
+  } else if (progress < 0.9) {
+    holdStatusEl.textContent = '// initializing...';
+    holdStatusEl.classList.add('active');
+  } else {
+    holdStatusEl.textContent = '// launching...';
+    holdStatusEl.classList.add('active');
+  }
+}
+
+function startHold() {
+  if (!promptReady || launched || isHolding) return;
+  isHolding = true;
+  holdStart = performance.now();
+  holdBtn.classList.add('holding');
+  holdFill.classList.remove('resetting');
+  tickHold();
+}
+
+function tickHold() {
+  const elapsed  = performance.now() - holdStart;
+  const progress = Math.min(elapsed / HOLD_DURATION, 1);
+  updateBar(progress);
+  if (progress >= 1) {
+    completeHold();
+  } else {
+    holdRaf = requestAnimationFrame(tickHold);
+  }
+}
+
+function cancelHold() {
+  if (!isHolding) return;
+  isHolding = false;
+  if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
+  holdBtn.classList.remove('holding');
+  holdStatusEl.textContent = '// press & hold · any key or tap';
+  holdStatusEl.classList.remove('active');
+  holdFill.classList.add('resetting');
+  holdFill.style.width = '0%';
+  segs.forEach(s => s.classList.remove('filled'));
+  setTimeout(() => holdFill.classList.remove('resetting'), 350);
+}
+
+function completeHold() {
+  if (launched) return;
+  launched = true;
+  isHolding = false;
+  if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; }
+  holdBtn.classList.remove('holding');
+  holdBtn.classList.add('complete');
+  holdStatusEl.textContent = '// access granted';
+  holdStatusEl.classList.add('active');
+  if (navigator.vibrate) navigator.vibrate(60);
+  setTimeout(() => {
+    overlayEl.classList.add('active');
+    setTimeout(() => {
+      bootEl.classList.add('fade-out');
+      siteEl.classList.add('visible');
+      setTimeout(() => {
+        bootEl.style.display = 'none';
+        overlayEl.classList.remove('active');
+      }, 600);
+    }, 300);
+  }, 200);
+}
+
+// Mouse / Touch
+holdBtn.addEventListener('mousedown', startHold);
+holdBtn.addEventListener('touchstart', e => { e.preventDefault(); startHold(); }, { passive: false });
+document.addEventListener('mouseup', cancelHold);
+document.addEventListener('touchend', cancelHold);
+
+// Keyboard
+let keyHolding = false;
+document.addEventListener('keydown', e => {
+  if (e.repeat || keyHolding) return;
+  keyHolding = true;
+  startHold();
+});
+document.addEventListener('keyup', () => {
+  keyHolding = false;
+  cancelHold();
+});
+
+/* ═══════════════════════════════════════
+   EXPERIENCE EXPAND/COLLAPSE
+═══════════════════════════════════════ */
+function toggleExp(row) {
+  const detail = row.nextElementSibling;
+  if (!detail || !detail.classList.contains('exp-detail')) return;
+  detail.classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════
+   SCROLL FADE-IN
+═══════════════════════════════════════ */
+const fadeEls = document.querySelectorAll('.fade-in');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+fadeEls.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
