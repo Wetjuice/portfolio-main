@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Michael Berman, Game Director</title>
+  <meta name="description" content="Learn about Michael Berman — Game Director at Sony Bend Studio with 16+ years in the game industry.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────────────── */
+    :root {
+      --bg:            #1E2020;
+      --bg-deep:       #111212;
+      --bg-card:       #242626;
+      --bg-card-hover: #2B2E2E;
+      --surface-light: #F0ECE8;
+      --text:          #F7FCFA;
+      --text-dim:      #A3A1A0;
+      --text-muted:    #5C5A58;
+      --accent:        #E76028;
+      --accent-dim:    rgba(231,96,40,0.15);
+      --border:        rgba(255,255,255,0.07);
+      --border-hi:     rgba(255,255,255,0.12);
+      --nav-h:         72px;
+      --max-w:         1240px;
+      --font-display:  'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --font-mono:     'JetBrains Mono', monospace;
+      --ease-expo:     cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    .grain { position: relative; }
+    .grain::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .grain > * { position: relative; z-index: 1; }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h); z-index: 100;
+      transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+      border-bottom: 1px solid transparent;
+    }
+    #nav.scrolled {
+      background: rgba(17,18,18,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-color: var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+      height: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display); font-weight: 800; font-size: 1.25rem;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-link {
+      font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-dim);
+      padding: 8px 14px; border-radius: 6px; transition: color 0.2s, background 0.2s;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-link.active { color: var(--accent); }
+    .nav-cta {
+      font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase; color: var(--text);
+      padding: 8px 18px; border: 1px solid var(--border-hi); border-radius: 6px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .nav-cta:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px; width: 28px;
+    }
+    .nav-hamburger span { display: block; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .nav-mobile-overlay {
+      position: fixed; inset: 0; background: rgba(9,10,10,0.97); z-index: 99;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .nav-mobile-overlay.open { display: flex; }
+    .nav-mobile-link {
+      font-family: var(--font-display); font-size: 2.5rem; font-weight: 800;
+      letter-spacing: -0.03em; color: var(--text-dim); padding: 12px 0; transition: color 0.2s;
+    }
+    .nav-mobile-link:hover { color: var(--text); }
+    .nav-mobile-link.active { color: var(--accent); }
+
+    /* ─── PAGE HEADER ────────────────────────────────────────────── */
+    .page-header {
+      padding-top: calc(var(--nav-h) + 80px);
+      padding-bottom: 80px;
+      background: var(--bg-deep);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 50%, rgba(231,96,40,0.04) 100%);
+    }
+    .page-header-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+    }
+    .page-eyebrow {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    }
+    .page-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px; background: var(--accent);
+    }
+    .page-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(3.5rem, 9vw, 9rem);
+      letter-spacing: -0.05em; line-height: 0.9;
+      color: var(--text); max-width: 900px;
+    }
+    .page-title .dim { color: rgba(247,252,250,0.3); }
+
+    /* ─── SECTIONS ───────────────────────────────────────────────── */
+    .section { padding: 96px 0; }
+    .section-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; }
+    .section-label {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+    .section-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      letter-spacing: -0.04em; line-height: 1.05; color: var(--text); margin-bottom: 16px;
+    }
+
+    /* ─── WHO I AM ───────────────────────────────────────────────── */
+    #who {
+      background: var(--bg);
+    }
+    .who-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 56px;
+    }
+    .who-photo {
+      aspect-ratio: 3/4;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      position: relative;
+      overflow: hidden;
+    }
+    .who-photo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(231,96,40,0.05) 0%, transparent 60%);
+    }
+    .who-photo-icon {
+      width: 48px;
+      height: 48px;
+      color: var(--text-muted);
+      opacity: 0.4;
+    }
+    .who-photo-label { opacity: 0.5; text-transform: uppercase; }
+
+    .who-content {}
+    .who-bio {
+      font-size: 1.125rem;
+      color: var(--text);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+    .who-bio p + p { margin-top: 16px; }
+    .who-bio strong { color: var(--text); font-weight: 600; }
+    .who-bio em { color: var(--accent); font-style: normal; }
+
+    .who-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 48px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .who-stat {
+      background: var(--bg-card);
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .who-stat-num {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+      letter-spacing: -0.04em; color: var(--text); line-height: 1;
+    }
+    .who-stat-label {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 6px;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 32px;
+    }
+    .skill-tag {
+      font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-dim);
+      padding: 6px 14px; border: 1px solid var(--border-hi); border-radius: 4px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .skill-tag:hover { border-color: rgba(231,96,40,0.4); color: var(--text); }
+
+    /* ─── PHILOSOPHY ─────────────────────────────────────────────── */
+    #philosophy { background: var(--bg-deep); }
+    .phil-list {
+      margin-top: 60px;
+      border-top: 1px solid var(--border);
+    }
+    .phil-item {
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      overflow: hidden;
+    }
+    .phil-trigger {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 80px 1fr 40px;
+      align-items: center;
+      padding: 28px 0;
+      cursor: pointer;
+      transition: color 0.2s;
+      text-align: left;
+      background: none;
+    }
+    .phil-trigger:hover .phil-trigger-title { color: var(--text); }
+    .phil-trigger.open .phil-trigger-title { color: var(--text); }
+    .phil-trigger.open { }
+    .phil-num {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.15em;
+      color: var(--accent); font-weight: 500;
+    }
+    .phil-trigger-title {
+      font-family: var(--font-display); font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-weight: 700; letter-spacing: -0.02em; color: var(--text-dim);
+      transition: color 0.2s;
+    }
+    .phil-icon {
+      width: 24px; height: 24px; color: var(--text-muted); transition: transform 0.35s var(--ease-expo);
+      flex-shrink: 0; justify-self: end;
+    }
+    .phil-trigger.open .phil-icon { transform: rotate(45deg); color: var(--accent); }
+
+    .phil-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease-expo), padding 0.4s ease;
+    }
+    .phil-body.open {
+      max-height: 200px;
+    }
+    .phil-body-inner {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      padding-bottom: 28px;
+    }
+    .phil-body-text {
+      font-size: 1.0625rem;
+      color: var(--text-dim);
+      line-height: 1.75;
+      font-style: italic;
+      border-left: 2px solid var(--accent);
+      padding-left: 24px;
+    }
+
+    /* ─── LIGHT CTA ─────────────────────────────────────────────── */
+    #about-cta {
+      background: var(--surface-light);
+      padding: 96px 0;
+    }
+    .about-cta-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px;
+    }
+    .about-cta-text {}
+    .about-cta-eyebrow {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .about-cta-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(1.75rem, 3.5vw, 3rem);
+      letter-spacing: -0.04em; line-height: 1.05; color: #1a1a1a;
+    }
+    .about-cta-body {
+      font-size: 1.0625rem; color: #6a6866; margin-top: 12px; max-width: 420px;
+    }
+    .about-cta-actions { display: flex; gap: 12px; flex-shrink: 0; }
+    .btn-dark {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #1a1a1a; color: #fff;
+      font-family: var(--font-body); font-size: 0.8125rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 13px 24px; border-radius: 6px; transition: background 0.2s, transform 0.2s;
+    }
+    .btn-dark:hover { background: #2a2a2a; transform: translateY(-1px); }
+    .btn-outline-dark {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: #1a1a1a;
+      font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 12px 24px; border: 1px solid #ccc8c4; border-radius: 6px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline-dark:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-deep); border-top: 1px solid var(--border); padding: 40px 0;
+    }
+    .footer-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo { font-family: var(--font-display); font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--text-muted); }
+    .footer-links { display: flex; align-items: center; gap: 20px; }
+    .footer-link { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); transition: color 0.2s; }
+    .footer-link:hover { color: var(--accent); }
+
+    /* ─── SCROLL REVEAL ───────────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .who-grid { grid-template-columns: 1fr; gap: 48px; }
+      .who-photo { aspect-ratio: 16/9; max-height: 280px; }
+      .who-stats { grid-template-columns: repeat(2, 1fr); }
+      .about-cta-inner { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 768px) {
+      :root { --nav-h: 60px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-inner, .page-header-inner, .section-inner { padding: 0 20px; }
+      .page-header { padding-top: calc(var(--nav-h) + 48px); padding-bottom: 56px; }
+      .section { padding: 64px 0; }
+      .who-stats { grid-template-columns: repeat(2, 1fr); }
+      .phil-trigger { grid-template-columns: 56px 1fr 32px; }
+      .phil-body-inner { grid-template-columns: 56px 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      .who-stats { grid-template-columns: 1fr 1fr; }
+      .about-cta-actions { flex-direction: column; width: 100%; }
+      .btn-dark, .btn-outline-dark { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">M<span>.</span>B</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link active">About</a></li>
+      <li><a href="experience.html" class="nav-link">Experience</a></li>
+      <li><a href="portfolio.html" class="nav-link">Portfolio</a></li>
+      <li><a href="blog.html" class="nav-link">Blog</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile-overlay" id="mobileNav">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="about.html" class="nav-mobile-link active">About</a>
+  <a href="experience.html" class="nav-mobile-link">Experience</a>
+  <a href="portfolio.html" class="nav-mobile-link">Portfolio</a>
+  <a href="blog.html" class="nav-mobile-link">Blog</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+</div>
+
+<!-- PAGE HEADER -->
+<header class="page-header grain">
+  <div class="page-header-inner">
+    <div class="page-eyebrow reveal">About Michael Berman</div>
+    <h1 class="page-title reveal reveal-delay-1">
+      The<br>Designer<br><span class="dim">Behind</span><br><span class="dim">the Games.</span>
+    </h1>
+  </div>
+</header>
+
+<!-- WHO I AM -->
+<section id="who" class="section grain">
+  <div class="section-inner">
+    <div class="section-label reveal">Who I Am</div>
+    <div class="who-grid reveal reveal-delay-1">
+      <div class="who-photo">
+        <svg class="who-photo-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="24" cy="18" r="8"/>
+          <path d="M8 40c0-8.837 7.163-16 16-16s16 7.163 16 16"/>
+        </svg>
+        <span class="who-photo-label">Photo</span>
+      </div>
+
+      <div class="who-content">
+        <div class="who-bio">
+          <p>
+            I'm a <em>Game Director</em> with <strong>16+ years of experience</strong> across AAA console, PC, mobile, and live service games. I currently lead an unannounced title at <strong>Sony PlayStation / Bend Studio</strong> — the team behind Days Gone.
+          </p>
+          <p>
+            My career spans Sony, Deep Silver Volition (Saints Row), Outact, Pocket Gems, Tencent, and Petroglyph — giving me a rare breadth of experience across genres, team sizes, and production models.
+          </p>
+          <p>
+            I'm a <strong>systems thinker</strong> and a <strong>player advocate</strong>. I care deeply about designing experiences that respect the player's intelligence, reward curiosity, and create moments worth talking about.
+          </p>
+          <p>
+            Not a developer. A creative leader — the person who synthesizes engineering constraints, art direction, player data, and design intuition into a coherent, compelling whole.
+          </p>
+        </div>
+
+        <div class="who-stats">
+          <div class="who-stat">
+            <div class="who-stat-num">16+</div>
+            <div class="who-stat-label">Years</div>
+          </div>
+          <div class="who-stat">
+            <div class="who-stat-num">6+</div>
+            <div class="who-stat-label">Leadership</div>
+          </div>
+          <div class="who-stat">
+            <div class="who-stat-num">5</div>
+            <div class="who-stat-label">Studios</div>
+          </div>
+          <div class="who-stat">
+            <div class="who-stat-num">10+</div>
+            <div class="who-stat-label">Products</div>
+          </div>
+        </div>
+
+        <div class="skills-list">
+          <span class="skill-tag">Systems Design</span>
+          <span class="skill-tag">UX Design</span>
+          <span class="skill-tag">Progression Design</span>
+          <span class="skill-tag">Game Direction</span>
+          <span class="skill-tag">Creative Leadership</span>
+          <span class="skill-tag">Player-Centric Design</span>
+          <span class="skill-tag">Team Leadership</span>
+          <span class="skill-tag">Product Ownership</span>
+          <span class="skill-tag">Prototyping</span>
+          <span class="skill-tag">Figma</span>
+          <span class="skill-tag">Unreal Engine</span>
+          <span class="skill-tag">Game Balance</span>
+          <span class="skill-tag">Monetization Strategy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy" class="section grain">
+  <div class="section-inner">
+    <div class="section-label reveal">Philosophy</div>
+    <h2 class="section-title reveal reveal-delay-1">How I Think<br>About Design</h2>
+    <p class="reveal reveal-delay-2" style="font-size:1.0625rem;color:var(--text-dim);max-width:520px;line-height:1.65;margin-top:12px;">
+      Five principles that shape every design decision I make — earned from a decade and a half of shipping games.
+    </p>
+
+    <div class="phil-list reveal reveal-delay-3">
+
+      <div class="phil-item">
+        <button class="phil-trigger" data-target="p1">
+          <span class="phil-num">01</span>
+          <span class="phil-trigger-title">Iterative by Default</span>
+          <svg class="phil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="phil-body" id="p1">
+          <div class="phil-body-inner">
+            <span></span>
+            <p class="phil-body-text">
+              "Graybox first. Find the fun before you polish anything. Low fidelity exploration is the highest ROI phase in game development — and it's getting lost in AAA."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phil-item">
+        <button class="phil-trigger" data-target="p2">
+          <span class="phil-num">02</span>
+          <span class="phil-trigger-title">Anti Hand-Holding</span>
+          <svg class="phil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="phil-body" id="p2">
+          <div class="phil-body-inner">
+            <span></span>
+            <p class="phil-body-text">
+              "Let players discover. Onboarding and FTUE have their place — but the instinct to explain everything kills the joy of figuring things out. Trust your players."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phil-item">
+        <button class="phil-trigger" data-target="p3">
+          <span class="phil-num">03</span>
+          <span class="phil-trigger-title">Sustainable Systems Design</span>
+          <svg class="phil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="phil-body" id="p3">
+          <div class="phil-body-inner">
+            <span></span>
+            <p class="phil-body-text">
+              "Content-dependent games are treadmills. Systems-driven design creates depth that multiplies — content is the multiplier, not the foundation."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phil-item">
+        <button class="phil-trigger" data-target="p4">
+          <span class="phil-num">04</span>
+          <span class="phil-trigger-title">Player First, Always</span>
+          <svg class="phil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="phil-body" id="p4">
+          <div class="phil-body-inner">
+            <span></span>
+            <p class="phil-body-text">
+              "You are not your player. Your preferences are a starting point, not a spec. Research, feedback, and empathy fill the gap between what you'd design for yourself and what actually resonates."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phil-item">
+        <button class="phil-trigger" data-target="p5">
+          <span class="phil-num">05</span>
+          <span class="phil-trigger-title">Cross-Disciplinary Fluency</span>
+          <svg class="phil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="phil-body" id="p5">
+          <div class="phil-body-inner">
+            <span></span>
+            <p class="phil-body-text">
+              "The best game design decisions live at the intersection of systems, UX, production, and art. I've worked across all of them. I build bridges, not silos."
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="about-cta">
+  <div class="about-cta-inner">
+    <div class="about-cta-text reveal">
+      <div class="about-cta-eyebrow">Next Step</div>
+      <h2 class="about-cta-title">See the Full<br>Career Timeline</h2>
+      <p class="about-cta-body">16 years of roles, studios, projects, and shipped games — in detail.</p>
+    </div>
+    <div class="about-cta-actions reveal reveal-delay-2">
+      <a href="experience.html" class="btn-dark">View Experience →</a>
+      <a href="contact.html" class="btn-outline-dark">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="index.html" class="footer-logo">M<span>.</span>B</a>
+    <span class="footer-copy">© 2025 Michael Berman — Game Director</span>
+    <div class="footer-links">
+      <a href="https://linkedin.com/in/bermandesign" target="_blank" class="footer-link">LinkedIn</a>
+      <a href="mailto:MBerman47@gmail.com" class="footer-link">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    hamburger.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  // Accordion
+  document.querySelectorAll('.phil-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const targetId = trigger.dataset.target;
+      const body = document.getElementById(targetId);
+      const isOpen = trigger.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.phil-trigger').forEach(t => t.classList.remove('open'));
+      document.querySelectorAll('.phil-body').forEach(b => b.classList.remove('open'));
+
+      if (!isOpen) {
+        trigger.classList.add('open');
+        body.classList.add('open');
+      }
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — Michael Berman, Game Director</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1E2020; --bg-deep: #111212; --bg-card: #242626;
+      --text: #F7FCFA; --text-dim: #A3A1A0; --text-muted: #5C5A58;
+      --accent: #E76028; --accent-dim: rgba(231,96,40,0.15);
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(255,255,255,0.12);
+      --nav-h: 72px; --max-w: 1240px;
+      --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg-deep); color: var(--text); font-family: var(--font-body); font-size: 1rem; line-height: 1.65; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    #nav { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 100; transition: background 0.3s, border-color 0.3s; border-bottom: 1px solid transparent; }
+    #nav.scrolled { background: rgba(17,18,18,0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-color: var(--border); }
+    .nav-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; height: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-link { font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-dim); padding: 8px 14px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-link.active { color: var(--accent); }
+    .nav-cta { font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); padding: 8px 18px; border: 1px solid var(--border-hi); border-radius: 6px; transition: border-color 0.2s, color 0.2s; }
+    .nav-cta:hover { border-color: var(--accent); color: var(--accent); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; width: 28px; }
+    .nav-hamburger span { display: block; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .nav-mobile-overlay { position: fixed; inset: 0; background: rgba(9,10,10,0.97); z-index: 99; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    .nav-mobile-overlay.open { display: flex; }
+    .nav-mobile-link { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text-dim); padding: 12px 0; transition: color 0.2s; }
+    .nav-mobile-link:hover { color: var(--text); }
+    .nav-mobile-link.active { color: var(--accent); }
+
+    .page-header { padding-top: calc(var(--nav-h) + 80px); padding-bottom: 80px; background: var(--bg-deep); }
+    .page-header-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; }
+    .page-eyebrow { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .page-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+    .page-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 8vw, 8rem); letter-spacing: -0.05em; line-height: 0.9; color: var(--text); }
+    .page-title .dim { color: rgba(247,252,250,0.25); }
+
+    .coming-soon {
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 24px;
+      padding: 80px 32px;
+      background: var(--bg);
+    }
+    .cs-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .cs-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.5rem, 3vw, 2.5rem); letter-spacing: -0.04em; color: var(--text); text-align: center; }
+    .cs-body { font-size: 1rem; color: var(--text-dim); text-align: center; max-width: 400px; line-height: 1.65; }
+    .cs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-width: 800px; width: 100%; margin-top: 16px; }
+    .cs-card { background: var(--bg-card); aspect-ratio: 16/10; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .cs-card-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; }
+    .btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text); font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 12px 24px; border: 1px solid var(--border-hi); border-radius: 6px; transition: border-color 0.2s, color 0.2s; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    footer { background: var(--bg-deep); border-top: 1px solid var(--border); padding: 40px 0; }
+    .footer-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: var(--font-display); font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--text-muted); }
+    .footer-links { display: flex; align-items: center; gap: 20px; }
+    .footer-link { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); transition: color 0.2s; }
+    .footer-link:hover { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      :root { --nav-h: 60px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-inner, .page-header-inner { padding: 0 20px; }
+      .page-header { padding-top: calc(var(--nav-h) + 48px); padding-bottom: 48px; }
+      .cs-grid { grid-template-columns: 1fr 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">M<span>.</span>B</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="experience.html" class="nav-link">Experience</a></li>
+      <li><a href="portfolio.html" class="nav-link active">Portfolio</a></li>
+      <li><a href="blog.html" class="nav-link">Blog</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile-overlay" id="mobileNav">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="experience.html" class="nav-mobile-link">Experience</a>
+  <a href="portfolio.html" class="nav-mobile-link active">Portfolio</a>
+  <a href="blog.html" class="nav-mobile-link">Blog</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+</div>
+
+<header class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Selected Work</div>
+    <h1 class="page-title">Portfolio<br><span class="dim">Coming Soon</span></h1>
+  </div>
+</header>
+
+<div class="coming-soon">
+  <span class="cs-label">Under Construction</span>
+  <h2 class="cs-title">Case Studies In Progress</h2>
+  <p class="cs-body">Detailed case studies for Saints Row, Boss Factory, War Dragons progression redesign, and Sony Bend are being prepared. Check back soon — or get in touch directly.</p>
+  <div class="cs-grid">
+    <div class="cs-card"><span class="cs-card-label">Saints Row</span></div>
+    <div class="cs-card"><span class="cs-card-label">Boss Factory</span></div>
+    <div class="cs-card"><span class="cs-card-label">War Dragons</span></div>
+  </div>
+  <a href="contact.html" class="btn-outline">Reach Out Directly →</a>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="index.html" class="footer-logo">M<span>.</span>B</a>
+    <span class="footer-copy">© 2025 Michael Berman — Game Director</span>
+    <div class="footer-links">
+      <a href="https://linkedin.com/in/bermandesign" target="_blank" class="footer-link">LinkedIn</a>
+      <a href="mailto:MBerman47@gmail.com" class="footer-link">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    hamburger.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+})();
+</script>
+</body>
+</html>

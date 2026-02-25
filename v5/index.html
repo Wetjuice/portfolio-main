@@ -1,17 +1,1388 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Michael Berman — Game Director</title>
-    <meta name="description" content="Michael Berman — Game Director at Sony Bend Studio. 18+ years of creative leadership across 5 studios and 10+ shipped products." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/mberman-portfolio/v5/assets/index-CbXxgTME.js"></script>
-    <link rel="stylesheet" crossorigin href="/mberman-portfolio/v5/assets/index-C57f3BQO.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael Berman — Game Director</title>
+  <meta name="description" content="Michael Berman — Game Director at Sony Bend Studio. 16+ years building games people love.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────────────── */
+    :root {
+      --bg:            #1E2020;
+      --bg-deep:       #111212;
+      --bg-card:       #242626;
+      --bg-card-hover: #2B2E2E;
+      --surface-light: #F0ECE8;
+      --text:          #F7FCFA;
+      --text-dim:      #A3A1A0;
+      --text-muted:    #5C5A58;
+      --accent:        #E76028;
+      --accent-dim:    rgba(231,96,40,0.15);
+      --border:        rgba(255,255,255,0.07);
+      --border-hi:     rgba(255,255,255,0.12);
+      --nav-h:         72px;
+      --max-w:         1240px;
+      --font-display:  'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --font-mono:     'JetBrains Mono', monospace;
+      --ease-expo:     cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth:   cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ─── RESET ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    ul { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* ─── GRAIN TEXTURE ─────────────────────────────────────────── */
+    .grain {
+      position: relative;
+    }
+    .grain::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .grain > * { position: relative; z-index: 1; }
+
+    /* ─── BOOT SCREEN ────────────────────────────────────────────── */
+    #boot {
+      position: fixed;
+      inset: 0;
+      background: #090A0A;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+    #boot.fade-out {
+      animation: bootFade 0.8s var(--ease-smooth) forwards;
+    }
+    @keyframes bootFade {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    /* Scanline overlay */
+    #boot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.12) 2px,
+        rgba(0,0,0,0.12) 4px
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Vignette */
+    #boot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .boot-wrap {
+      width: 100%;
+      max-width: 600px;
+      z-index: 3;
+    }
+
+    .boot-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .boot-title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .boot-version {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #3a3c3c;
+      letter-spacing: 0.1em;
+    }
+
+    .boot-lines {
+      font-family: var(--font-mono);
+      font-size: clamp(0.75rem, 1.8vw, 0.875rem);
+      font-weight: 400;
+      line-height: 2;
+      color: #6E7070;
+      min-height: 224px;
+    }
+    .boot-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .boot-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .boot-line-label { color: #4A4C4C; }
+    .boot-line-dots { flex: 1; margin: 0 12px; color: #252727; overflow: hidden; }
+    .boot-line-status { }
+    .boot-line-status.ok { color: #4CAF82; }
+    .boot-line-status.active { color: var(--accent); }
+
+    .boot-prompt {
+      margin-top: 32px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .boot-prompt.visible { opacity: 1; }
+    .boot-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--text);
+      vertical-align: middle;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .boot-progress-bar {
+      margin-top: 40px;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .boot-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.15s linear;
+      border-radius: 1px;
+    }
+
+    /* ─── SITE WRAPPER ───────────────────────────────────────────── */
+    #site { opacity: 0; transition: opacity 0.6s ease; }
+    #site.visible { opacity: 1; }
+
+    /* ─── NAVIGATION ─────────────────────────────────────────────── */
+    #nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      z-index: 100;
+      transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+      border-bottom: 1px solid transparent;
+    }
+    #nav.scrolled {
+      background: rgba(17, 18, 18, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-color: var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-logo:hover { color: var(--text); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-link {
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-link.active { color: var(--accent); }
+    .nav-cta {
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text);
+      padding: 8px 18px;
+      border: 1px solid var(--border-hi);
+      border-radius: 6px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .nav-cta:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* Mobile nav */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      width: 28px;
+      height: 20px;
+      justify-content: center;
+    }
+    .nav-hamburger span {
+      display: block;
+      height: 1.5px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .nav-mobile-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(9,10,10,0.97);
+      z-index: 99;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    .nav-mobile-overlay.open { display: flex; }
+    .nav-mobile-link {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-dim);
+      padding: 12px 0;
+      transition: color 0.2s;
+    }
+    .nav-mobile-link:hover { color: var(--text); }
+    .nav-mobile-link.active { color: var(--accent); }
+
+    /* ─── HERO ───────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      background: var(--bg-deep);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-top: var(--nav-h);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background geometric accent */
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 60%, rgba(231,96,40,0.03) 100%);
+      pointer-events: none;
+    }
+
+    /* Vertical line accent */
+    .hero-line-accent {
+      position: absolute;
+      top: 15%;
+      right: 10%;
+      width: 1px;
+      height: 35%;
+      background: linear-gradient(to bottom, transparent, rgba(231,96,40,0.4), transparent);
+    }
+
+    .hero-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 32px;
+      width: 100%;
+      padding-bottom: 100px;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .hero-eyebrow-text {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(4.5rem, 11vw, 12rem);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 40px;
+    }
+    .hero-name-line2 {
+      display: block;
+      padding-left: clamp(2rem, 5vw, 7rem);
+      color: rgba(247,252,250,0.45);
+    }
+
+    .hero-divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .hero-divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--accent), transparent);
+      max-width: 120px;
+    }
+    .hero-divider-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+    }
+    .hero-bio {
+      font-size: clamp(1rem, 1.5vw, 1.125rem);
+      font-weight: 400;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+    .hero-bio strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 16px;
+    }
+    .hero-stat-row {
+      display: flex;
+      gap: 32px;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+    .hero-stat {
+      text-align: right;
+    }
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 13px 24px;
+      border-radius: 6px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #d05420; transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      border: 1px solid var(--border-hi);
+      border-radius: 6px;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+    /* Hero scroll indicator */
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.4;
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    .hero-scroll-text {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--text-dim), transparent);
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: translateX(-50%) translateY(0); }
+      50% { opacity: 0.6; transform: translateX(-50%) translateY(4px); }
+    }
+
+    /* ─── DIAGONAL DIVIDER ───────────────────────────────────────── */
+    .diagonal-divider {
+      width: 100%;
+      height: 80px;
+      background: var(--bg-deep);
+      clip-path: polygon(0 0, 100% 0, 100% 30%, 0 100%);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ─── SECTION BASE ────────────────────────────────────────────── */
+    .section {
+      padding: 100px 0;
+      position: relative;
+    }
+    .section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .section-subtitle {
+      font-size: 1.0625rem;
+      color: var(--text-dim);
+      max-width: 520px;
+      line-height: 1.65;
+    }
+
+    /* ─── WHAT I DO ───────────────────────────────────────────────── */
+    #what-i-do {
+      background: var(--bg);
+    }
+    .wid-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 60px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .wid-card {
+      background: var(--bg-card);
+      padding: 40px 32px;
+      position: relative;
+      transition: background 0.25s ease;
+      overflow: hidden;
+    }
+    .wid-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s var(--ease-expo);
+    }
+    .wid-card:hover { background: var(--bg-card-hover); }
+    .wid-card:hover::before { transform: scaleX(1); }
+
+    .wid-number {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .wid-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 20px;
+      color: var(--text-muted);
+    }
+    .wid-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .wid-body {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+    .wid-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 20px;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border: 1px solid var(--border-hi);
+      border-radius: 4px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .wid-card:hover .tag { border-color: rgba(231,96,40,0.3); }
+
+    /* ─── EXPERIENCE TEASER ───────────────────────────────────────── */
+    #exp-teaser {
+      background: var(--bg-deep);
+    }
+    .exp-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 60px;
+    }
+    .exp-header-link {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+      padding-bottom: 4px;
+    }
+    .exp-header-link:hover { color: var(--accent); }
+    .exp-header-link .arrow { transition: transform 0.2s; }
+    .exp-header-link:hover .arrow { transform: translateX(4px); }
+
+    .exp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    .exp-item {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 32px;
+      align-items: start;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+      position: relative;
+    }
+    .exp-item::before {
+      content: '';
+      position: absolute;
+      left: -32px;
+      right: -32px;
+      top: 0;
+      bottom: 0;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .exp-item:hover::before {
+      background: rgba(255,255,255,0.02);
+    }
+    .exp-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .exp-company {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .exp-dates {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .exp-content {}
+    .exp-role {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .exp-desc {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+    .exp-tags {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    /* ─── PHILOSOPHY TEASER ───────────────────────────────────────── */
+    #philosophy {
+      background: var(--surface-light);
+    }
+    #philosophy .section-label { color: var(--accent); }
+    #philosophy .section-label::before { background: var(--accent); }
+    #philosophy .section-title { color: #1a1a1a; }
+    #philosophy .section-subtitle { color: #5a5856; }
+    .phil-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .phil-card {
+      background: #fff;
+      border: 1px solid #E8E4DF;
+      border-radius: 12px;
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .phil-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    }
+    .phil-num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .phil-title {
+      font-family: var(--font-display);
+      font-size: 1.1875rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+    }
+    .phil-quote {
+      font-size: 0.9375rem;
+      color: #5a5856;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* ─── CTA SECTION ────────────────────────────────────────────── */
+    #cta {
+      background: var(--bg-deep);
+      padding: 120px 0;
+    }
+    .cta-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 32px;
+      text-align: center;
+    }
+    .cta-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .cta-body {
+      font-size: 1.0625rem;
+      color: var(--text-dim);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+    }
+    .cta-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-deep);
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+    }
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .footer-link {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--accent); }
+
+    /* ─── SCROLL REVEAL ───────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s var(--ease-expo), transform 0.7s var(--ease-expo);
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-bottom { grid-template-columns: 1fr; gap: 32px; }
+      .hero-actions { align-items: flex-start; }
+      .hero-stat-row { justify-content: flex-start; }
+      .wid-grid { grid-template-columns: 1fr; }
+      .exp-item { grid-template-columns: 1fr; gap: 12px; }
+      .exp-tags { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
+      .phil-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      :root { --nav-h: 60px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-inner { padding: 0 20px; }
+      .hero-inner { padding: 0 20px 80px; }
+      .hero-name { letter-spacing: -0.03em; }
+      .hero-name-line2 { padding-left: 1.5rem; }
+      .section-inner { padding: 0 20px; }
+      .section { padding: 72px 0; }
+      .exp-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      .hero-btns { flex-direction: column; width: 100%; }
+      .btn-primary, .btn-outline { justify-content: center; width: 100%; }
+      .cta-buttons { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     BOOT SCREEN
+════════════════════════════════════════════ -->
+<div id="boot">
+  <div class="boot-wrap">
+    <div class="boot-header">
+      <div class="boot-title">Berman OS</div>
+      <div class="boot-version">v5.0.0 // 2025</div>
+    </div>
+
+    <div class="boot-lines" id="bootLines">
+      <div class="boot-line" id="bl0">
+        <span class="boot-line-label">BERMAN OS v5.0</span>
+        <span class="boot-line-dots">................................</span>
+        <span class="boot-line-status ok">LOADING</span>
+      </div>
+      <div class="boot-line" id="bl1">
+        <span class="boot-line-label">CREATIVE LEADERSHIP</span>
+        <span class="boot-line-dots">........................</span>
+        <span class="boot-line-status ok">OK</span>
+      </div>
+      <div class="boot-line" id="bl2">
+        <span class="boot-line-label">GAME DESIGN</span>
+        <span class="boot-line-dots">................................</span>
+        <span class="boot-line-status ok">OK</span>
+      </div>
+      <div class="boot-line" id="bl3">
+        <span class="boot-line-label">UX SYSTEMS</span>
+        <span class="boot-line-dots">.................................</span>
+        <span class="boot-line-status ok">OK</span>
+      </div>
+      <div class="boot-line" id="bl4">
+        <span class="boot-line-label">PROGRESSION DESIGN</span>
+        <span class="boot-line-dots">........................</span>
+        <span class="boot-line-status ok">OK</span>
+      </div>
+      <div class="boot-line" id="bl5">
+        <span class="boot-line-label">PLAYER EMPATHY</span>
+        <span class="boot-line-dots">..............................</span>
+        <span class="boot-line-status ok">OK</span>
+      </div>
+      <div class="boot-line" id="bl6">
+        <span class="boot-line-label">STUDIO: SONY BEND</span>
+        <span class="boot-line-dots">.........................</span>
+        <span class="boot-line-status active">ACTIVE</span>
+      </div>
+    </div>
+
+    <div class="boot-prompt" id="bootPrompt">
+      PRESS ANY KEY TO CONTINUE <span class="boot-cursor"></span>
+    </div>
+
+    <div class="boot-progress-bar">
+      <div class="boot-progress-fill" id="bootProgress"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN SITE
+════════════════════════════════════════════ -->
+<div id="site">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">M<span>.</span>B</a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="experience.html" class="nav-link">Experience</a></li>
+        <li><a href="portfolio.html" class="nav-link">Portfolio</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="contact.html" class="nav-cta">Contact</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <div class="nav-mobile-overlay" id="mobileNav">
+    <a href="index.html" class="nav-mobile-link active">Home</a>
+    <a href="about.html" class="nav-mobile-link">About</a>
+    <a href="experience.html" class="nav-mobile-link">Experience</a>
+    <a href="portfolio.html" class="nav-mobile-link">Portfolio</a>
+    <a href="blog.html" class="nav-mobile-link">Blog</a>
+    <a href="contact.html" class="nav-mobile-link">Contact</a>
+  </div>
+
+  <!-- ── HERO ── -->
+  <section id="hero" class="grain">
+    <div class="hero-line-accent"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow reveal">
+        <span class="hero-eyebrow-dot"></span>
+        <span class="hero-eyebrow-text">Game Director · Sony Bend Studio · 2025</span>
+      </div>
+
+      <h1 class="hero-name reveal reveal-delay-1">
+        MICHAEL<span class="hero-name-line2">BERMAN</span>
+      </h1>
+
+      <div class="hero-divider reveal reveal-delay-2">
+        <div class="hero-divider-line"></div>
+        <span class="hero-divider-label">Creative Leadership · Game Design · UX Systems</span>
+      </div>
+
+      <div class="hero-bottom reveal reveal-delay-3">
+        <p class="hero-bio">
+          <strong>Game Director</strong> with 16+ years building games people love.
+          Currently at <strong>Sony PlayStation / Bend Studio</strong>, leading an
+          unannounced PC &amp; Console title. Expert in progression systems, player-centric
+          design, and building multidisciplinary teams that ship.
+        </p>
+        <div class="hero-actions">
+          <div class="hero-stat-row">
+            <div class="hero-stat">
+              <div class="hero-stat-num">16+</div>
+              <div class="hero-stat-label">Years</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num">5</div>
+              <div class="hero-stat-label">Studios</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num">10+</div>
+              <div class="hero-stat-label">Products</div>
+            </div>
+          </div>
+          <div class="hero-btns">
+            <a href="experience.html" class="btn-primary">View My Work →</a>
+            <a href="contact.html" class="btn-outline">Get In Touch</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <span class="hero-scroll-text">Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ── WHAT I DO ── -->
+  <section id="what-i-do" class="section grain">
+    <div class="section-inner">
+      <div class="section-label reveal">Capabilities</div>
+      <h2 class="section-title reveal reveal-delay-1">What I Bring<br>to the Table</h2>
+      <p class="section-subtitle reveal reveal-delay-2">16 years of pattern recognition across 5 studios, 3 genres, and every stage of production.</p>
+
+      <div class="wid-grid reveal reveal-delay-3">
+        <div class="wid-card">
+          <div class="wid-number">01 ——</div>
+          <svg class="wid-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="20" cy="12" r="6"/>
+            <circle cx="8" cy="30" r="4"/>
+            <circle cx="32" cy="30" r="4"/>
+            <line x1="20" y1="18" x2="8" y2="26"/>
+            <line x1="20" y1="18" x2="32" y2="26"/>
+          </svg>
+          <div class="wid-title">Creative Leadership</div>
+          <p class="wid-body">6+ years directing multidisciplinary teams. I translate ambiguous creative visions into clear, actionable design direction — and build the culture that ships it.</p>
+          <div class="wid-tags">
+            <span class="tag">Game Direction</span>
+            <span class="tag">Team Building</span>
+            <span class="tag">Vision</span>
+          </div>
+        </div>
+
+        <div class="wid-card">
+          <div class="wid-number">02 ——</div>
+          <svg class="wid-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="4" y="4" width="32" height="24" rx="3"/>
+            <line x1="4" y1="12" x2="36" y2="12"/>
+            <line x1="16" y1="34" x2="24" y2="34"/>
+            <line x1="20" y1="28" x2="20" y2="34"/>
+          </svg>
+          <div class="wid-title">Game Design</div>
+          <p class="wid-body">Deep expertise in progression, systems, and live service design. I build the mechanics that create long-term player investment — not just engagement spikes.</p>
+          <div class="wid-tags">
+            <span class="tag">Systems Design</span>
+            <span class="tag">Progression</span>
+            <span class="tag">Live Service</span>
+          </div>
+        </div>
+
+        <div class="wid-card">
+          <div class="wid-number">03 ——</div>
+          <svg class="wid-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="6" y="8" width="28" height="22" rx="3"/>
+            <circle cx="20" cy="19" r="5"/>
+            <line x1="6" y1="16" x2="15" y2="16"/>
+            <line x1="25" y1="16" x2="34" y2="16"/>
+          </svg>
+          <div class="wid-title">UX Design</div>
+          <p class="wid-body">Player-first UX that respects intelligence. I design onboarding and FTUE that teaches through play, not tutorials — and flows that feel invisible until they're gone.</p>
+          <div class="wid-tags">
+            <span class="tag">UX Systems</span>
+            <span class="tag">FTUE</span>
+            <span class="tag">Player Research</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCE TEASER ── -->
+  <section id="exp-teaser" class="section">
+    <div class="section-inner">
+      <div class="exp-header">
+        <div>
+          <div class="section-label reveal">Career</div>
+          <h2 class="section-title reveal reveal-delay-1">Selected<br>Experience</h2>
+        </div>
+        <a href="experience.html" class="exp-header-link reveal">
+          Full timeline <span class="arrow">→</span>
+        </a>
+      </div>
+
+      <div class="exp-list">
+        <div class="exp-item reveal">
+          <div class="exp-meta">
+            <div class="exp-company">Sony Bend</div>
+            <div class="exp-dates">2022 — Present</div>
+          </div>
+          <div class="exp-content">
+            <div class="exp-role">Game Director</div>
+            <p class="exp-desc">Leading creative direction on an unannounced PC &amp; Console title. Previously Design Manager &amp; Product Owner on a service-based multiplayer project. Led 15+ multidisciplinary developers.</p>
+          </div>
+          <div class="exp-tags">
+            <span class="tag">PC / Console</span>
+            <span class="tag">Leadership</span>
+          </div>
+        </div>
+
+        <div class="exp-item reveal reveal-delay-1">
+          <div class="exp-meta">
+            <div class="exp-company">Deep Silver Volition</div>
+            <div class="exp-dates">2019 — 2022</div>
+          </div>
+          <div class="exp-content">
+            <div class="exp-role">Design Director / Lead Systems Designer</div>
+            <p class="exp-desc">Modernized the Saints Row franchise. Led 10-13 developers across all customization suites. Product Owner for Boss Factory pre-release demo. Developed ambient life systems including pedestrian AI and open world spawning.</p>
+          </div>
+          <div class="exp-tags">
+            <span class="tag">Saints Row</span>
+            <span class="tag">Open World</span>
+          </div>
+        </div>
+
+        <div class="exp-item reveal reveal-delay-2">
+          <div class="exp-meta">
+            <div class="exp-company">Outact</div>
+            <div class="exp-dates">2015 — 2019</div>
+          </div>
+          <div class="exp-content">
+            <div class="exp-role">Lead Designer / Senior Systems Designer</div>
+            <p class="exp-desc">Design Lead and vision holder for early-stage ARPG production. Led all major game systems — progression, loot, content, combat — across two mobile titles. Created pitch decks for publishers and investors.</p>
+          </div>
+          <div class="exp-tags">
+            <span class="tag">ARPG</span>
+            <span class="tag">Mobile</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PHILOSOPHY TEASER ── -->
+  <section id="philosophy" class="section">
+    <div class="section-inner">
+      <div class="section-label reveal">Philosophy</div>
+      <h2 class="section-title reveal reveal-delay-1">How I Think<br>About Games</h2>
+      <p class="section-subtitle reveal reveal-delay-2">The principles that shape every design decision.</p>
+
+      <div class="phil-grid reveal reveal-delay-3">
+        <div class="phil-card">
+          <div class="phil-num">01 ——</div>
+          <div class="phil-title">Iterative by Default</div>
+          <p class="phil-quote">"Graybox first. Find the fun before you polish anything. Low fidelity exploration is the highest ROI phase in game development — and it's getting lost in AAA."</p>
+        </div>
+        <div class="phil-card">
+          <div class="phil-num">02 ——</div>
+          <div class="phil-title">Anti Hand-Holding</div>
+          <p class="phil-quote">"Let players discover. Onboarding and FTUE have their place — but the instinct to explain everything kills the joy of figuring things out. Trust your players."</p>
+        </div>
+        <div class="phil-card">
+          <div class="phil-num">03 ——</div>
+          <div class="phil-title">Sustainable Systems Design</div>
+          <p class="phil-quote">"Content-dependent games are treadmills. Systems-driven design creates depth that multiplies — content is the multiplier, not the foundation."</p>
+        </div>
+        <div class="phil-card">
+          <div class="phil-num">04 ——</div>
+          <div class="phil-title">Player First, Always</div>
+          <p class="phil-quote">"You are not your player. Your preferences are a starting point, not a spec. Research, feedback, and empathy fill the gap."</p>
+        </div>
+      </div>
+
+      <div style="margin-top:40px;" class="reveal">
+        <a href="about.html" class="btn-outline" style="border-color:#ccc8c4;color:#5a5856;">Read Full Philosophy →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section id="cta" class="grain">
+    <div class="cta-inner">
+      <span class="cta-label reveal">Let's Work Together</span>
+      <h2 class="cta-title reveal reveal-delay-1">Ready to Build<br>Something Great?</h2>
+      <p class="cta-body reveal reveal-delay-2">Whether you're building a team, shipping a franchise, or reinventing how players experience your world — let's talk.</p>
+      <div class="cta-buttons reveal reveal-delay-3">
+        <a href="mailto:MBerman47@gmail.com" class="btn-primary">Send a Message →</a>
+        <a href="contact.html" class="btn-outline">View Contact Page</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <a href="index.html" class="footer-logo">M<span>.</span>B</a>
+      <span class="footer-copy">© 2025 Michael Berman — Game Director</span>
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/bermandesign" target="_blank" class="footer-link">LinkedIn</a>
+        <a href="mailto:MBerman47@gmail.com" class="footer-link">Email</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /#site -->
+
+<!-- ════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════ -->
+<script>
+(function() {
+  /* ── BOOT SEQUENCE ── */
+  const boot     = document.getElementById('boot');
+  const progress = document.getElementById('bootProgress');
+  const prompt   = document.getElementById('bootPrompt');
+  const lines    = [0,1,2,3,4,5,6].map(i => document.getElementById('bl'+i));
+  const site     = document.getElementById('site');
+
+  let bootDone = false;
+  let lineCount = lines.length;
+  let pct = 0;
+  let lineIdx = 0;
+
+  function showLine(i) {
+    if (i >= lineCount) {
+      // All lines shown — show prompt
+      setTimeout(() => {
+        prompt.classList.add('visible');
+        progress.style.width = '100%';
+      }, 200);
+      return;
+    }
+    lines[i].classList.add('visible');
+    pct = Math.round(((i + 1) / lineCount) * 90);
+    progress.style.width = pct + '%';
+    lineIdx = i + 1;
+    setTimeout(() => showLine(i + 1), 280 + Math.random() * 180);
+  }
+
+  function dismissBoot() {
+    if (bootDone) return;
+    bootDone = true;
+    boot.classList.add('fade-out');
+    site.classList.add('visible');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      boot.style.display = 'none';
+      // Trigger hero reveals after boot
+      triggerReveals();
+    }, 900);
+  }
+
+  // Start sequence
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => showLine(0), 400);
+
+  // Listen for any key or click
+  document.addEventListener('keydown', dismissBoot);
+  document.addEventListener('click', dismissBoot);
+  document.addEventListener('touchstart', dismissBoot, { passive: true });
+
+  // Auto-dismiss after ~6s
+  setTimeout(dismissBoot, 6000);
+
+  /* ── NAV SCROLL ── */
+  const nav = document.getElementById('nav');
+  function handleScroll() {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }
+  window.addEventListener('scroll', handleScroll, { passive: true });
+
+  /* ── MOBILE NAV ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    hamburger.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  /* ── SCROLL REVEAL ── */
+  let observer;
+  function triggerReveals() {
+    const els = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('revealed');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      els.forEach(el => observer.observe(el));
+    } else {
+      els.forEach(el => el.classList.add('revealed'));
+    }
+  }
+
+  // If boot was already dismissed before DOM was ready (shouldn't happen, but safety net)
+  if (bootDone) triggerReveals();
+})();
+</script>
+</body>
 </html>

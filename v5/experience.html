@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experience — Michael Berman, Game Director</title>
+  <meta name="description" content="Full career timeline for Michael Berman — 16+ years across Sony, Deep Silver Volition, Outact, Pocket Gems, Tencent, and Petroglyph.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:            #1E2020;
+      --bg-deep:       #111212;
+      --bg-card:       #242626;
+      --bg-card-hover: #2B2E2E;
+      --surface-light: #F0ECE8;
+      --text:          #F7FCFA;
+      --text-dim:      #A3A1A0;
+      --text-muted:    #5C5A58;
+      --accent:        #E76028;
+      --accent-dim:    rgba(231,96,40,0.15);
+      --border:        rgba(255,255,255,0.07);
+      --border-hi:     rgba(255,255,255,0.12);
+      --nav-h:         72px;
+      --max-w:         1240px;
+      --font-display:  'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --font-mono:     'JetBrains Mono', monospace;
+      --ease-expo:     cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    .grain { position: relative; }
+    .grain::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 200px;
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .grain > * { position: relative; z-index: 1; }
+
+    /* NAV */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h); z-index: 100;
+      transition: background 0.3s, border-color 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    #nav.scrolled {
+      background: rgba(17,18,18,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-color: var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+      height: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-link { font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-dim); padding: 8px 14px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-link.active { color: var(--accent); }
+    .nav-cta { font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); padding: 8px 18px; border: 1px solid var(--border-hi); border-radius: 6px; transition: border-color 0.2s, color 0.2s, background 0.2s; }
+    .nav-cta:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; width: 28px; }
+    .nav-hamburger span { display: block; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .nav-mobile-overlay { position: fixed; inset: 0; background: rgba(9,10,10,0.97); z-index: 99; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    .nav-mobile-overlay.open { display: flex; }
+    .nav-mobile-link { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text-dim); padding: 12px 0; transition: color 0.2s; }
+    .nav-mobile-link:hover { color: var(--text); }
+    .nav-mobile-link.active { color: var(--accent); }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding-top: calc(var(--nav-h) + 80px);
+      padding-bottom: 80px;
+      background: var(--bg-deep);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; width: 50%; height: 100%;
+      background: linear-gradient(135deg, transparent 60%, rgba(231,96,40,0.04) 100%);
+    }
+    .page-header-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; }
+    .page-eyebrow {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    }
+    .page-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+    .page-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(3rem, 8vw, 8.5rem);
+      letter-spacing: -0.05em; line-height: 0.9; color: var(--text);
+    }
+    .page-title .dim { color: rgba(247,252,250,0.25); }
+
+    /* FILTER BAR */
+    .filter-bar {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 50;
+    }
+    .filter-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; gap: 4px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-inner::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted); padding: 16px 16px;
+      white-space: nowrap; border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .filter-btn:hover { color: var(--text); }
+    .filter-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* TIMELINE */
+    .timeline-section {
+      background: var(--bg-deep);
+      padding: 80px 0;
+    }
+    .timeline-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+    }
+
+    /* Timeline entries */
+    .tl-studio-block {
+      margin-bottom: 80px;
+    }
+    .tl-studio-block:last-child { margin-bottom: 0; }
+
+    .tl-studio-header {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 40px;
+      align-items: start;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    .tl-studio-meta {}
+    .tl-studio-name {
+      font-family: var(--font-display); font-size: 0.875rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent);
+    }
+    .tl-studio-dates {
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em;
+      color: var(--text-muted); margin-top: 6px;
+    }
+    .tl-studio-type {
+      display: inline-flex; align-items: center;
+      font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 3px 8px; border: 1px solid var(--border); border-radius: 4px;
+      margin-top: 10px;
+    }
+    .tl-studio-summary {
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      max-width: 640px;
+    }
+
+    .tl-roles {
+      padding-left: 200px;
+      padding-left: 0;
+    }
+
+    .tl-role {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 40px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .tl-role:last-child { border-bottom: 1px solid var(--border); }
+
+    /* The diamond marker */
+    .tl-role-meta {
+      padding-top: 4px;
+      position: relative;
+    }
+    .tl-role-meta::before {
+      content: '◆';
+      font-size: 0.5rem;
+      color: var(--accent);
+      position: absolute;
+      right: -20px;
+      top: 8px;
+    }
+    .tl-role-title {
+      font-family: var(--font-display); font-size: 1.125rem; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--text); line-height: 1.2;
+    }
+    .tl-role-project {
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em;
+      color: var(--text-muted); margin-top: 8px;
+    }
+    .tl-role-dates-inline {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.06em;
+      color: var(--accent); margin-top: 4px;
+    }
+
+    .tl-role-content {}
+    .tl-bullets {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tl-bullet {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .tl-bullet::before {
+      content: '—';
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .tl-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 16px;
+    }
+    .tag {
+      font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 4px 10px; border: 1px solid var(--border-hi); border-radius: 4px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    /* highlight stat */
+    .tl-highlight {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-dim); border: 1px solid rgba(231,96,40,0.3);
+      border-radius: 6px; padding: 8px 14px; margin-top: 12px;
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+
+    /* SUMMARY SECTION */
+    #summary {
+      background: var(--bg);
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+    .summary-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 32px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    }
+    .summary-block {}
+    .summary-eyebrow {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .summary-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+    .summary-title {
+      font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
+      letter-spacing: -0.03em; color: var(--text); margin-bottom: 16px;
+    }
+    .summary-text {
+      font-size: 0.9375rem; color: var(--text-dim); line-height: 1.75;
+    }
+    .summary-skills {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff;
+      font-family: var(--font-body); font-size: 0.8125rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 13px 24px; border-radius: 6px; transition: background 0.2s, transform 0.2s;
+      margin-top: 24px;
+    }
+    .btn-primary:hover { background: #d05420; transform: translateY(-1px); }
+
+    /* FOOTER */
+    footer { background: var(--bg-deep); border-top: 1px solid var(--border); padding: 40px 0; }
+    .footer-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: var(--font-display); font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--text-muted); }
+    .footer-links { display: flex; align-items: center; gap: 20px; }
+    .footer-link { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); transition: color 0.2s; }
+    .footer-link:hover { color: var(--accent); }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+
+    /* FILTER HIDDEN */
+    .tl-studio-block.hidden { display: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .tl-studio-header { grid-template-columns: 1fr; gap: 12px; }
+      .tl-role { grid-template-columns: 1fr; gap: 12px; }
+      .tl-role-meta::before { display: none; }
+      .summary-inner { grid-template-columns: 1fr; gap: 48px; }
+    }
+    @media (max-width: 768px) {
+      :root { --nav-h: 60px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-inner, .page-header-inner, .timeline-inner, .summary-inner, .footer-inner { padding: 0 20px; }
+      .filter-inner { padding: 0 20px; }
+      .page-header { padding-top: calc(var(--nav-h) + 48px); padding-bottom: 56px; }
+      .tl-studio-block { margin-bottom: 56px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">M<span>.</span>B</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="experience.html" class="nav-link active">Experience</a></li>
+      <li><a href="portfolio.html" class="nav-link">Portfolio</a></li>
+      <li><a href="blog.html" class="nav-link">Blog</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile-overlay" id="mobileNav">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="experience.html" class="nav-mobile-link active">Experience</a>
+  <a href="portfolio.html" class="nav-mobile-link">Portfolio</a>
+  <a href="blog.html" class="nav-mobile-link">Blog</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+</div>
+
+<!-- PAGE HEADER -->
+<header class="page-header grain">
+  <div class="page-header-inner">
+    <div class="page-eyebrow reveal">16+ Years · 5 Studios · 10+ Products</div>
+    <h1 class="page-title reveal reveal-delay-1">
+      Career<br><span class="dim">Timeline</span>
+    </h1>
+  </div>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <button class="filter-btn active" data-filter="all">All Roles</button>
+    <button class="filter-btn" data-filter="leadership">Leadership</button>
+    <button class="filter-btn" data-filter="game-design">Game Design</button>
+    <button class="filter-btn" data-filter="ux">UX Design</button>
+    <button class="filter-btn" data-filter="mobile">Mobile</button>
+    <button class="filter-btn" data-filter="console">Console / PC</button>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline-section">
+  <div class="timeline-inner">
+
+    <!-- SONY BEND -->
+    <div class="tl-studio-block reveal" data-tags="leadership game-design console">
+      <div class="tl-studio-header">
+        <div class="tl-studio-meta">
+          <div class="tl-studio-name">Sony PlayStation</div>
+          <div class="tl-studio-dates">May 2022 — Present</div>
+          <div class="tl-studio-type">Bend Studio</div>
+        </div>
+        <p class="tl-studio-summary">
+          Currently at Sony's Bend Studio — home of Days Gone — directing an unannounced PC &amp; Console title. Previously served as Design Manager &amp; Product Owner on a service-based multiplayer project.
+        </p>
+      </div>
+
+      <div class="tl-roles">
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Game Director</div>
+            <div class="tl-role-project">Unannounced PC / Console</div>
+            <div class="tl-role-dates-inline">Feb 2025 — Present</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Directing full creative vision for an unannounced next-generation title at PlayStation's Bend Studio.</div>
+              <div class="tl-bullet">Defining holistic design direction across gameplay, systems, progression, and player experience.</div>
+              <div class="tl-bullet">Partnering with executive leadership to align product vision with platform and business goals.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">Game Direction</span>
+              <span class="tag">Creative Vision</span>
+              <span class="tag">PC / Console</span>
+              <span class="tag">AAA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Design Manager &amp; Product Owner</div>
+            <div class="tl-role-project">Unannounced Multiplayer Online</div>
+            <div class="tl-role-dates-inline">May 2022 — Feb 2025</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Led a team of 15+ multidisciplinary developers across design, engineering, and content.</div>
+              <div class="tl-bullet">Defined holistic creative vision for Progression Systems on a service-based multiplayer game.</div>
+              <div class="tl-bullet">Worked alongside Chief Product Owner developing strategic framework and long-term product roadmap.</div>
+              <div class="tl-bullet">Managed 6 direct reports across multiple disciplines.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">Leadership</span>
+              <span class="tag">Progression</span>
+              <span class="tag">Live Service</span>
+              <span class="tag">Product Ownership</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEEP SILVER VOLITION -->
+    <div class="tl-studio-block reveal" data-tags="leadership game-design ux console">
+      <div class="tl-studio-header">
+        <div class="tl-studio-meta">
+          <div class="tl-studio-name">Deep Silver Volition</div>
+          <div class="tl-studio-dates">Aug 2019 — May 2022</div>
+          <div class="tl-studio-type">Saints Row</div>
+        </div>
+        <p class="tl-studio-summary">
+          Volition, makers of Saints Row. Contributed to the franchise modernization strategy and led the full customization design suite for Saints Row (2022). Product Owner for the Boss Factory pre-release demo.
+        </p>
+      </div>
+
+      <div class="tl-roles">
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Design Director</div>
+            <div class="tl-role-project">Unannounced PC &amp; Console</div>
+            <div class="tl-role-dates-inline">2021 — 2022</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Developed strategy to modernize the Saints Row franchise direction and long-term player engagement.</div>
+              <div class="tl-bullet">Collaborated with directors and stakeholders on creative vision for franchise future and sequel.</div>
+              <div class="tl-bullet">Championed design principles across the studio — iterative production, player trust, systemic depth.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">Design Direction</span>
+              <span class="tag">Franchise Strategy</span>
+              <span class="tag">Leadership</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Lead Systems &amp; Principal UX Designer</div>
+            <div class="tl-role-project">Saints Row (PC &amp; Console)</div>
+            <div class="tl-role-dates-inline">2019 — 2021</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Led team of 10–13 developers across all customization suites — character, vehicle, weapon, and gang.</div>
+              <div class="tl-bullet">Product Owner for "Boss Factory" — the pre-release character customization demo shipped ahead of launch.</div>
+              <div class="tl-bullet">Developed multiple ambient life systems including pedestrian AI, open world spawning, and vignette system.</div>
+              <div class="tl-bullet">Managed 2 direct reports and drove cross-discipline design reviews.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">Systems Design</span>
+              <span class="tag">UX</span>
+              <span class="tag">Open World</span>
+              <span class="tag">Customization</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTACT -->
+    <div class="tl-studio-block reveal" data-tags="leadership game-design mobile">
+      <div class="tl-studio-header">
+        <div class="tl-studio-meta">
+          <div class="tl-studio-name">Outact</div>
+          <div class="tl-studio-dates">May 2015 — Jul 2019</div>
+          <div class="tl-studio-type">Mobile / PC</div>
+        </div>
+        <p class="tl-studio-summary">
+          4 years spanning two shipped mobile titles and an early-stage PC ARPG. Led all major game systems and served as design lead and vision holder for an unannounced action RPG.
+        </p>
+      </div>
+
+      <div class="tl-roles">
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Lead Designer</div>
+            <div class="tl-role-project">Unannounced ARPG (PC)</div>
+            <div class="tl-role-dates-inline">2017 — 2019</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Design Lead and creative vision holder for an early-stage PC action RPG in pre-production.</div>
+              <div class="tl-bullet">Created pitch decks for publisher and investor presentations.</div>
+              <div class="tl-bullet">Established design pillars, production framework, and initial systems architecture.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">ARPG</span>
+              <span class="tag">PC</span>
+              <span class="tag">Pre-Production</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Senior Systems Designer</div>
+            <div class="tl-role-project">Wartide / Brave Order (Mobile)</div>
+            <div class="tl-role-dates-inline">2015 — 2017</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Led all major game systems across both titles: progression, loot, content, combat, and economy.</div>
+              <div class="tl-bullet">Developed design-data toolset for ability creation, enabling faster design iteration.</div>
+              <div class="tl-bullet">Mentored 3 junior and mid-level designers across both productions.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">Mobile</span>
+              <span class="tag">Systems Design</span>
+              <span class="tag">Progression</span>
+              <span class="tag">Mentorship</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POCKET GEMS -->
+    <div class="tl-studio-block reveal" data-tags="game-design mobile">
+      <div class="tl-studio-header">
+        <div class="tl-studio-meta">
+          <div class="tl-studio-name">Pocket Gems</div>
+          <div class="tl-studio-dates">Sep 2013 — May 2015</div>
+          <div class="tl-studio-type">Mobile</div>
+        </div>
+        <p class="tl-studio-summary">
+          Led the cross-disciplinary progression pod on War Dragons (mobile). Redesigned primary progression post geo-beta, resulting in a significant D3 retention lift.
+        </p>
+      </div>
+
+      <div class="tl-roles">
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Game Designer</div>
+            <div class="tl-role-project">War Dragons (Mobile)</div>
+            <div class="tl-role-dates-inline">2013 — 2015</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Led cross-disciplinary pod of 10 developers responsible for progression and gameplay systems.</div>
+              <div class="tl-bullet">Redesigned primary progression post geo-beta — driving measurable player retention improvements.</div>
+              <div class="tl-bullet">Developed initial camera, controls, and character systems for the core gameplay experience.</div>
+            </div>
+            <div class="tl-highlight">+12% D3 Retention after progression redesign</div>
+            <div class="tl-tags">
+              <span class="tag">Progression</span>
+              <span class="tag">Mobile</span>
+              <span class="tag">Retention</span>
+              <span class="tag">Gameplay</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TENCENT BOSTON -->
+    <div class="tl-studio-block reveal" data-tags="game-design">
+      <div class="tl-studio-header">
+        <div class="tl-studio-meta">
+          <div class="tl-studio-name">Tencent Boston</div>
+          <div class="tl-studio-dates">Jan 2013 — Aug 2013</div>
+          <div class="tl-studio-type">PC</div>
+        </div>
+        <p class="tl-studio-summary">
+          Systems design, game balance, and monetization for Robot Rising, a PC title. Data-informed design decisions driving economy and combat balancing.
+        </p>
+      </div>
+
+      <div class="tl-roles">
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Systems Designer</div>
+            <div class="tl-role-project">Robot Rising (PC)</div>
+            <div class="tl-role-dates-inline">2013</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Game balance, systems design, and monetization for an action PC title.</div>
+              <div class="tl-bullet">Developed data-informed design approach to economy and combat tuning.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">Systems Design</span>
+              <span class="tag">Balance</span>
+              <span class="tag">Monetization</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PETROGLYPH -->
+    <div class="tl-studio-block reveal" data-tags="game-design">
+      <div class="tl-studio-header">
+        <div class="tl-studio-meta">
+          <div class="tl-studio-name">Petroglyph Games</div>
+          <div class="tl-studio-dates">Aug 2009 — Dec 2012</div>
+          <div class="tl-studio-type">PC / RTS</div>
+        </div>
+        <p class="tl-studio-summary">
+          Where it started. Worked across multiple titles — including a Star Wars MOBA — across design, production, and QA roles. The foundation of 16+ years to come.
+        </p>
+      </div>
+
+      <div class="tl-roles">
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Game Designer</div>
+            <div class="tl-role-project">Rise of Immortals · End of Nations · Star Wars MOBA</div>
+            <div class="tl-role-dates-inline">2010 — 2012</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Designed gameplay systems across multiple PC titles — from an action RPG to real-time strategy.</div>
+              <div class="tl-bullet">Contributed to an unreleased Star Wars MOBA — a formative early-career project.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">RTS</span>
+              <span class="tag">MOBA</span>
+              <span class="tag">PC</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-role">
+          <div class="tl-role-meta">
+            <div class="tl-role-title">Production Assistant / QA</div>
+            <div class="tl-role-project">Panzer General · Guardians of Graxia</div>
+            <div class="tl-role-dates-inline">2009 — 2010</div>
+          </div>
+          <div class="tl-role-content">
+            <div class="tl-bullets">
+              <div class="tl-bullet">Production support and quality assurance across two shipped titles.</div>
+              <div class="tl-bullet">Foundation of understanding how games are made, tested, and delivered.</div>
+            </div>
+            <div class="tl-tags">
+              <span class="tag">QA</span>
+              <span class="tag">Production</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline-inner -->
+</div><!-- /timeline-section -->
+
+<!-- PROFESSIONAL SUMMARY -->
+<section id="summary">
+  <div class="summary-inner">
+    <div class="summary-block reveal">
+      <div class="summary-eyebrow">Professional Summary</div>
+      <h2 class="summary-title">What Makes Me Different</h2>
+      <p class="summary-text">
+        Adaptable, seasoned game director with 16+ years of industry experience, including 6+ years in leadership and director-level roles. Player-centric design philosophy with a strong capability to translate strategic and creative vision into tangible, cohesive design direction.
+      </p>
+      <p class="summary-text" style="margin-top:12px;">
+        Experience building, mentoring, and leading multidisciplinary teams on large-scale projects. Broad expertise across systems, progression, UX, gameplay, and content design — complemented by notable background in Production and Art.
+      </p>
+      <a href="contact.html" class="btn-primary">Get In Touch →</a>
+    </div>
+
+    <div class="summary-block reveal reveal-delay-1">
+      <div class="summary-eyebrow">Core Skills</div>
+      <h2 class="summary-title">Areas of Expertise</h2>
+      <div class="summary-skills">
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Systems Design</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">UX Design</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Progression Design</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Game Direction</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Creative Leadership</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Player-Centric Design</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Team Leadership</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Product Ownership</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Prototyping</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Adobe XD</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Figma</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Unreal Engine</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Game Balance</span>
+        <span class="tag" style="font-size:0.7rem;padding:6px 12px;">Monetization Strategy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="index.html" class="footer-logo">M<span>.</span>B</a>
+    <span class="footer-copy">© 2025 Michael Berman — Game Director</span>
+    <div class="footer-links">
+      <a href="https://linkedin.com/in/bermandesign" target="_blank" class="footer-link">LinkedIn</a>
+      <a href="mailto:MBerman47@gmail.com" class="footer-link">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    hamburger.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  // Filters
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const blocks = document.querySelectorAll('.tl-studio-block');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+
+      blocks.forEach(block => {
+        if (filter === 'all') {
+          block.classList.remove('hidden');
+        } else {
+          const tags = block.dataset.tags || '';
+          block.classList.toggle('hidden', !tags.includes(filter));
+        }
+      });
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+</script>
+</body>
+</html>
