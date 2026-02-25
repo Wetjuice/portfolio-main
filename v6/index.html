@@ -1,18 +1,365 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Michael Berman — Game Director & Creative Leader</title>
-    <meta name="description" content="Michael Berman is a Game Director with 18 years of industry experience, currently leading an unannounced AAA title at Sony Bend Studio. Open to roles and consulting." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>" />
-    <script type="module" crossorigin src="/mberman-portfolio/v6/assets/index-DX3x9FE4.js"></script>
-    <link rel="stylesheet" crossorigin href="/mberman-portfolio/v6/assets/index-P53qdMpG.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marcus Reeve — Game Director</title>
+  <meta name="description" content="Marcus Reeve — Game Director. 20 years. 3 landmark titles. Infinite possibility spaces.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <!-- Cursor Glow -->
+  <div id="cursor-glow" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       NAV
+       ============================================================ -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__monogram" aria-hidden="true">MR</span>
+      <span class="nav__wordmark">Marcus Reeve</span>
+    </a>
+
+    <button class="nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="nav__links">
+      <a href="#works"       class="nav__link">Works</a>
+      <a href="#process"     class="nav__link">Process</a>
+      <a href="#recognition" class="nav__link">Recognition</a>
+      <a href="#contact"     class="nav__link">Contact</a>
+      <span class="nav__status" aria-label="Availability status">
+        <span class="nav__status-dot" aria-hidden="true"></span>
+        Available for Projects
+      </span>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+       ============================================================ -->
+  <section class="hero" id="hero" aria-label="Introduction">
+    <div class="hero__bg"    aria-hidden="true"></div>
+    <div class="hero__grid"  aria-hidden="true"></div>
+    <div class="hero__aurora" aria-hidden="true"></div>
+
+    <div class="hero__content">
+      <p class="hero__eyebrow" aria-hidden="true">
+        Game Director &nbsp;·&nbsp; 20 Years &nbsp;·&nbsp; 2004–2026
+      </p>
+
+      <h1 class="hero__title">
+        <span class="line"><span class="line-inner">I build worlds</span></span>
+        <span class="line"><span class="line-inner">that <span class="accent-word">outlast</span></span></span>
+        <span class="line"><span class="line-inner">their stories.</span></span>
+      </h1>
+
+      <p class="hero__subtitle">
+        20 years. 3 landmark titles. Infinite possibility spaces.
+      </p>
+
+      <a href="#works" class="hero__cta">
+        Explore the work &nbsp;&#8595;
+      </a>
+    </div>
+
+    <!-- Bottom timeline -->
+    <div class="hero__timeline" aria-hidden="true">
+      <span class="hero__timeline-year">2004</span>
+      <div class="hero__timeline-track"></div>
+      <span class="hero__timeline-year">2026</span>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="hero__scroll-hint" aria-hidden="true">
+      <div class="hero__scroll-line"></div>
+      <span>scroll</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PHILOSOPHY
+       ============================================================ -->
+  <section class="philosophy" id="philosophy" aria-label="Design philosophy">
+    <div class="philosophy__bg-text" aria-hidden="true">ART</div>
+
+    <div class="philosophy__inner">
+      <div>
+        <div class="section-count reveal">01</div>
+        <h2 class="philosophy__manifesto reveal">
+          <span class="word word--white">Craft.</span>
+          <span class="word word--cyan reveal reveal-delay-1">Empathy.</span>
+          <span class="word word--gold reveal reveal-delay-2">Impact.</span>
+        </h2>
+      </div>
+
+      <div class="philosophy__right reveal reveal-delay-2">
+        <div class="philosophy__rule"></div>
+        <p class="philosophy__pull-quote">
+          "The greatest games aren't designed — they're discovered."
+        </p>
+        <p class="philosophy__body">
+          Systems that breathe. Worlds dense enough to get lost in. Stories that emerge
+          from the collision of player agency and authored intent. Every project I lead
+          starts with one question: what truth is this world trying to tell?
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SELECTED WORKS
+       ============================================================ -->
+  <section class="works" id="works" aria-label="Selected works">
+    <div class="works__header">
+      <div>
+        <div class="section-count reveal">02</div>
+        <h2 class="section-title reveal reveal-delay-1">Selected Works</h2>
+      </div>
+      <p class="reveal reveal-delay-2" style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;max-width:20ch;text-align:right;line-height:2;">
+        Hover to reveal — click to expand on mobile
+      </p>
+    </div>
+
+    <div class="works__list">
+
+      <!-- 01: Ashen Meridian -->
+      <article class="work-entry reveal">
+        <div class="work-entry__num">
+          <span class="work-entry__num-text">01</span>
+        </div>
+        <div class="work-entry__body">
+          <div class="work-entry__top">
+            <h3 class="work-entry__title">Ashen Meridian</h3>
+            <span class="work-entry__year">2019</span>
+          </div>
+          <div class="work-entry__meta">
+            <span class="work-entry__genre">Open-World RPG</span>
+          </div>
+          <p class="work-entry__desc">
+            A dying sun-empire where every NPC lives a full simulated life. 12M copies sold.
+          </p>
+          <div class="work-entry__expanded">
+            <p class="work-entry__detail">
+              Set in a collapsing civilization powered by a fading star, Ashen Meridian redefined emergent
+              storytelling. Every character — from emperors to street vendors — operates on a full life
+              simulation, creating narratives no designer could have scripted. A landmark for the medium.
+            </p>
+            <div class="work-entry__awards">
+              <span class="work-entry__award">Game of the Year — TGA 2019</span>
+              <span class="work-entry__award">Best Direction — BAFTA 2020</span>
+              <span class="work-entry__award">Best Narrative — GDC 2020</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 02: HOLLOW -->
+      <article class="work-entry reveal reveal-delay-1">
+        <div class="work-entry__num">
+          <span class="work-entry__num-text">02</span>
+        </div>
+        <div class="work-entry__body">
+          <div class="work-entry__top">
+            <h3 class="work-entry__title">HOLLOW</h3>
+            <span class="work-entry__year">2014</span>
+          </div>
+          <div class="work-entry__meta">
+            <span class="work-entry__genre">Psychological Horror</span>
+          </div>
+          <p class="work-entry__desc">
+            Non-linear dread mechanics and an unreliable narrator. 2M copies. Cult classic.
+          </p>
+          <div class="work-entry__expanded">
+            <p class="work-entry__detail">
+              HOLLOW weaponized uncertainty. The game's narrator lies. The environment shifts when you're
+              not looking. Critics called it "the Inland Empire of games" — a work that trusts its audience
+              enough to leave them unsettled and questioning what they actually experienced.
+            </p>
+            <div class="work-entry__awards">
+              <span class="work-entry__award">Cult Classic Award — IGF 2015</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 03: BREACH -->
+      <article class="work-entry reveal reveal-delay-2">
+        <div class="work-entry__num">
+          <span class="work-entry__num-text">03</span>
+        </div>
+        <div class="work-entry__body">
+          <div class="work-entry__top">
+            <h3 class="work-entry__title">BREACH: Overwatch Protocol</h3>
+            <span class="work-entry__year">2022</span>
+          </div>
+          <div class="work-entry__meta">
+            <span class="work-entry__genre">Tactical Multiplayer</span>
+          </div>
+          <p class="work-entry__desc">
+            Asymmetric class design with a persistent world narrative. 8M active players.
+          </p>
+          <div class="work-entry__expanded">
+            <p class="work-entry__detail">
+              BREACH proved that competitive multiplayer and deep narrative aren't mutually exclusive.
+              Its world evolves between seasons through player actions, and its asymmetric class system
+              made every match feel like a tactical puzzle with no single correct answer.
+            </p>
+            <div class="work-entry__awards">
+              <span class="work-entry__award">Best Multiplayer — D.I.C.E. 2023</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROCESS
+       ============================================================ -->
+  <section class="process" id="process" aria-label="Process">
+    <div class="section-count reveal">03</div>
+    <h2 class="section-title reveal reveal-delay-1">How I Work</h2>
+
+    <div class="process__steps">
+      <div class="process__step reveal reveal-delay-1">
+        <span class="process__num">01</span>
+        <h3 class="process__name">Vision</h3>
+        <p class="process__desc">Define the one question the game is asking.</p>
+      </div>
+      <div class="process__step reveal reveal-delay-2">
+        <span class="process__num">02</span>
+        <h3 class="process__name">Architecture</h3>
+        <p class="process__desc">Build the systems before the content.</p>
+      </div>
+      <div class="process__step reveal reveal-delay-3">
+        <span class="process__num">03</span>
+        <h3 class="process__name">Iteration</h3>
+        <p class="process__desc">Play it broken. Fix it honest.</p>
+      </div>
+      <div class="process__step reveal reveal-delay-4">
+        <span class="process__num">04</span>
+        <h3 class="process__name">Collaboration</h3>
+        <p class="process__desc">The best idea wins, regardless of title.</p>
+      </div>
+      <div class="process__step reveal reveal-delay-5">
+        <span class="process__num">05</span>
+        <h3 class="process__name">Ship</h3>
+        <p class="process__desc">Done is a design decision.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RECOGNITION
+       ============================================================ -->
+  <section class="recognition" id="recognition" aria-label="Recognition and awards">
+    <div class="section-count reveal">04</div>
+    <h2 class="section-title reveal reveal-delay-1">Recognition</h2>
+
+    <div class="recognition__grid">
+
+      <!-- Awards column -->
+      <div class="reveal reveal-delay-1">
+        <div class="recognition__col-label">
+          <span>Awards</span>
+          <span>&#183;</span>
+        </div>
+
+        <div class="award-row">
+          <span class="award-row__name">Game of the Year — The Game Awards</span>
+          <span class="award-row__detail">2019 · Ashen Meridian</span>
+        </div>
+        <div class="award-row">
+          <span class="award-row__name">Best Direction — BAFTA Games</span>
+          <span class="award-row__detail">2020 · Ashen Meridian</span>
+        </div>
+        <div class="award-row">
+          <span class="award-row__name">Best Narrative — GDC Awards</span>
+          <span class="award-row__detail">2020 · Ashen Meridian</span>
+        </div>
+        <div class="award-row">
+          <span class="award-row__name">Cult Classic Award — IGF</span>
+          <span class="award-row__detail">2015 · HOLLOW</span>
+        </div>
+        <div class="award-row">
+          <span class="award-row__name">Best Multiplayer Design — D.I.C.E. Awards</span>
+          <span class="award-row__detail">2023 · BREACH</span>
+        </div>
+      </div>
+
+      <!-- Press column -->
+      <div class="reveal reveal-delay-2">
+        <div class="recognition__col-label">
+          <span>Press</span>
+          <span>&#183;</span>
+        </div>
+
+        <blockquote class="press-quote">
+          <p class="press-quote__text">
+            "Marcus Reeve doesn't make games. He makes inevitabilities."
+          </p>
+          <cite class="press-quote__source">Edge Magazine</cite>
+        </blockquote>
+
+        <blockquote class="press-quote">
+          <p class="press-quote__text">
+            "Ashen Meridian is proof that the medium has finally grown up."
+          </p>
+          <cite class="press-quote__source">The Guardian</cite>
+        </blockquote>
+
+        <blockquote class="press-quote">
+          <p class="press-quote__text">
+            "HOLLOW haunted me for weeks. That's not hyperbole."
+          </p>
+          <cite class="press-quote__source">Kotaku</cite>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONTACT
+       ============================================================ -->
+  <section class="contact" id="contact" aria-label="Contact">
+    <div class="contact__bg-word" aria-hidden="true">HELLO</div>
+    <div class="contact__inner">
+      <div class="section-count reveal">05</div>
+      <h2 class="contact__headline reveal reveal-delay-1">
+        Let's build something that <em>matters</em>.
+      </h2>
+      <div class="contact__links reveal reveal-delay-2">
+        <a href="mailto:hello@marcusreeve.io" class="contact__link">
+          hello@marcusreeve.io
+        </a>
+        <a href="https://linkedin.com/in/marcusreeve" class="contact__link contact__link--secondary" target="_blank" rel="noopener noreferrer">
+          LinkedIn
+        </a>
+      </div>
+      <p class="contact__note reveal reveal-delay-3">
+        Currently accepting select projects for 2026.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer__copy">© 2026 Marcus Reeve. All rights reserved.</span>
+    <nav class="footer__nav" aria-label="Footer navigation">
+      <a href="about.html"      class="footer__link">About</a>
+      <a href="experience.html" class="footer__link">Experience</a>
+      <a href="library.html"    class="footer__link">Library</a>
+      <a href="#hero"           class="footer__link">↑ Top</a>
+    </nav>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
 </html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library — Marcus Reeve</title>
+  <meta name="description" content="Reference material — games, books, talks, and influences that shape Marcus Reeve's design thinking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <div id="cursor-glow" aria-hidden="true"></div>
+
+  <!-- Nav -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__monogram" aria-hidden="true">MR</span>
+      <span class="nav__wordmark">Marcus Reeve</span>
+    </a>
+    <button class="nav__toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav__links">
+      <a href="index.html"      class="nav__link">Home</a>
+      <a href="about.html"      class="nav__link">About</a>
+      <a href="experience.html" class="nav__link">Experience</a>
+      <a href="library.html"    class="nav__link active">Library</a>
+      <span class="nav__status">
+        <span class="nav__status-dot" aria-hidden="true"></span>
+        Available for Projects
+      </span>
+    </div>
+  </nav>
+
+  <!-- Page hero -->
+  <header class="page-hero">
+    <div class="page-hero__bg" aria-hidden="true"></div>
+    <div class="page-hero__content">
+      <p class="page-hero__eyebrow">Reference Material · Influences</p>
+      <h1 class="page-hero__title">Library</h1>
+    </div>
+  </header>
+
+  <main>
+    <section class="library-section" style="background:var(--bg);">
+
+      <div class="section-count reveal">Reference</div>
+      <div class="reveal reveal-delay-1" style="max-width:52ch;margin-bottom:3.5rem;">
+        <p style="font-family:var(--font-editorial);font-style:italic;font-size:clamp(1.1rem,1.7vw,1.5rem);color:var(--text);line-height:1.65;opacity:0.8;">
+          "You cannot make great games without consuming great games, books, and ideas."
+        </p>
+        <p style="font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-top:0.75rem;">— Marcus Reeve</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="lib-tabs reveal reveal-delay-2">
+        <div class="lib-tab active" data-tab="games">Games</div>
+        <div class="lib-tab" data-tab="books">Books</div>
+        <div class="lib-tab" data-tab="talks">Talks</div>
+        <div class="lib-tab" data-tab="blogs">Blogs</div>
+        <div class="lib-tab" data-tab="videos">Videos</div>
+      </div>
+
+      <!-- GAMES -->
+      <div class="lib-panel active" id="lib-games">
+        <div class="lib-entries">
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Elden Ring</div>
+                <div class="lib-entry-sub">FromSoftware · 2022 · PS5 / PC</div>
+              </div>
+              <div class="lib-entry-year">2022</div>
+              <span class="lib-badge lib-badge--active">Playing</span>
+            </div>
+            <div class="lib-entry-notes">
+              The gold standard for environmental storytelling and systemic difficulty. Zero hand-holding — every mechanic is discovered through exploration and failure. The open world doesn't tell you where to go; it trusts you to figure it out.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Balatro</div>
+                <div class="lib-entry-sub">LocalThunk · 2024 · PC / Mobile</div>
+              </div>
+              <div class="lib-entry-year">2024</div>
+              <span class="lib-badge lib-badge--active">Playing</span>
+            </div>
+            <div class="lib-entry-notes">
+              An exceptional example of emergence from minimal rules. Poker hands are the core mechanic — everything else builds on that simple foundation. The joker system creates infinite build variety from a tight ruleset. Pure systemic design.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Hades</div>
+                <div class="lib-entry-sub">Supergiant Games · 2020 · PC / Switch</div>
+              </div>
+              <div class="lib-entry-year">2020</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              The benchmark for narrative integration in a roguelite. Story progress is tied to mechanical progress — every run advances both. The relationship system makes repetition feel intentional. Supergiant solved "replay fatigue" through character investment.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Celeste</div>
+                <div class="lib-entry-sub">Maddy Thorson &amp; Noel Berry · 2018 · Multi</div>
+              </div>
+              <div class="lib-entry-year">2018</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Perfect difficulty scaffolding. Each mechanic is introduced, tested, and then combined with others. Accessibility options (assist mode) without compromising the core experience. The design philosophy of "difficult but fair" executed flawlessly.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">The Last of Us Part II</div>
+                <div class="lib-entry-sub">Naughty Dog · 2020 · PS4</div>
+              </div>
+              <div class="lib-entry-year">2020</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Emotional storytelling through environmental design and character action. The game makes you feel through gameplay, not just cutscenes. A counterexample to the idea that emergent storytelling can't coexist with authored narrative.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Dead Cells</div>
+                <div class="lib-entry-sub">Motion Twin · 2018 · Multi</div>
+              </div>
+              <div class="lib-entry-year">2018</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Exceptional feel and responsiveness. Every mechanic is tuned to feel satisfying before complexity is added. A reminder that polish matters — great game feel makes learning forgiving.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BOOKS -->
+      <div class="lib-panel" id="lib-books">
+        <div class="lib-entries">
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">The Art of Game Design</div>
+                <div class="lib-entry-sub">Jesse Schell · 2008</div>
+              </div>
+              <div class="lib-entry-year">2008</div>
+              <span class="lib-badge lib-badge--reading">Reading</span>
+            </div>
+            <div class="lib-entry-notes">
+              The most comprehensive framework for thinking about games as designed experiences. The "lens" system is a practical toolkit for evaluating any design decision. Required reading — return to it at every stage of a project.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">A Theory of Fun for Game Design</div>
+                <div class="lib-entry-sub">Raph Koster · 2004</div>
+              </div>
+              <div class="lib-entry-year">2004</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              The foundational argument that fun = learning. Games are enjoyable because the brain is wired to find pattern recognition satisfying. Understanding this changes how you think about difficulty curves and player mastery arcs.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">The Design of Everyday Things</div>
+                <div class="lib-entry-sub">Don Norman · 1988</div>
+              </div>
+              <div class="lib-entry-year">1988</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Norman's affordances and signifiers apply directly to game UX. Players shouldn't need a tutorial to understand a well-designed interface. When an action is unclear it's a design failure, not a player failure.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Thinking, Fast and Slow</div>
+                <div class="lib-entry-sub">Daniel Kahneman · 2011</div>
+              </div>
+              <div class="lib-entry-year">2011</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              System 1 vs System 2 thinking is directly applicable to game UI/UX. Players make most in-game decisions on autopilot — good design works with that, not against it. Cognitive load is the enemy of immersion.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TALKS -->
+      <div class="lib-panel" id="lib-talks">
+        <div class="lib-entries">
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Cursed Problems in Game Design</div>
+                <div class="lib-entry-sub">Alex Jaffe · GDC 2020</div>
+              </div>
+              <div class="lib-entry-year">2020</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Identifies design problems where every solution creates a new problem. The concept of "cursed problems" — constraints that make a perfect solution impossible — is essential context for directors managing stakeholder expectations.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Idle Games: The Mechanics and Monetization of Self-Playing Games</div>
+                <div class="lib-entry-sub">Anthony Pecorella · GDC 2015</div>
+              </div>
+              <div class="lib-entry-year">2015</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Breaks down engagement loops to their atomic components. Useful for understanding why progression systems work even when stripped of all other mechanics. Core loop clarity is the foundation of any successful live service game.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">How to Explain Your Game to an Asshole</div>
+                <div class="lib-entry-sub">Tom Francis · GDC 2012</div>
+              </div>
+              <div class="lib-entry-year">2012</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Every game director needs to pitch and re-pitch their game constantly. This talk cuts through the noise of marketing-speak and teaches you to communicate the actual experience. If you can't explain it clearly, the design isn't clear enough.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BLOGS -->
+      <div class="lib-panel" id="lib-blogs">
+        <div class="lib-entries">
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Lostgarden</div>
+                <div class="lib-entry-sub">Daniel Cook · lostgarden.com</div>
+              </div>
+              <div class="lib-entry-year">Ongoing</div>
+              <span class="lib-badge lib-badge--reading">Reading</span>
+            </div>
+            <div class="lib-entry-notes">
+              The most rigorous analytical writing on game design on the internet. Cook's essays on skill atoms, game loops, and design patterns are foundational. "Visualizing the Creative Process" changed how I think about iterative design.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Game Developer Magazine / Gamasutra</div>
+                <div class="lib-entry-sub">gamedeveloper.com</div>
+              </div>
+              <div class="lib-entry-year">Ongoing</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Post-mortems are the most valuable content here — developers being honest about what went wrong is rarer and more useful than any success story. Read the "what went wrong" sections of every post-mortem you can find.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Designer Notes</div>
+                <div class="lib-entry-sub">Soren Johnson · Podcast + Blog</div>
+              </div>
+              <div class="lib-entry-year">Ongoing</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              Long-form interviews with game designers about their process and philosophy. The Civilization series deep dives are essential for anyone thinking about systems design at scale.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VIDEOS -->
+      <div class="lib-panel" id="lib-videos">
+        <div class="lib-entries">
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Game Maker's Toolkit</div>
+                <div class="lib-entry-sub">Mark Brown · YouTube</div>
+              </div>
+              <div class="lib-entry-year">Ongoing</div>
+              <span class="lib-badge lib-badge--watch">Watching</span>
+            </div>
+            <div class="lib-entry-notes">
+              The best video essay series on game design mechanics and systems. Accessible without being shallow. The "Boss Keys" series on dungeon design and the accessibility series are standouts. Useful for explaining design concepts to non-designers on your team.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">Design Doc</div>
+                <div class="lib-entry-sub">YouTube</div>
+              </div>
+              <div class="lib-entry-year">Ongoing</div>
+              <span class="lib-badge lib-badge--watch">Watching</span>
+            </div>
+            <div class="lib-entry-notes">
+              More technically focused than GMTK. Deep dives on specific mechanics across different games — good for comparative analysis when designing similar systems. The roguelite and progression system episodes are especially sharp.
+            </div>
+          </div>
+
+          <div class="lib-entry">
+            <div class="lib-entry-header" tabindex="0" role="button">
+              <div>
+                <div class="lib-entry-title">GDC Vault</div>
+                <div class="lib-entry-sub">gdcvault.com</div>
+              </div>
+              <div class="lib-entry-year">Ongoing</div>
+              <span class="lib-badge lib-badge--ref">Reference</span>
+            </div>
+            <div class="lib-entry-notes">
+              The archive of decades of industry knowledge. Free tier has enough to keep anyone busy for years. Prioritize talks by directors and leads at studios whose output you respect — process matters as much as outcome.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="footer__copy">© 2026 Marcus Reeve. All rights reserved.</span>
+    <nav class="footer__nav" aria-label="Footer navigation">
+      <a href="index.html"      class="footer__link">Home</a>
+      <a href="about.html"      class="footer__link">About</a>
+      <a href="experience.html" class="footer__link">Experience</a>
+      <a href="#"               class="footer__link">↑ Top</a>
+    </nav>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
