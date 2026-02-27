@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kael Drennan — Senior Game Designer</title>
+  <meta name="description" content="Portfolio of Kael Drennan, Senior Game Designer with 14 years crafting immersive sci-fi and genre-spanning interactive experiences.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Splitting.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/splitting@latest/dist/splitting.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/splitting@latest/dist/splitting-cells.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Favicon (inline SVG data URI) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+</head>
+<body>
+  <!-- Custom Cursor -->
+  <div class="cursor-reticle" aria-hidden="true">
+    <div class="cursor-ring"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-crosshair cursor-crosshair--h"></div>
+    <div class="cursor-crosshair cursor-crosshair--v"></div>
+  </div>
+
+  <!-- Star Field Canvas -->
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
+  <!-- Scanline Overlay -->
+  <div class="scanline-overlay" aria-hidden="true"></div>
+
+  <!-- Navigation HUD -->
+  <nav class="nav-hud" role="navigation" aria-label="Primary navigation">
+    <div class="nav-hud__logo">
+      <span class="nav-hud__logo-icon" aria-hidden="true">◈</span>
+      <span class="nav-hud__logo-text">DRENNAN<span class="text-cyan">.</span>SYS</span>
+    </div>
+    <ul class="nav-hud__links">
+      <li><a href="#about" class="nav-link" data-section="about"><span class="nav-link__index">01</span><span class="nav-link__label">DOSSIER</span></a></li>
+      <li><a href="#projects" class="nav-link" data-section="projects"><span class="nav-link__index">02</span><span class="nav-link__label">MISSIONS</span></a></li>
+      <li><a href="#skills" class="nav-link" data-section="skills"><span class="nav-link__index">03</span><span class="nav-link__label">SYSTEMS</span></a></li>
+      <li><a href="#timeline" class="nav-link" data-section="timeline"><span class="nav-link__index">04</span><span class="nav-link__label">FLIGHT LOG</span></a></li>
+      <li><a href="#philosophy" class="nav-link" data-section="philosophy"><span class="nav-link__index">05</span><span class="nav-link__label">DIRECTIVE</span></a></li>
+      <li><a href="#contact" class="nav-link" data-section="contact"><span class="nav-link__index">06</span><span class="nav-link__label">COMMS</span></a></li>
+    </ul>
+    <button class="nav-hud__menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
+    <ul class="mobile-nav__links">
+      <li><a href="#about" class="mobile-nav-link"><span class="mobile-nav-link__index">01</span>DOSSIER</a></li>
+      <li><a href="#projects" class="mobile-nav-link"><span class="mobile-nav-link__index">02</span>MISSIONS</a></li>
+      <li><a href="#skills" class="mobile-nav-link"><span class="mobile-nav-link__index">03</span>SYSTEMS</a></li>
+      <li><a href="#timeline" class="mobile-nav-link"><span class="mobile-nav-link__index">04</span>FLIGHT LOG</a></li>
+      <li><a href="#philosophy" class="mobile-nav-link"><span class="mobile-nav-link__index">05</span>DIRECTIVE</a></li>
+      <li><a href="#contact" class="mobile-nav-link"><span class="mobile-nav-link__index">06</span>COMMS</a></li>
+    </ul>
+  </div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" aria-hidden="true">
+    <div class="scroll-progress__bar"></div>
+  </div>
+
+  <main>
+    <!-- ==============================
+         HERO — COCKPIT BOOT SEQUENCE
+    ============================== -->
+    <section id="hero" class="section hero" aria-label="Introduction">
+      <div class="hero__hud-frame" aria-hidden="true">
+        <div class="hud-corner hud-corner--tl"></div>
+        <div class="hud-corner hud-corner--tr"></div>
+        <div class="hud-corner hud-corner--bl"></div>
+        <div class="hud-corner hud-corner--br"></div>
+      </div>
+
+      <div class="hero__content">
+        <div class="hero__status-line">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="typewriter" data-typewriter="SYSTEM ONLINE — PILOT DOSSIER LOADED — CLEARANCE: ALPHA">SYSTEM ONLINE — PILOT DOSSIER LOADED — CLEARANCE: ALPHA</span>
+        </div>
+
+        <h1 class="hero__title" data-splitting>
+          <span class="hero__title-line hero__title-line--name">Kael Drennan</span>
+          <span class="hero__title-line hero__title-line--role">Senior Game Designer</span>
+        </h1>
+
+        <p class="hero__subtitle">
+          14 years charting uncharted systems. Five shipped titles. Countless worlds built from nothing but code and conviction. I design the games that keep you up past 3 AM.
+        </p>
+
+        <div class="hero__stats" aria-label="Career statistics">
+          <div class="stat-block">
+            <span class="stat-block__value" data-count="14">0</span>
+            <span class="stat-block__label">Years Active</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-block__value" data-count="5">0</span>
+            <span class="stat-block__label">Shipped Titles</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-block__value" data-count="4">0</span>
+            <span class="stat-block__label">Studios</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-block__value" data-count="12">0</span>
+            <span class="stat-block__label">Awards</span>
+          </div>
+        </div>
+
+        <div class="hero__cta">
+          <a href="#projects" class="btn btn--primary">
+            <span class="btn__chrome" aria-hidden="true"></span>
+            <span class="btn__text">VIEW MISSION LOG</span>
+          </a>
+          <a href="#contact" class="btn btn--ghost">
+            <span class="btn__text">OPEN COMMS</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__scroll-indicator" aria-hidden="true">
+        <div class="scroll-indicator__line"></div>
+        <span class="scroll-indicator__text">SCROLL TO NAVIGATE</span>
+      </div>
+    </section>
+
+    <!-- ==============================
+         ABOUT — PILOT DOSSIER
+    ============================== -->
+    <section id="about" class="section about" aria-labelledby="about-heading">
+      <div class="section__chrome" aria-hidden="true">
+        <div class="chrome-line chrome-line--left"></div>
+        <div class="chrome-line chrome-line--right"></div>
+      </div>
+
+      <div class="section__header">
+        <span class="section__index" aria-hidden="true">01</span>
+        <h2 id="about-heading" class="section__title" data-splitting>PILOT DOSSIER</h2>
+        <div class="section__rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="about__grid">
+        <div class="about__portrait">
+          <div class="portrait-frame">
+            <div class="portrait-frame__scan" aria-hidden="true"></div>
+            <div class="portrait-placeholder" aria-label="Pilot identification photo">
+              <svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="200" height="250" fill="#0a1628" />
+                <circle cx="100" cy="85" r="40" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.5"/>
+                <path d="M50 220 Q100 160 150 220" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.5"/>
+                <line x1="30" y1="30" x2="50" y2="30" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <line x1="30" y1="30" x2="30" y2="50" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <line x1="170" y1="30" x2="150" y2="30" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <line x1="170" y1="30" x2="170" y2="50" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <line x1="30" y1="220" x2="50" y2="220" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <line x1="30" y1="220" x2="30" y2="200" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <line x1="170" y1="220" x2="150" y2="220" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <line x1="170" y1="220" x2="170" y2="200" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                <text x="100" y="135" text-anchor="middle" fill="#00e5ff" font-family="Share Tech Mono" font-size="10" opacity="0.6">ID VERIFIED</text>
+              </svg>
+            </div>
+            <div class="portrait-frame__data" aria-hidden="true">
+              <span>CLEARANCE: ALPHA-7</span>
+              <span>STATUS: ACTIVE</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="about__bio">
+          <div class="about__bio-block">
+            <h3 class="about__bio-label">PERSONNEL FILE</h3>
+            <p>I've spent the better part of fourteen years learning how to make strangers feel something through a screen. It started at a twelve-person indie studio in Vancouver, where I discovered that a perfectly tuned jump arc could make someone laugh out loud, and a well-placed environmental detail could make them stop breathing for a full second.</p>
+            <p>From there, the trajectory went exactly where restless curiosity takes you — through the trenches of AAA production at Obsidian Forge Interactive, into the experimental crucible of Parallax Studios' narrative division, and eventually to my current role leading combat and systems design at Aether Dynamics.</p>
+            <p>My work lives at the intersection of systemic depth and emotional resonance. I believe the best game design is invisible — that players should feel like authors of their own experience, not passengers on a scripted ride. Every system I build serves a story. Every mechanic is a verb the player uses to speak.</p>
+          </div>
+
+          <div class="about__meta-grid">
+            <div class="meta-card">
+              <span class="meta-card__label">DESIGNATION</span>
+              <span class="meta-card__value">Kael Drennan</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-card__label">RANK</span>
+              <span class="meta-card__value">Senior Game Designer</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-card__label">BASE OF OPS</span>
+              <span class="meta-card__value">Seattle, WA</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-card__label">ACTIVE SINCE</span>
+              <span class="meta-card__value">2012</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-card__label">SPECIALIZATION</span>
+              <span class="meta-card__value">Combat &amp; Systems Design</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-card__label">CURRENT STATION</span>
+              <span class="meta-card__value">Aether Dynamics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         PROJECTS — MISSION LOG
+    ============================== -->
+    <section id="projects" class="section projects" aria-labelledby="projects-heading">
+      <div class="section__chrome" aria-hidden="true">
+        <div class="chrome-line chrome-line--left"></div>
+        <div class="chrome-line chrome-line--right"></div>
+      </div>
+
+      <div class="section__header">
+        <span class="section__index" aria-hidden="true">02</span>
+        <h2 id="projects-heading" class="section__title" data-splitting>MISSION LOG</h2>
+        <div class="section__rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="projects__grid">
+        <!-- Project 1 -->
+        <article class="project-card" data-project="1">
+          <div class="project-card__hud" aria-hidden="true">
+            <span class="project-card__status">MISSION COMPLETE</span>
+            <span class="project-card__id">MX-001</span>
+          </div>
+          <div class="project-card__visual">
+            <div class="project-card__glitch-img" aria-hidden="true">
+              <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0a1628;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0d2847;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" fill="url(#g1)"/>
+                <circle cx="200" cy="120" r="60" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                <circle cx="200" cy="120" r="90" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+                <circle cx="200" cy="120" r="30" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.4"/>
+                <polygon points="200,80 230,140 170,140" fill="none" stroke="#ff6b2b" stroke-width="1" opacity="0.5"/>
+                <text x="200" y="125" text-anchor="middle" fill="#00e5ff" font-family="Share Tech Mono" font-size="11" opacity="0.7">VOID SIGNAL</text>
+              </svg>
+            </div>
+          </div>
+          <div class="project-card__content">
+            <div class="project-card__meta">
+              <span class="project-card__year">2024</span>
+              <span class="project-card__separator" aria-hidden="true">//</span>
+              <span class="project-card__studio">Aether Dynamics</span>
+            </div>
+            <h3 class="project-card__title">Void Signal</h3>
+            <p class="project-card__role">Lead Systems Designer</p>
+            <span class="project-card__genre">Sci-Fi / Survival Horror</span>
+            <p class="project-card__desc">A deep-space salvage crew receives a distress signal from a derelict megastructure orbiting a dying star. What begins as a routine recovery operation unravels into a claustrophobic nightmare where the ship itself becomes the antagonist. I designed the adaptive threat system — an AI director that reads player behavior and reshapes encounters in real time, ensuring no two playthroughs feel the same.</p>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project-card" data-project="2">
+          <div class="project-card__hud" aria-hidden="true">
+            <span class="project-card__status">MISSION COMPLETE</span>
+            <span class="project-card__id">MX-002</span>
+          </div>
+          <div class="project-card__visual">
+            <div class="project-card__glitch-img" aria-hidden="true">
+              <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#0a1628;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1a0d2e;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" fill="url(#g2)"/>
+                <path d="M0 200 Q100 100 200 180 Q300 80 400 160" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                <path d="M0 180 Q100 120 200 160 Q300 60 400 140" fill="none" stroke="#ff6b2b" stroke-width="0.5" opacity="0.3"/>
+                <rect x="150" y="60" width="100" height="120" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.2" rx="4"/>
+                <line x1="160" y1="90" x2="240" y2="90" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                <line x1="160" y1="110" x2="220" y2="110" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                <line x1="160" y1="130" x2="230" y2="130" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                <text x="200" y="160" text-anchor="middle" fill="#00e5ff" font-family="Share Tech Mono" font-size="11" opacity="0.7">CHRONICLE</text>
+              </svg>
+            </div>
+          </div>
+          <div class="project-card__content">
+            <div class="project-card__meta">
+              <span class="project-card__year">2022</span>
+              <span class="project-card__separator" aria-hidden="true">//</span>
+              <span class="project-card__studio">Parallax Studios</span>
+            </div>
+            <h3 class="project-card__title">The Ashborne Chronicle</h3>
+            <p class="project-card__role">Senior Narrative Designer</p>
+            <span class="project-card__genre">Dark Fantasy / Action RPG</span>
+            <p class="project-card__desc">A sprawling action RPG set in a world where gods are dying and mortals scramble to inherit their fading power. I architected the faction reputation system and its cascading consequences — over 200 unique story permutations that emerge from how players navigate shifting political alliances. The game shipped to critical acclaim and a 91 Metacritic.</p>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project-card" data-project="3">
+          <div class="project-card__hud" aria-hidden="true">
+            <span class="project-card__status">MISSION COMPLETE</span>
+            <span class="project-card__id">MX-003</span>
+          </div>
+          <div class="project-card__visual">
+            <div class="project-card__glitch-img" aria-hidden="true">
+              <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#061220;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0d2847;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" fill="url(#g3)"/>
+                <circle cx="120" cy="120" r="8" fill="#00e5ff" opacity="0.3"/>
+                <circle cx="280" cy="80" r="5" fill="#ff6b2b" opacity="0.3"/>
+                <circle cx="300" cy="180" r="6" fill="#00e5ff" opacity="0.2"/>
+                <circle cx="80" cy="60" r="4" fill="#00e5ff" opacity="0.2"/>
+                <line x1="120" y1="120" x2="280" y2="80" stroke="#00e5ff" stroke-width="0.5" opacity="0.2" stroke-dasharray="4,4"/>
+                <line x1="280" y1="80" x2="300" y2="180" stroke="#00e5ff" stroke-width="0.5" opacity="0.2" stroke-dasharray="4,4"/>
+                <line x1="120" y1="120" x2="80" y2="60" stroke="#00e5ff" stroke-width="0.5" opacity="0.2" stroke-dasharray="4,4"/>
+                <text x="200" y="210" text-anchor="middle" fill="#00e5ff" font-family="Share Tech Mono" font-size="11" opacity="0.7">STELLARION</text>
+              </svg>
+            </div>
+          </div>
+          <div class="project-card__content">
+            <div class="project-card__meta">
+              <span class="project-card__year">2020</span>
+              <span class="project-card__separator" aria-hidden="true">//</span>
+              <span class="project-card__studio">Obsidian Forge Interactive</span>
+            </div>
+            <h3 class="project-card__title">Stellarion</h3>
+            <p class="project-card__role">Combat Designer</p>
+            <span class="project-card__genre">Space Combat / Open World</span>
+            <p class="project-card__desc">An open-world space combat game spanning twelve procedurally augmented star systems. Players command a fully customizable frigate through dynamic territorial wars between three major factions. I owned the ship-to-ship combat system — a physics-based model balancing Newtonian flight mechanics with arcade accessibility that became the game's signature feature.</p>
+          </div>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="project-card" data-project="4">
+          <div class="project-card__hud" aria-hidden="true">
+            <span class="project-card__status">MISSION COMPLETE</span>
+            <span class="project-card__id">MX-004</span>
+          </div>
+          <div class="project-card__visual">
+            <div class="project-card__glitch-img" aria-hidden="true">
+              <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="g4" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0a1628;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1a1a0a;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" fill="url(#g4)"/>
+                <rect x="60" y="80" width="280" height="80" fill="none" stroke="#ff6b2b" stroke-width="0.5" opacity="0.3" rx="2"/>
+                <line x1="60" y1="100" x2="340" y2="100" stroke="#ff6b2b" stroke-width="0.3" opacity="0.2"/>
+                <line x1="60" y1="120" x2="340" y2="120" stroke="#ff6b2b" stroke-width="0.3" opacity="0.2"/>
+                <line x1="60" y1="140" x2="340" y2="140" stroke="#ff6b2b" stroke-width="0.3" opacity="0.2"/>
+                <line x1="130" y1="80" x2="130" y2="160" stroke="#ff6b2b" stroke-width="0.3" opacity="0.2"/>
+                <line x1="200" y1="80" x2="200" y2="160" stroke="#ff6b2b" stroke-width="0.3" opacity="0.2"/>
+                <line x1="270" y1="80" x2="270" y2="160" stroke="#ff6b2b" stroke-width="0.3" opacity="0.2"/>
+                <text x="200" y="200" text-anchor="middle" fill="#ff6b2b" font-family="Share Tech Mono" font-size="11" opacity="0.7">IRON MERIDIAN</text>
+              </svg>
+            </div>
+          </div>
+          <div class="project-card__content">
+            <div class="project-card__meta">
+              <span class="project-card__year">2017</span>
+              <span class="project-card__separator" aria-hidden="true">//</span>
+              <span class="project-card__studio">Obsidian Forge Interactive</span>
+            </div>
+            <h3 class="project-card__title">Iron Meridian</h3>
+            <p class="project-card__role">Systems Designer</p>
+            <span class="project-card__genre">Tactical Strategy / Alt-History</span>
+            <p class="project-card__desc">Set in an alternate 1960s where the Cold War turned hot across a fractured Europe, Iron Meridian blends real-time tactical combat with a deep strategic metagame of resource management and espionage. I designed the morale and supply chain systems — interconnected mechanics that forced players to think beyond the battlefield and consider the human cost of every decision.</p>
+          </div>
+        </article>
+
+        <!-- Project 5 -->
+        <article class="project-card" data-project="5">
+          <div class="project-card__hud" aria-hidden="true">
+            <span class="project-card__status">MISSION COMPLETE</span>
+            <span class="project-card__id">MX-005</span>
+          </div>
+          <div class="project-card__visual">
+            <div class="project-card__glitch-img" aria-hidden="true">
+              <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="g5" x1="50%" y1="0%" x2="50%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0d2847;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0a1628;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" fill="url(#g5)"/>
+                <path d="M100 200 L200 40 L300 200" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                <path d="M140 200 L200 80 L260 200" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+                <circle cx="200" cy="40" r="15" fill="none" stroke="#ff6b2b" stroke-width="0.5" opacity="0.4"/>
+                <line x1="100" y1="200" x2="300" y2="200" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+                <text x="200" y="230" text-anchor="middle" fill="#00e5ff" font-family="Share Tech Mono" font-size="11" opacity="0.7">WAYPOINT EDEN</text>
+              </svg>
+            </div>
+          </div>
+          <div class="project-card__content">
+            <div class="project-card__meta">
+              <span class="project-card__year">2014</span>
+              <span class="project-card__separator" aria-hidden="true">//</span>
+              <span class="project-card__studio">Wanderlux Games</span>
+            </div>
+            <h3 class="project-card__title">Waypoint Eden</h3>
+            <p class="project-card__role">Game Designer</p>
+            <span class="project-card__genre">Exploration / Puzzle Adventure</span>
+            <p class="project-card__desc">A meditative exploration game set on a terraformed moon where ancient alien machinery hums beneath crystalline forests. Players unravel the mystery of a vanished civilization through environmental storytelling and physics-based puzzles. My first shipped title — I designed the core traversal mechanics and the environmental puzzle language that critics called "quietly revolutionary."</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==============================
+         SKILLS — SHIP SYSTEMS
+    ============================== -->
+    <section id="skills" class="section skills" aria-labelledby="skills-heading">
+      <div class="section__chrome" aria-hidden="true">
+        <div class="chrome-line chrome-line--left"></div>
+        <div class="chrome-line chrome-line--right"></div>
+      </div>
+
+      <div class="section__header">
+        <span class="section__index" aria-hidden="true">03</span>
+        <h2 id="skills-heading" class="section__title" data-splitting>SHIP SYSTEMS</h2>
+        <div class="section__rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="skills__grid">
+        <div class="skill-system" data-skill>
+          <div class="skill-system__header">
+            <span class="skill-system__icon" aria-hidden="true">⬡</span>
+            <h3 class="skill-system__name">COMBAT SYSTEMS</h3>
+            <span class="skill-system__status">ONLINE</span>
+          </div>
+          <div class="skill-system__bar-track">
+            <div class="skill-system__bar-fill" data-level="95" style="--level: 95%"></div>
+          </div>
+          <ul class="skill-system__sub">
+            <li>Combat encounter design</li>
+            <li>Weapon balancing &amp; tuning</li>
+            <li>Enemy AI behavior trees</li>
+            <li>Difficulty curve architecture</li>
+          </ul>
+        </div>
+
+        <div class="skill-system" data-skill>
+          <div class="skill-system__header">
+            <span class="skill-system__icon" aria-hidden="true">◇</span>
+            <h3 class="skill-system__name">NARRATIVE ENGINE</h3>
+            <span class="skill-system__status">ONLINE</span>
+          </div>
+          <div class="skill-system__bar-track">
+            <div class="skill-system__bar-fill" data-level="90" style="--level: 90%"></div>
+          </div>
+          <ul class="skill-system__sub">
+            <li>Branching narrative systems</li>
+            <li>Environmental storytelling</li>
+            <li>Dialogue tree architecture</li>
+            <li>Player agency frameworks</li>
+          </ul>
+        </div>
+
+        <div class="skill-system" data-skill>
+          <div class="skill-system__header">
+            <span class="skill-system__icon" aria-hidden="true">△</span>
+            <h3 class="skill-system__name">SYSTEMS ARCHITECTURE</h3>
+            <span class="skill-system__status">ONLINE</span>
+          </div>
+          <div class="skill-system__bar-track">
+            <div class="skill-system__bar-fill" data-level="92" style="--level: 92%"></div>
+          </div>
+          <ul class="skill-system__sub">
+            <li>Economy &amp; progression design</li>
+            <li>Procedural generation logic</li>
+            <li>Interconnected mechanic webs</li>
+            <li>Emergent gameplay engineering</li>
+          </ul>
+        </div>
+
+        <div class="skill-system" data-skill>
+          <div class="skill-system__header">
+            <span class="skill-system__icon" aria-hidden="true">◎</span>
+            <h3 class="skill-system__name">LEVEL DESIGN</h3>
+            <span class="skill-system__status">ONLINE</span>
+          </div>
+          <div class="skill-system__bar-track">
+            <div class="skill-system__bar-fill" data-level="88" style="--level: 88%"></div>
+          </div>
+          <ul class="skill-system__sub">
+            <li>Spatial flow &amp; pacing</li>
+            <li>Open world structuring</li>
+            <li>Encounter space composition</li>
+            <li>Verticality &amp; traversal design</li>
+          </ul>
+        </div>
+
+        <div class="skill-system" data-skill>
+          <div class="skill-system__header">
+            <span class="skill-system__icon" aria-hidden="true">⊡</span>
+            <h3 class="skill-system__name">PROTOTYPING</h3>
+            <span class="skill-system__status">ONLINE</span>
+          </div>
+          <div class="skill-system__bar-track">
+            <div class="skill-system__bar-fill" data-level="85" style="--level: 85%"></div>
+          </div>
+          <ul class="skill-system__sub">
+            <li>Unreal Engine 5 / Unity</li>
+            <li>Blueprint scripting</li>
+            <li>Rapid iteration frameworks</li>
+            <li>Greybox &amp; blockout methods</li>
+          </ul>
+        </div>
+
+        <div class="skill-system" data-skill>
+          <div class="skill-system__header">
+            <span class="skill-system__icon" aria-hidden="true">⬢</span>
+            <h3 class="skill-system__name">TEAM COMMAND</h3>
+            <span class="skill-system__status">ONLINE</span>
+          </div>
+          <div class="skill-system__bar-track">
+            <div class="skill-system__bar-fill" data-level="91" style="--level: 91%"></div>
+          </div>
+          <ul class="skill-system__sub">
+            <li>Cross-discipline leadership</li>
+            <li>Design documentation</li>
+            <li>Stakeholder communication</li>
+            <li>Mentorship &amp; team growth</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tools subsection -->
+      <div class="skills__tools">
+        <h3 class="skills__tools-heading">AUXILIARY LOADOUT</h3>
+        <div class="skills__tools-grid">
+          <span class="tool-tag">Unreal Engine 5</span>
+          <span class="tool-tag">Unity</span>
+          <span class="tool-tag">Figma</span>
+          <span class="tool-tag">Miro</span>
+          <span class="tool-tag">Jira</span>
+          <span class="tool-tag">Confluence</span>
+          <span class="tool-tag">Perforce</span>
+          <span class="tool-tag">Git</span>
+          <span class="tool-tag">Lua</span>
+          <span class="tool-tag">C# Scripting</span>
+          <span class="tool-tag">Blueprint</span>
+          <span class="tool-tag">Machinations</span>
+          <span class="tool-tag">Houdini</span>
+          <span class="tool-tag">Photoshop</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         TIMELINE — FLIGHT LOG
+    ============================== -->
+    <section id="timeline" class="section timeline" aria-labelledby="timeline-heading">
+      <div class="section__chrome" aria-hidden="true">
+        <div class="chrome-line chrome-line--left"></div>
+        <div class="chrome-line chrome-line--right"></div>
+      </div>
+
+      <div class="section__header">
+        <span class="section__index" aria-hidden="true">04</span>
+        <h2 id="timeline-heading" class="section__title" data-splitting>FLIGHT LOG</h2>
+        <div class="section__rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="timeline__track">
+        <div class="timeline__line" aria-hidden="true"></div>
+
+        <div class="timeline__entry" data-timeline-entry>
+          <div class="timeline__node" aria-hidden="true">
+            <span class="timeline__node-dot"></span>
+            <span class="timeline__node-ring"></span>
+          </div>
+          <div class="timeline__content">
+            <span class="timeline__date">2012 — 2015</span>
+            <h3 class="timeline__role">Game Designer</h3>
+            <span class="timeline__org">Wanderlux Games <span class="text-dim">// Vancouver, BC</span></span>
+            <p class="timeline__desc">First deployment. Joined a scrappy 12-person indie studio and learned that great games are built by small teams with big convictions. Shipped Waypoint Eden to critical praise and discovered my voice as a designer.</p>
+          </div>
+        </div>
+
+        <div class="timeline__entry" data-timeline-entry>
+          <div class="timeline__node" aria-hidden="true">
+            <span class="timeline__node-dot"></span>
+            <span class="timeline__node-ring"></span>
+          </div>
+          <div class="timeline__content">
+            <span class="timeline__date">2015 — 2021</span>
+            <h3 class="timeline__role">Systems Designer → Senior Combat Designer</h3>
+            <span class="timeline__org">Obsidian Forge Interactive <span class="text-dim">// Austin, TX</span></span>
+            <p class="timeline__desc">The long tour. Six years across two major titles — Iron Meridian and Stellarion — where I evolved from systems designer to owning the entire combat vertical. Built a design team from 3 to 11. Learned that AAA scale demands both vision and compromise.</p>
+          </div>
+        </div>
+
+        <div class="timeline__entry" data-timeline-entry>
+          <div class="timeline__node" aria-hidden="true">
+            <span class="timeline__node-dot"></span>
+            <span class="timeline__node-ring"></span>
+          </div>
+          <div class="timeline__content">
+            <span class="timeline__date">2021 — 2023</span>
+            <h3 class="timeline__role">Senior Narrative Designer</h3>
+            <span class="timeline__org">Parallax Studios <span class="text-dim">// Montreal, QC</span></span>
+            <p class="timeline__desc">A deliberate pivot into narrative-heavy design. Led the systems-narrative integration on The Ashborne Chronicle — proving that systemic depth and storytelling aren't opposing forces, but amplifiers of each other.</p>
+          </div>
+        </div>
+
+        <div class="timeline__entry" data-timeline-entry>
+          <div class="timeline__node" aria-hidden="true">
+            <span class="timeline__node-dot"></span>
+            <span class="timeline__node-ring"></span>
+          </div>
+          <div class="timeline__content">
+            <span class="timeline__date">2023 — Present</span>
+            <h3 class="timeline__role">Lead Systems Designer</h3>
+            <span class="timeline__org">Aether Dynamics <span class="text-dim">// Seattle, WA</span></span>
+            <p class="timeline__desc">Current station. Leading combat and core systems design on Void Signal and an unannounced title. Building the most ambitious adaptive AI system of my career, and mentoring the next generation of designers who'll do it better than I ever could.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         PHILOSOPHY — DESIGN DIRECTIVE
+    ============================== -->
+    <section id="philosophy" class="section philosophy" aria-labelledby="philosophy-heading">
+      <div class="section__chrome" aria-hidden="true">
+        <div class="chrome-line chrome-line--left"></div>
+        <div class="chrome-line chrome-line--right"></div>
+      </div>
+
+      <div class="section__header">
+        <span class="section__index" aria-hidden="true">05</span>
+        <h2 id="philosophy-heading" class="section__title" data-splitting>DESIGN DIRECTIVE</h2>
+        <div class="section__rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="philosophy__content">
+        <blockquote class="philosophy__quote">
+          <p>"The best games don't tell you what to feel. They build a space where feeling becomes inevitable."</p>
+        </blockquote>
+
+        <div class="philosophy__principles">
+          <div class="principle-card" data-principle>
+            <span class="principle-card__number" aria-hidden="true">I</span>
+            <h3 class="principle-card__title">Systems Are Stories</h3>
+            <p class="principle-card__text">Every mechanic is a sentence in a language the player is learning to speak. The best design creates grammar — consistent, learnable rules that reward mastery and punish assumptions. When your systems tell a story, your narrative doesn't have to carry the entire weight.</p>
+          </div>
+
+          <div class="principle-card" data-principle>
+            <span class="principle-card__number" aria-hidden="true">II</span>
+            <h3 class="principle-card__title">Friction Is A Feature</h3>
+            <p class="principle-card__text">Not all resistance is bad design. The right kind of friction creates tension, forces decision-making, and makes eventual triumph transcendent. The wrong kind creates frustration. Knowing the difference is the entire job.</p>
+          </div>
+
+          <div class="principle-card" data-principle>
+            <span class="principle-card__number" aria-hidden="true">III</span>
+            <h3 class="principle-card__title">Design For The Verb</h3>
+            <p class="principle-card__text">Players don't remember features — they remember actions. "I climbed," "I chose," "I survived." Every system I build starts with the verb. What will the player do? How will it feel? Everything else is architecture in service of that moment.</p>
+          </div>
+
+          <div class="principle-card" data-principle>
+            <span class="principle-card__number" aria-hidden="true">IV</span>
+            <h3 class="principle-card__title">Invisible Elegance</h3>
+            <p class="principle-card__text">The highest compliment to a designer is when no one notices the design. If players feel like authors of their own experience — not passengers on your ride — you've done it right. Ego has no place in systems design. Only clarity.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         CONTACT — COMMS TERMINAL
+    ============================== -->
+    <section id="contact" class="section contact" aria-labelledby="contact-heading">
+      <div class="section__chrome" aria-hidden="true">
+        <div class="chrome-line chrome-line--left"></div>
+        <div class="chrome-line chrome-line--right"></div>
+      </div>
+
+      <div class="section__header">
+        <span class="section__index" aria-hidden="true">06</span>
+        <h2 id="contact-heading" class="section__title" data-splitting>COMMS TERMINAL</h2>
+        <div class="section__rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="contact__terminal">
+        <div class="terminal__chrome" aria-hidden="true">
+          <span class="terminal__status-dot"></span>
+          <span class="terminal__status-text">CHANNEL OPEN — AWAITING TRANSMISSION</span>
+        </div>
+
+        <div class="terminal__body">
+          <p class="terminal__intro">Transmission frequency open. Whether you're building the next great space odyssey, need a veteran systems designer for your combat team, or just want to argue about whether Newtonian flight physics belong in arcade shooters — I'm listening.</p>
+
+          <div class="contact__channels">
+            <a href="mailto:kael.drennan@proton.me" class="channel-link">
+              <span class="channel-link__icon" aria-hidden="true">◈</span>
+              <span class="channel-link__label">ENCRYPTED MAIL</span>
+              <span class="channel-link__value">kael.drennan@proton.me</span>
+            </a>
+            <a href="https://linkedin.com/in/kaeldrennan" class="channel-link" target="_blank" rel="noopener noreferrer">
+              <span class="channel-link__icon" aria-hidden="true">◇</span>
+              <span class="channel-link__label">FEDERATION NETWORK</span>
+              <span class="channel-link__value">linkedin.com/in/kaeldrennan</span>
+            </a>
+            <a href="https://twitter.com/kaeldrennan" class="channel-link" target="_blank" rel="noopener noreferrer">
+              <span class="channel-link__icon" aria-hidden="true">△</span>
+              <span class="channel-link__label">OPEN BROADCAST</span>
+              <span class="channel-link__value">@kaeldrennan</span>
+            </a>
+            <a href="https://kaeldrennan.itch.io" class="channel-link" target="_blank" rel="noopener noreferrer">
+              <span class="channel-link__icon" aria-hidden="true">⬡</span>
+              <span class="channel-link__label">PROTOTYPE BAY</span>
+              <span class="channel-link__value">kaeldrennan.itch.io</span>
+            </a>
+          </div>
+
+          <div class="terminal__prompt" aria-hidden="true">
+            <span class="terminal__prompt-caret">▸</span>
+            <span class="terminal__prompt-text typewriter" data-typewriter="READY FOR NEW MISSION_">READY FOR NEW MISSION_</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__content">
+      <span class="footer__copy">&copy; 2026 Kael Drennan. All systems nominal.</span>
+      <span class="footer__signal" aria-hidden="true">◈ SIGNAL STRONG ◈</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@latest/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/splitting@latest/dist/splitting.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
