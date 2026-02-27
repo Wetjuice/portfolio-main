@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KAEL THORNWOOD — Game Designer</title>
+  <meta name="description" content="Portfolio of Kael Thornwood, veteran game designer and systems architect. 18 years building emergent worlds.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Skip link for accessibility -->
+  <a href="#terminal-input" class="skip-link">Skip to terminal input</a>
+
+  <div id="app" role="application" aria-label="Kael Thornwood Portfolio — Interactive terminal and viewport">
+
+    <!-- ========== TERMINAL PANEL ========== -->
+    <section id="terminal" role="region" aria-label="Command terminal">
+      <header id="terminal-header">
+        <div class="terminal-dots">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+        </div>
+        <span class="terminal-title">thornwood.engine <span class="dim">v4.2.1</span></span>
+        <div class="terminal-header-right">
+          <span class="connection-indicator" aria-hidden="true"></span>
+          <span class="dim">VIEWPORT LINKED</span>
+        </div>
+      </header>
+
+      <div id="terminal-output" role="log" aria-live="polite" aria-label="Terminal output"></div>
+
+      <nav id="terminal-suggestions" aria-label="Suggested commands"></nav>
+
+      <div id="terminal-input-line">
+        <span class="prompt" aria-hidden="true">→</span>
+        <label for="terminal-input" class="sr-only">Enter command</label>
+        <input
+          type="text"
+          id="terminal-input"
+          autocomplete="off"
+          spellcheck="false"
+          autofocus
+          placeholder="type a command..."
+          aria-describedby="input-hint"
+        >
+        <span id="input-hint" class="sr-only">Type help for available commands. Use arrow keys for history, tab for autocomplete.</span>
+      </div>
+    </section>
+
+    <!-- ========== CONNECTION BEAM ========== -->
+    <div id="connection-beam" aria-hidden="true"></div>
+
+    <!-- ========== VIEWPORT PANEL ========== -->
+    <section id="viewport" role="region" aria-label="Visual viewport">
+      <canvas id="particles" aria-hidden="true"></canvas>
+      <div id="viewport-content"></div>
+      <div id="viewport-label" aria-hidden="true">
+        <span class="viewport-tag">VIEWPORT</span>
+        <span id="viewport-state">IDLE</span>
+      </div>
+      <div id="viewport-coords" aria-hidden="true">
+        <span id="coord-x">X: 0</span>
+        <span id="coord-y">Y: 0</span>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Reduced motion notice (hidden, for screen readers) -->
+  <div class="sr-only" role="status" id="motion-status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="engine.js"></script>
+</body>
+</html>
