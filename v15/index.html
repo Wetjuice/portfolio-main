@@ -84,16 +84,6 @@ body::before {
 /* ═══════════════════════════════════════════
    BOOT SEQUENCE
    ═══════════════════════════════════════════ */
-#boot-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: var(--bg);
-  padding: 24px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
 
 #boot-log {
   font-size: 0.8rem;
@@ -102,6 +92,8 @@ body::before {
   white-space: pre-wrap;
   word-break: break-all;
   overflow: hidden;
+  padding: 24px;
+  transition: opacity 0.6s, transform 0.6s, max-height 0.6s;
 }
 
 #boot-log .dim { color: var(--text-dim); }
@@ -1128,7 +1120,6 @@ body::before {
   .np-dot { animation: none; }
 
   #boot-screen { display: none !important; }
-  #verify-screen { display: none !important; }
   #cli-screen { display: none !important; }
   #static-canvas { display: none !important; }
   #boot-scanline { display: none !important; }
@@ -1193,17 +1184,37 @@ body::before {
 }
 
 /* ═══════════════════════════════════════════
-   VERIFY SCREEN
+   VERIFICATION (inside boot-screen)
    ═══════════════════════════════════════════ */
-#verify-screen {
-  display: none;
+#boot-screen {
   position: fixed;
   inset: 0;
-  z-index: 950;
+  z-index: 1000;
   background: var(--bg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#boot-log.dimmed {
+  opacity: 0.3;
+  transform: scale(0.92);
+  transform-origin: top left;
+  max-height: 30vh;
+  transition: opacity 0.6s, transform 0.6s, max-height 0.6s;
+}
+#verify-area {
+  flex: 1;
+  position: relative;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+#verify-area.visible {
+  display: flex;
+  opacity: 1;
 }
 #verify-canvas {
   position: absolute;
@@ -1459,29 +1470,25 @@ body::before {
 <div class="tab-scanline" id="tab-scanline"></div>
 
 <!-- ═══════════════════════════════════════════
-     BOOT SEQUENCE
+     BOOT SEQUENCE + VERIFICATION (unified)
      ═══════════════════════════════════════════ -->
 <div id="boot-screen">
   <div id="boot-log"></div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     SYNTHETIC VERIFICATION
-     ═══════════════════════════════════════════ -->
-<div id="verify-screen">
-  <canvas id="verify-canvas"></canvas>
-  <div id="verify-ui">
-    <div id="verify-label">SECURITY CHECKPOINT</div>
-    <div id="verify-title">Verify you are synthetic</div>
-    <div id="verify-action">Tap anywhere to begin verification</div>
-  </div>
-  <div id="verify-result">
-    <svg id="verify-check-svg" viewBox="0 0 52 52" width="64" height="64">
-      <circle cx="26" cy="26" r="25" fill="none" stroke="#00ff88" stroke-width="2"/>
-      <path fill="none" stroke="#00ff88" stroke-width="3" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-    </svg>
-    <div id="verify-confirmed">SYNTHETIC IDENTITY CONFIRMED</div>
-    <div id="verify-clearance">Clearance Level: ALPHA</div>
+  <div id="verify-area">
+    <canvas id="verify-canvas"></canvas>
+    <div id="verify-ui">
+      <div id="verify-label">SECURITY CHECKPOINT</div>
+      <div id="verify-title">Verify you are synthetic</div>
+      <div id="verify-action">Tap anywhere to begin verification</div>
+    </div>
+    <div id="verify-result">
+      <svg id="verify-check-svg" viewBox="0 0 52 52" width="64" height="64">
+        <circle cx="26" cy="26" r="25" fill="none" stroke="#00ff88" stroke-width="2"/>
+        <path fill="none" stroke="#00ff88" stroke-width="3" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+      </svg>
+      <div id="verify-confirmed">SYNTHETIC IDENTITY CONFIRMED</div>
+      <div id="verify-clearance">Clearance Level: ALPHA</div>
+    </div>
   </div>
 </div>
 
@@ -2361,7 +2368,9 @@ const bootMessages = [
   { text: '', delay: 0.04 },
   { text: '  ─────────────────────────────────────────────────────', cls: 'dim', delay: 0.03 },
   { text: '  CONNECTION ESTABLISHED', cls: 'header', delay: 0.1, shake: true },
-  { text: '  Redirecting to security checkpoint...', cls: 'dim', delay: 0.08 },
+  { text: '', delay: 0.04 },
+  { text: '  ⚠ SECURITY CHECKPOINT REQUIRED', cls: 'warn', delay: 0.1 },
+  { text: '  INITIATING SYNTHETIC VERIFICATION...', cls: 'sys', delay: 0.08 },
 ];
 
 function runBootSequence() {
@@ -2375,6 +2384,7 @@ function runBootSequence() {
   const scanline = runBootScanline();
   const bootLog = document.getElementById('boot-log');
   const bootScreen = document.getElementById('boot-screen');
+  const verifyArea = document.getElementById('verify-area');
   const tl = gsap.timeline();
   let cumulativeDelay = 0.15;
   let progress = 0;
@@ -2396,45 +2406,32 @@ function runBootSequence() {
     cumulativeDelay += msg.delay;
   });
 
-  // Seamless transition: show verify screen BEHIND boot, then dissolve boot away
+  // After boot messages: dim boot-log, fade in verification area inline
   tl.call(() => {
     if (staticCtrl) staticCtrl.fadeOut(0.2);
     if (scanline) gsap.to(scanline, { opacity: 0, duration: 0.2 });
 
-    // Show verify screen underneath (z-index 950 < boot's 1000)
-    const verifyScreen = document.getElementById('verify-screen');
-    verifyScreen.style.display = 'flex';
-    verifyScreen.style.opacity = '1';
-    initVerification();
+    // Dim the boot log text — shrink and fade it
+    bootLog.classList.add('dimmed');
 
-    // Dissolve boot screen — bg goes transparent, text fades up
-    gsap.to(bootScreen, { backgroundColor: 'transparent', duration: 0.3 });
-    gsap.to(bootLog, {
-      opacity: 0, y: -20, duration: 0.3,
-      onComplete() {
-        bootScreen.style.display = 'none';
-      }
-    });
+    // Show verification area below the dimmed boot text
+    verifyArea.style.display = 'flex';
+    gsap.fromTo(verifyArea, { opacity: 0 }, { opacity: 1, duration: 0.5, delay: 0.3 });
+    setTimeout(() => initVerification(), 350);
   }, null, cumulativeDelay);
 }
 
 /* ─── SYNTHETIC VERIFICATION ─── */
-function showVerifyScreen() {
-  // Called only from reduced-motion path now
-  const screen = document.getElementById('verify-screen');
-  screen.style.display = 'flex';
-  screen.style.opacity = '1';
-  initVerification();
-}
-
 function initVerification() {
+  const verifyArea = document.getElementById('verify-area');
   const canvas = document.getElementById('verify-canvas');
   const ctx = canvas.getContext('2d');
-  const W = canvas.width = window.innerWidth;
-  const H = canvas.height = window.innerHeight;
+  const rect = verifyArea.getBoundingClientRect();
+  const W = canvas.width = rect.width;
+  const H = canvas.height = rect.height;
   const nodeCount = 42;
   const nodes = [];
-  const pad = 60;
+  const pad = 40;
 
   for (let i = 0; i < nodeCount; i++) {
     nodes.push({
@@ -2474,9 +2471,19 @@ function initVerification() {
   function onInteract(e) {
     if (started) return;
     started = true;
-    const touch = e.touches ? e.touches[0] : null;
-    const cx = (e.clientX != null) ? e.clientX : (touch ? touch.clientX : W / 2);
-    const cy = (e.clientY != null) ? e.clientY : (touch ? touch.clientY : H / 2);
+    // Get coordinates relative to the canvas area
+    let cx, cy;
+    if (e.touches && e.touches[0]) {
+      const touch = e.touches[0];
+      cx = touch.clientX - rect.left;
+      cy = touch.clientY - rect.top;
+    } else if (e.clientX != null) {
+      cx = e.clientX - rect.left;
+      cy = e.clientY - rect.top;
+    } else {
+      cx = W / 2;
+      cy = H / 2;
+    }
     const sorted = nodes.map((n, i) => ({ i, d: Math.hypot(n.x - cx, n.y - cy) })).sort((a, b) => a.d - b.d);
     gsap.to('#verify-ui', { opacity: 0, duration: 0.2 });
 
@@ -2619,14 +2626,28 @@ function initVerification() {
     requestAnimationFrame(animate);
   }
 
+  // Click listener on canvas
   canvas.addEventListener('click', onInteract);
+
+  // Touch listeners on canvas
   canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    if (e.touches && e.touches[0]) {
-      onInteract(e.touches[0]);
-    } else {
-      onInteract(e);
-    }
+    onInteract(e);
+  }, { passive: false });
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    onInteract(e);
+  }, { passive: false });
+
+  // Make ENTIRE verify-area clickable/tappable (not just canvas)
+  verifyArea.addEventListener('click', onInteract);
+  verifyArea.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    onInteract(e);
+  }, { passive: false });
+  verifyArea.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    onInteract(e);
   }, { passive: false });
 }
 
@@ -2640,10 +2661,11 @@ function showVerifyResult() {
   gsap.to('#verify-confirmed', { opacity: 1, duration: 0.4, delay: 0.8 });
   gsap.to('#verify-clearance', { opacity: 1, duration: 0.3, delay: 1.1 });
   setTimeout(() => {
-    gsap.to('#verify-screen', {
+    const bootScreen = document.getElementById('boot-screen');
+    gsap.to(bootScreen, {
       opacity: 0, duration: 0.5,
       onComplete() {
-        document.getElementById('verify-screen').style.display = 'none';
+        bootScreen.style.display = 'none';
         showCliScreen();
       }
     });
