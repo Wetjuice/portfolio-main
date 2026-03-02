@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kael Duskwright — Game Designer Portfolio</title>
+  <meta name="description" content="A pixel art journey through 15+ years of game design — from indie garage to creative director.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HUD / Inventory Bar -->
+  <header class="hud" role="banner" aria-label="Game HUD">
+    <div class="hud-left">
+      <span class="hud-label">SKILLS</span>
+      <div class="hud-skills" id="hudSkills" aria-live="polite"></div>
+    </div>
+    <div class="hud-center">
+      <span class="hud-level" id="hudLevel">LV 1</span>
+      <span class="hud-name">KAEL DUSKWRIGHT</span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-label">MAP</span>
+      <div class="minimap" id="minimap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="minimap-track">
+          <div class="minimap-dot" data-checkpoint="0" title="Start"></div>
+          <div class="minimap-dot" data-checkpoint="1" title="Pixel Forge"></div>
+          <div class="minimap-dot" data-checkpoint="2" title="Stormlight"></div>
+          <div class="minimap-dot" data-checkpoint="3" title="Titan"></div>
+          <div class="minimap-dot" data-checkpoint="4" title="Nebula"></div>
+          <div class="minimap-dot" data-checkpoint="5" title="Independent"></div>
+          <div class="minimap-dot" data-checkpoint="6" title="Contact"></div>
+          <div class="minimap-player" id="minimapPlayer"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Scroll container — tall page drives horizontal movement -->
+  <div class="scroll-container" id="scrollContainer">
+
+    <!-- Fixed viewport for the pixel world -->
+    <div class="viewport" id="viewport">
+
+      <!-- Parallax sky layer (slowest) -->
+      <div class="parallax-layer sky-layer" id="skyLayer">
+        <canvas id="skyCanvas" aria-hidden="true"></canvas>
+      </div>
+
+      <!-- Parallax mid layer (mountains/distant buildings) -->
+      <div class="parallax-layer mid-layer" id="midLayer">
+        <canvas id="midCanvas" aria-hidden="true"></canvas>
+      </div>
+
+      <!-- Foreground layer (path, buildings, character) -->
+      <div class="parallax-layer fg-layer" id="fgLayer">
+        <canvas id="fgCanvas" aria-hidden="true"></canvas>
+      </div>
+
+      <!-- Character layer (fixed center) -->
+      <div class="character-layer" id="characterLayer">
+        <canvas id="charCanvas" width="64" height="96" aria-label="Pixel art character walking through career journey"></canvas>
+      </div>
+
+      <!-- Dialogue overlay -->
+      <div class="dialogue-overlay" id="dialogueOverlay" aria-live="polite">
+        <div class="dialogue-box" id="dialogueBox">
+          <div class="dialogue-header">
+            <div class="dialogue-portrait" id="dialoguePortrait"></div>
+            <div class="dialogue-title-block">
+              <h3 class="dialogue-company" id="dialogueCompany"></h3>
+              <p class="dialogue-role" id="dialogueRole"></p>
+              <p class="dialogue-years" id="dialogueYears"></p>
+            </div>
+          </div>
+          <div class="dialogue-text" id="dialogueText"></div>
+          <div class="dialogue-prompt">&#9660; SCROLL</div>
+        </div>
+      </div>
+
+      <!-- Title screen overlay -->
+      <div class="title-screen" id="titleScreen">
+        <div class="title-content">
+          <h1 class="title-name">KAEL DUSKWRIGHT</h1>
+          <p class="title-subtitle">GAME DESIGNER</p>
+          <div class="title-stars" aria-hidden="true"></div>
+          <p class="title-prompt" id="titlePrompt">[ SCROLL TO BEGIN ]</p>
+        </div>
+      </div>
+
+    </div><!-- /viewport -->
+
+  </div><!-- /scroll-container -->
+
+  <!-- Semantic content layer (accessible, hidden visually) -->
+  <div class="sr-content" aria-label="Portfolio content">
+    <main>
+      <section aria-label="Introduction">
+        <h1>Kael Duskwright — Game Designer</h1>
+        <p>15+ years crafting interactive worlds. From indie flash games to genre-defining space sims.</p>
+      </section>
+
+      <section aria-label="Career History">
+        <article>
+          <h2>Pixel Forge Indie</h2>
+          <p>Junior Designer, 2009–2012</p>
+          <p>Started in a garage studio making flash games. Learned that constraints breed creativity. Built 12 prototypes, shipped 3 titles, and discovered that game feel matters more than graphics.</p>
+        </article>
+        <article>
+          <h2>Stormlight Entertainment</h2>
+          <p>Game Designer, 2012–2015</p>
+          <p>First AAA project. Shipped a 40-hour RPG and learned what crunch really means. Designed the quest system that players still talk about. Grew from junior to trusted designer.</p>
+        </article>
+        <article>
+          <h2>Titan Interactive</h2>
+          <p>Senior Designer, 2015–2019</p>
+          <p>Led a team of 12. Two shipped titles. Discovered that design is really about people. Built internal tools that cut iteration time by 60%. Mentored 4 junior designers.</p>
+        </article>
+        <article>
+          <h2>Nebula Games</h2>
+          <p>Lead Designer, 2019–2023</p>
+          <p>Creative lead on a genre-defining space sim. 4 million copies. Best team I ever worked with. Pioneered a procedural narrative system that generated 10,000 unique storylines.</p>
+        </article>
+        <article>
+          <h2>Independent</h2>
+          <p>Creative Director & Consultant, 2023–Present</p>
+          <p>Now I help other studios find their vision. The journey continues. Currently advising 3 studios, writing a book on game feel, and prototyping something new.</p>
+        </article>
+      </section>
+
+      <section aria-label="Skills">
+        <h2>Skills</h2>
+        <ul>
+          <li>Game Design</li>
+          <li>Level Design</li>
+          <li>Narrative Design</li>
+          <li>Prototyping</li>
+          <li>Team Leadership</li>
+          <li>Systems Design</li>
+          <li>UX/UI</li>
+          <li>Unity</li>
+          <li>Unreal Engine</li>
+          <li>Pixel Art</li>
+        </ul>
+      </section>
+
+      <section aria-label="Contact">
+        <h2>Contact</h2>
+        <p>Email: kael@duskwright.dev</p>
+        <p>Twitter: @kaelduskwright</p>
+        <p>LinkedIn: linkedin.com/in/kaelduskwright</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Reduced motion static fallback message -->
+  <noscript>
+    <style>.viewport, .hud { display: none; } .sr-content { position: static !important; width: auto !important; height: auto !important; overflow: visible !important; clip: auto !important; white-space: normal !important; }</style>
+  </noscript>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+/* ============================================
+   V11 — Pixel Art Career Journey
+   ============================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Palette — earthy retro */
+  --sky-light: #7ec8e3;
+  --sky-dark: #1a1a2e;
+  --ground: #5a3921;
+  --grass: #4a7c3f;
+  --grass-light: #6db55b;
+  --stone: #8a8a8a;
+  --wood: #8b5e34;
+  --wood-dark: #5a3a1e;
+  --text: #f0e6d3;
+  --text-dark: #1a1a2e;
+  --accent: #e8c170;
+  --accent-red: #d04648;
+  --accent-blue: #4a90d9;
+  --neon-purple: #9b59b6;
+  --neon-cyan: #00d4aa;
+  --neon-pink: #ff6b9d;
+  --dialogue-bg: #1a1a2e;
+  --dialogue-border: #e8c170;
+  --hud-bg: rgba(10, 10, 30, 0.85);
+
+  --pixel: 4px;
+  --world-width: 12000px;
+}
+
+html {
+  font-family: 'Press Start 2P', monospace;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  overflow-x: hidden;
+}
+
+body {
+  background: #0a0a1e;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ============================================
+   Scroll Container — tall page for ScrollTrigger
+   ============================================ */
+.scroll-container {
+  position: relative;
+  width: 100%;
+  height: 600vh; /* tall scroll space */
+}
+
+/* ============================================
+   Viewport — fixed window into the pixel world
+   ============================================ */
+.viewport {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================
+   Parallax Layers
+   ============================================ */
+.parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.parallax-layer canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   Character Layer — centered
+   ============================================ */
+.character-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.character-layer canvas {
+  position: absolute;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================
+   HUD Bar
+   ============================================ */
+.hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--hud-bg);
+  border-bottom: 3px solid var(--accent);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--text);
+  gap: 12px;
+  backdrop-filter: blur(4px);
+}
+
+.hud-left, .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.hud-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.hud-label {
+  color: var(--accent);
+  font-size: 6px;
+  letter-spacing: 1px;
+}
+
+.hud-level {
+  background: var(--accent);
+  color: var(--text-dark);
+  padding: 3px 6px;
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.hud-name {
+  font-size: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-skills {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  max-width: 200px;
+  overflow: hidden;
+}
+
+.hud-skill-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.hud-skill-icon.collected {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hud-skill-icon canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================
+   Minimap
+   ============================================ */
+.minimap {
+  width: 120px;
+  height: 12px;
+  position: relative;
+}
+
+.minimap-track {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.minimap-dot {
+  position: absolute;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transform: translateX(-50%);
+  transition: background 0.3s;
+}
+
+.minimap-dot.active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.minimap-dot[data-checkpoint="0"] { left: 2%; }
+.minimap-dot[data-checkpoint="1"] { left: 18%; }
+.minimap-dot[data-checkpoint="2"] { left: 34%; }
+.minimap-dot[data-checkpoint="3"] { left: 52%; }
+.minimap-dot[data-checkpoint="4"] { left: 70%; }
+.minimap-dot[data-checkpoint="5"] { left: 86%; }
+.minimap-dot[data-checkpoint="6"] { left: 98%; }
+
+.minimap-player {
+  position: absolute;
+  top: -4px;
+  width: 8px;
+  height: 10px;
+  background: var(--accent-red);
+  border: 1px solid #fff;
+  transform: translateX(-50%);
+  left: 2%;
+  transition: left 0.15s;
+  z-index: 2;
+}
+
+/* ============================================
+   Title Screen
+   ============================================ */
+.title-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background: rgba(10, 10, 30, 0.7);
+  transition: opacity 0.8s;
+  pointer-events: none;
+}
+
+.title-screen.hidden {
+  opacity: 0;
+}
+
+.title-content {
+  text-align: center;
+}
+
+.title-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(18px, 4vw, 36px);
+  color: var(--accent);
+  text-shadow:
+    3px 3px 0 var(--accent-red),
+    -1px -1px 0 rgba(0,0,0,0.5);
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.title-subtitle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(10px, 2vw, 16px);
+  color: var(--text);
+  margin-bottom: 48px;
+  letter-spacing: 4px;
+}
+
+.title-prompt {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 1.5vw, 12px);
+  color: var(--accent);
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ============================================
+   Dialogue Box — RPG style
+   ============================================ */
+.dialogue-overlay {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+  width: min(520px, 90vw);
+}
+
+.dialogue-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dialogue-box {
+  background: var(--dialogue-bg);
+  border: 4px solid var(--dialogue-border);
+  padding: 16px;
+  position: relative;
+  /* Pixel border effect */
+  box-shadow:
+    4px 0 0 0 var(--dialogue-border),
+    -4px 0 0 0 var(--dialogue-border),
+    0 4px 0 0 var(--dialogue-border),
+    0 -4px 0 0 var(--dialogue-border),
+    inset 4px 4px 0 0 rgba(255,255,255,0.05);
+  transform: scale(0.95);
+  transition: transform 0.3s;
+}
+
+.dialogue-overlay.visible .dialogue-box {
+  transform: scale(1);
+}
+
+.dialogue-header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  border-bottom: 2px solid rgba(232, 193, 112, 0.3);
+  padding-bottom: 10px;
+}
+
+.dialogue-portrait {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--accent);
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  image-rendering: pixelated;
+}
+
+.dialogue-portrait canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.dialogue-title-block {
+  min-width: 0;
+}
+
+.dialogue-company {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(9px, 1.5vw, 12px);
+  color: var(--accent);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.dialogue-role {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 1.2vw, 9px);
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.dialogue-years {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1vw, 8px);
+  color: rgba(240, 230, 211, 0.6);
+  line-height: 1.3;
+}
+
+.dialogue-text {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(12px, 1.5vw, 15px);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 48px;
+}
+
+.dialogue-prompt {
+  text-align: right;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--accent);
+  margin-top: 10px;
+  animation: blink 1.2s step-end infinite;
+}
+
+/* ============================================
+   Accessible / SR-only content
+   ============================================ */
+.sr-content {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================
+   Reduced motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-container {
+    height: auto;
+  }
+
+  .viewport {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .title-screen,
+  .dialogue-overlay,
+  .hud,
+  .parallax-layer {
+    display: none;
+  }
+
+  .sr-content {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .sr-content h1 { font-family: 'Press Start 2P', monospace; font-size: 20px; margin-bottom: 16px; color: var(--accent); }
+  .sr-content h2 { font-family: 'Press Start 2P', monospace; font-size: 14px; margin: 32px 0 8px; color: var(--accent); }
+  .sr-content p { margin-bottom: 8px; }
+  .sr-content article { margin-bottom: 24px; padding: 16px; border: 2px solid var(--accent); background: rgba(255,255,255,0.03); }
+  .sr-content ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .sr-content li { background: var(--accent); color: var(--text-dark); padding: 4px 8px; font-size: 12px; font-family: 'Press Start 2P', monospace; }
+}
+
+/* ============================================
+   Mobile adjustments
+   ============================================ */
+@media (max-width: 600px) {
+  .hud {
+    padding: 6px 10px;
+    font-size: 6px;
+  }
+
+  .hud-name {
+    display: none;
+  }
+
+  .hud-skills {
+    max-width: 100px;
+  }
+
+  .minimap {
+    width: 80px;
+  }
+
+  .dialogue-overlay {
+    bottom: 10%;
+    width: 94vw;
+  }
+
+  .dialogue-box {
+    padding: 12px;
+  }
+
+  .dialogue-portrait {
+    width: 36px;
+    height: 36px;
+  }
+}
