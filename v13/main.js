@@ -302,6 +302,23 @@
     });
   });
 
+  // ── Sticky header detection ──────────────────────────────────
+  roleSections.forEach(function (section) {
+    var header = section.querySelector('.role__header');
+    if (!header) return;
+
+    ScrollTrigger.create({
+      trigger: header,
+      start: 'top top',
+      endTrigger: section,
+      end: 'bottom top',
+      onEnter: function () { header.classList.add('is-stuck'); },
+      onLeave: function () { header.classList.remove('is-stuck'); },
+      onEnterBack: function () { header.classList.add('is-stuck'); },
+      onLeaveBack: function () { header.classList.remove('is-stuck'); },
+    });
+  });
+
   // ── Floating year indicator — smooth interpolation ───────────
   var displayedYear = 2025;
   var targetYear = 2025;
