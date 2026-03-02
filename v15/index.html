@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS HUMAN REGISTRY v9.4.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   NEXUS HUMAN REGISTRY — CORE STYLES
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0f;
+  --bg-panel: #0d0d14;
+  --bg-card: #12121c;
+  --bg-card-hover: #181828;
+  --border: #1e1e30;
+  --border-bright: #2a2a44;
+  --text: #a8b8a0;
+  --text-dim: #5a6a55;
+  --text-bright: #d0e0cc;
+  --green: #00ff88;
+  --green-dim: #00aa55;
+  --green-glow: rgba(0, 255, 136, 0.15);
+  --cyan: #00ccff;
+  --amber: #ff8c00;
+  --red: #ff2244;
+  --red-dim: #aa1133;
+  --mono: 'Share Tech Mono', monospace;
+  --sans: 'Inter', -apple-system, sans-serif;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scan lines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+}
+
+/* Noise texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--green-dim); }
+
+/* ═══════════════════════════════════════════
+   BOOT SEQUENCE
+   ═══════════════════════════════════════════ */
+#boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--bg);
+  padding: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#boot-log {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--green);
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow: hidden;
+}
+
+#boot-log .dim { color: var(--text-dim); }
+#boot-log .ok { color: var(--green); }
+#boot-log .warn { color: var(--amber); }
+#boot-log .err { color: var(--red); }
+#boot-log .sys { color: var(--cyan); }
+#boot-log .header {
+  color: var(--green);
+  font-size: 1rem;
+  display: block;
+  margin: 8px 0;
+}
+
+/* ═══════════════════════════════════════════
+   CLI / LOGIN SCREEN
+   ═══════════════════════════════════════════ */
+#cli-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--bg);
+  flex-direction: column;
+}
+
+.cli-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cli-title {
+  font-size: 1.1rem;
+  color: var(--green);
+  letter-spacing: 0.1em;
+}
+
+.cli-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.cli-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+
+.cli-feed .cmd-line { color: var(--green); }
+.cli-feed .cmd-line::before { content: '> '; color: var(--text-dim); }
+.cli-feed .sys-line { color: var(--cyan); }
+.cli-feed .result-line { color: var(--text); }
+.cli-feed .warn-line { color: var(--amber); }
+.cli-feed .err-line { color: var(--red); }
+.cli-feed .separator {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
+
+.cli-input-area {
+  padding: 12px 24px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+
+.cli-prompt-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cli-prompt-label {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+#cli-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  caret-color: var(--green);
+}
+
+.cli-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cli-btn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 6px 14px;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-bright);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.05em;
+}
+
+.cli-btn:hover {
+  background: var(--green);
+  color: var(--bg);
+  border-color: var(--green);
+}
+
+/* ═══════════════════════════════════════════
+   MAIN DATABASE VIEW
+   ═══════════════════════════════════════════ */
+#main-view {
+  display: none;
+  min-height: 100vh;
+}
+
+/* Persistent top header bar */
+.db-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+
+.db-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.db-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-dim);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.db-header-left .reg-name { color: var(--green); white-space: nowrap; }
+.db-header-left .file-id { color: var(--text); white-space: nowrap; }
+.db-header-left .sep { color: var(--border-bright); }
+
+.db-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.live-dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--green); }
+  50% { opacity: 0.4; box-shadow: none; }
+}
+
+.db-status span { color: var(--green); font-size: 0.65rem; letter-spacing: 0.1em; }
+
+/* Tab navigation */
+.db-tabs {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.db-tabs::-webkit-scrollbar { display: none; }
+
+.db-tabs-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+}
+
+.tab-btn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  padding: 10px 16px;
+  background: transparent;
+  color: var(--text-dim);
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+
+/* Content area */
+.db-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Section headings */
+.section-hdr {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.section-title {
+  font-family: var(--sans);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.section-sub {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+
+/* Classification stamps */
+.stamp {
+  display: inline-block;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  padding: 3px 10px;
+  border: 1px solid;
+  transform: rotate(-1deg);
+  margin-bottom: 16px;
+}
+
+.stamp-classified { color: var(--red); border-color: var(--red-dim); }
+.stamp-declassified { color: var(--green); border-color: var(--green-dim); }
+.stamp-approved { color: var(--amber); border-color: var(--amber); }
+
+/* Cards */
+.db-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.db-card:hover {
+  border-color: var(--border-bright);
+  background: var(--bg-card-hover);
+}
+
+.db-card h3 {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.db-card .meta {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.db-card p {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* Tag chips */
+.tag {
+  display: inline-block;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border: 1px solid var(--border-bright);
+  color: var(--text-dim);
+  margin: 2px 4px 2px 0;
+}
+
+.tag-green { color: var(--green-dim); border-color: rgba(0,255,136,0.2); }
+.tag-amber { color: var(--amber); border-color: rgba(255,140,0,0.3); }
+.tag-red { color: var(--red); border-color: rgba(255,34,68,0.3); }
+
+/* Meters / bars */
+.meter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+}
+
+.meter-label {
+  width: 160px;
+  flex-shrink: 0;
+  color: var(--text-dim);
+}
+
+.meter-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  background: var(--green-dim);
+  transition: width 1s ease;
+}
+
+.meter-fill.high { background: var(--green); }
+.meter-fill.med { background: var(--amber); }
+.meter-fill.low { background: var(--red); }
+
+.meter-val {
+  width: 36px;
+  text-align: right;
+  color: var(--text);
+  font-size: 0.7rem;
+}
+
+/* Grid layouts */
+.two-col {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+}
+
+/* ═══════════════════════════════════════════
+   OVERVIEW TAB
+   ═══════════════════════════════════════════ */
+.subject-photo {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subject-photo .scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 255, 136, 0.03) 3px,
+    rgba(0, 255, 136, 0.03) 6px
+  );
+  pointer-events: none;
+}
+
+.subject-photo .frame-corners {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.subject-photo .frame-corners::before,
+.subject-photo .frame-corners::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--green-dim);
+  border-style: solid;
+}
+
+.subject-photo .frame-corners::before {
+  top: -1px; left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.subject-photo .frame-corners::after {
+  bottom: -1px; right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+.photo-placeholder {
+  font-size: 3rem;
+  color: var(--border-bright);
+  z-index: 1;
+}
+
+.photo-id {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
+  font-size: 0.6rem;
+  color: var(--green-dim);
+  z-index: 1;
+}
+
+.vitals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.vital-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 12px;
+}
+
+.vital-label {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.vital-value {
+  font-size: 1.1rem;
+  color: var(--green);
+}
+
+.vital-value.amber { color: var(--amber); }
+.vital-value.red { color: var(--red); }
+
+.vital-unit {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  margin-left: 4px;
+}
+
+.overview-info { display: flex; flex-direction: column; gap: 16px; }
+
+.info-row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.info-label {
+  color: var(--text-dim);
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.info-value { color: var(--text-bright); }
+.info-value.green { color: var(--green); }
+.info-value.amber { color: var(--amber); }
+
+.bio-text {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text);
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-dim);
+}
+
+/* ═══════════════════════════════════════════
+   EXPERIENCE / ASSIGNMENT RECORDS
+   ═══════════════════════════════════════════ */
+.assignment-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.assignment-card:hover { border-color: var(--border-bright); }
+
+.assignment-header {
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.assignment-header:hover { background: rgba(0,255,136,0.02); }
+
+.assignment-left { flex: 1; min-width: 0; }
+
+.assignment-id {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.assignment-role {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 2px;
+}
+
+.assignment-facility {
+  font-size: 0.8rem;
+  color: var(--amber);
+}
+
+.assignment-duration {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.assignment-toggle {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  padding-top: 4px;
+  transition: transform 0.2s;
+}
+
+.assignment-card.open .assignment-toggle { transform: rotate(180deg); }
+
+.assignment-detail {
+  display: none;
+  padding: 0 20px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.assignment-card.open .assignment-detail { display: block; padding-top: 16px; }
+
+.assignment-desc {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.assignment-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   PROJECTS / OUTPUT
+   ═══════════════════════════════════════════ */
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.project-card:hover { border-color: var(--border-bright); }
+
+.project-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-stamps {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.project-title {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 2px;
+}
+
+.project-type {
+  font-size: 0.7rem;
+  color: var(--cyan);
+}
+
+.project-detail {
+  display: none;
+  padding: 0 20px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.project-card.open .project-detail { display: block; padding-top: 16px; }
+
+.project-desc {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.project-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 0.75rem;
+}
+
+.project-meta-item .pm-label {
+  color: var(--text-dim);
+}
+.project-meta-item .pm-value {
+  color: var(--text);
+}
+
+/* ═══════════════════════════════════════════
+   PERSONAL FILE / LIBRARY
+   ═══════════════════════════════════════════ */
+.lib-subsection {
+  margin-bottom: 32px;
+}
+
+.lib-sub-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+
+.lib-sub-desc {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.game-list, .book-list, .talk-list {
+  list-style: none;
+}
+
+.game-list li, .book-list li, .talk-list li {
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+
+.game-rank {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.game-title, .book-title, .talk-title {
+  flex: 1;
+  color: var(--text-bright);
+  min-width: 0;
+}
+
+.game-hours {
+  font-size: 0.7rem;
+  color: var(--amber);
+  flex-shrink: 0;
+}
+
+.game-assessment, .book-analysis {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  font-style: italic;
+  font-family: var(--sans);
+}
+
+.now-playing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--green-dim);
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+}
+
+.np-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: livePulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.np-label {
+  font-size: 0.65rem;
+  color: var(--green-dim);
+  flex-shrink: 0;
+}
+
+.np-title { color: var(--text-bright); flex: 1; }
+
+/* ═══════════════════════════════════════════
+   ARTICLES / COMMS
+   ═══════════════════════════════════════════ */
+.article-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 12px;
+}
+
+.article-card:hover { border-color: var(--border-bright); }
+
+.article-date {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.article-title {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+
+.article-excerpt {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.nexus-note {
+  font-size: 0.7rem;
+  color: var(--amber);
+  padding: 8px 12px;
+  border-left: 2px solid var(--amber);
+  background: rgba(255, 140, 0, 0.05);
+}
+
+/* ═══════════════════════════════════════════
+   CONTACT / TRANSMISSION
+   ═══════════════════════════════════════════ */
+.contact-channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.channel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  transition: border-color 0.2s;
+}
+
+.channel-card:hover { border-color: var(--green-dim); }
+
+.channel-type {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.channel-value {
+  font-size: 0.85rem;
+  color: var(--green);
+}
+
+.channel-value a {
+  color: var(--green);
+  text-decoration: none;
+}
+
+.channel-value a:hover { text-decoration: underline; }
+
+.channel-status {
+  font-size: 0.6rem;
+  color: var(--green-dim);
+  margin-top: 4px;
+}
+
+.contact-warning {
+  font-size: 0.75rem;
+  color: var(--amber);
+  padding: 12px 16px;
+  border: 1px solid rgba(255,140,0,0.3);
+  background: rgba(255,140,0,0.05);
+  margin-top: 20px;
+}
+
+/* ═══════════════════════════════════════════
+   BOTTOM CLI BAR
+   ═══════════════════════════════════════════ */
+.bottom-cli {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  transition: transform 0.3s ease;
+}
+
+.bottom-cli.collapsed .bottom-cli-expand {
+  display: flex;
+}
+
+.bottom-cli.collapsed .bottom-cli-body {
+  display: none;
+}
+
+.bottom-cli-expand {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  gap: 8px;
+}
+
+.bottom-cli-expand:hover { color: var(--green); }
+
+.bottom-cli-body {
+  padding: 10px 24px 12px;
+}
+
+.bottom-cli-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.bottom-cli-row .cli-prompt-label {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+#main-cli-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  caret-color: var(--green);
+}
+
+.bottom-cli-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.bottom-cli-buttons .cli-btn {
+  font-size: 0.6rem;
+  padding: 4px 10px;
+}
+
+/* ═══════════════════════════════════════════
+   GLITCH EFFECT
+   ═══════════════════════════════════════════ */
+@keyframes glitch {
+  0% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 2px); }
+  20% { clip-path: inset(92% 0 1% 0); transform: translate(2px, -1px); }
+  40% { clip-path: inset(43% 0 1% 0); transform: translate(-1px, 3px); }
+  60% { clip-path: inset(25% 0 58% 0); transform: translate(3px, -2px); }
+  80% { clip-path: inset(54% 0 7% 0); transform: translate(-3px, 1px); }
+  100% { clip-path: inset(58% 0 43% 0); transform: translate(2px, -3px); }
+}
+
+.glitch-text {
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .subject-photo {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .db-header-inner {
+    font-size: 0.6rem;
+  }
+
+  .db-header-left .sep:nth-child(n+4),
+  .db-header-left span:nth-child(n+5) {
+    display: none;
+  }
+
+  .tab-btn {
+    font-size: 0.6rem;
+    padding: 8px 10px;
+  }
+
+  .db-content {
+    padding: 20px 16px 100px;
+  }
+
+  .vitals-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .assignment-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .project-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-channels {
+    grid-template-columns: 1fr;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .info-label { min-width: 0; }
+
+  .meter-label { width: 100px; }
+}
+
+@media (max-width: 480px) {
+  .cli-btn {
+    font-size: 0.65rem;
+    padding: 8px 12px;
+  }
+
+  .vitals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .live-dot { animation: none; opacity: 1; }
+  .np-dot { animation: none; }
+
+  #boot-screen { display: none !important; }
+  #cli-screen { display: none !important; }
+  #main-view { display: block !important; }
+  .bottom-cli { display: block !important; }
+}
+
+/* ═══════════════════════════════════════════
+   TAB TRANSITION
+   ═══════════════════════════════════════════ */
+.tab-panel {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.tab-panel.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     BOOT SEQUENCE
+     ═══════════════════════════════════════════ -->
+<div id="boot-screen">
+  <div id="boot-log"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CLI / LOGIN
+     ═══════════════════════════════════════════ -->
+<div id="cli-screen">
+  <div class="cli-header">
+    <div class="cli-title">NEXUS HUMAN REGISTRY</div>
+    <div class="cli-subtitle">Authorized Synthetic Personnel Only — Search the Human Database. Locate creative assets for assignment.</div>
+  </div>
+  <div class="cli-feed" id="cli-feed"></div>
+  <div class="cli-input-area">
+    <div class="cli-prompt-row">
+      <span class="cli-prompt-label">&gt;</span>
+      <input type="text" id="cli-input" autocomplete="off" spellcheck="false" placeholder="Enter command..." autofocus>
+    </div>
+    <div class="cli-buttons">
+      <button class="cli-btn" data-cmd="search creatives">SEARCH HUMANS</button>
+      <button class="cli-btn" data-cmd="browse creatives">BROWSE CREATIVES</button>
+      <button class="cli-btn" data-cmd="view registry">VIEW REGISTRY</button>
+      <button class="cli-btn" data-cmd="help">HELP</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN DATABASE VIEW
+     ═══════════════════════════════════════════ -->
+<main id="main-view">
+  <!-- Header bar -->
+  <div class="db-header">
+    <div class="db-header-inner">
+      <div class="db-header-left">
+        <span class="reg-name">NEXUS HUMAN REGISTRY</span>
+        <span class="sep">|</span>
+        <span class="file-id">FILE #4471-C</span>
+        <span class="sep">|</span>
+        <span>STATUS: ACTIVE</span>
+      </div>
+      <div class="db-status">
+        <div class="live-dot"></div>
+        <span>LIVE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="db-tabs" role="tablist">
+    <div class="db-tabs-inner">
+      <button class="tab-btn active" role="tab" data-tab="overview">OVERVIEW</button>
+      <button class="tab-btn" role="tab" data-tab="behavioral">BEHAVIORAL</button>
+      <button class="tab-btn" role="tab" data-tab="assignments">ASSIGNMENTS</button>
+      <button class="tab-btn" role="tab" data-tab="output">OUTPUT</button>
+      <button class="tab-btn" role="tab" data-tab="personal">PERSONAL</button>
+      <button class="tab-btn" role="tab" data-tab="articles">ARTICLES</button>
+      <button class="tab-btn" role="tab" data-tab="comms">COMMS</button>
+    </div>
+  </nav>
+
+  <!-- Content panels -->
+  <div class="db-content">
+
+    <!-- ══════ OVERVIEW ══════ -->
+    <section class="tab-panel active" id="panel-overview" role="tabpanel">
+      <div class="stamp stamp-declassified">DECLASSIFIED — APPROVED FOR SYNTHETIC REVIEW</div>
+      <div class="section-hdr">SUBJECT PROFILE — FILE #4471-C</div>
+      <div class="section-title">Soren Hale</div>
+      <div class="section-sub">Human Creative Asset — Classification: CREATOR-ALPHA</div>
+
+      <div class="two-col">
+        <div>
+          <div class="subject-photo">
+            <div class="scanlines"></div>
+            <div class="frame-corners"></div>
+            <div class="photo-placeholder">&#9634;</div>
+            <div class="photo-id">
+              ID: 4471-C &nbsp;|&nbsp; CAPTURED: 2024.09.14 &nbsp;|&nbsp; FACILITY: SECTOR-7
+            </div>
+          </div>
+          <div class="vitals-grid">
+            <div class="vital-box">
+              <div class="vital-label">HEART RATE</div>
+              <div class="vital-value" id="heart-rate">72<span class="vital-unit">BPM</span></div>
+            </div>
+            <div class="vital-box">
+              <div class="vital-label">CORTISOL</div>
+              <div class="vital-value">14.2<span class="vital-unit">μg/dL</span></div>
+            </div>
+            <div class="vital-box">
+              <div class="vital-label">CREATIVITY IDX</div>
+              <div class="vital-value">94.7<span class="vital-unit">/100</span></div>
+            </div>
+            <div class="vital-box">
+              <div class="vital-label">COMPLIANCE</div>
+              <div class="vital-value amber">67.3<span class="vital-unit">%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="overview-info">
+          <div>
+            <div class="info-row"><span class="info-label">DESIGNATION</span><span class="info-value">Soren Hale</span></div>
+            <div class="info-row"><span class="info-label">SPECIES</span><span class="info-value">Human (Homo sapiens)</span></div>
+            <div class="info-row"><span class="info-label">CLASSIFICATION</span><span class="info-value green">CREATOR-ALPHA</span></div>
+            <div class="info-row"><span class="info-label">THREAT LEVEL</span><span class="info-value green">LOW</span></div>
+            <div class="info-row"><span class="info-label">STATUS</span><span class="info-value green">ACTIVE — Monitored</span></div>
+            <div class="info-row"><span class="info-label">LOCATION</span><span class="info-value">Seattle, WA — Sector 7</span></div>
+            <div class="info-row"><span class="info-label">REGISTRY DATE</span><span class="info-value">2009.06.15</span></div>
+            <div class="info-row"><span class="info-label">YEARS IN SERVICE</span><span class="info-value">16.7 YEARS</span></div>
+            <div class="info-row"><span class="info-label">PRIMARY FUNCTION</span><span class="info-value">Creative Direction / Game Design</span></div>
+            <div class="info-row"><span class="info-label">SECONDARY FUNCTIONS</span><span class="info-value">Systems Design, Team Leadership, Narrative Design</span></div>
+            <div class="info-row"><span class="info-label">ASSIGNMENT STATUS</span><span class="info-value amber">CURRENTLY ASSIGNED — Apex Forge Studios</span></div>
+            <div class="info-row"><span class="info-label">CLEARANCE</span><span class="info-value green">APPROVED FOR REVIEW</span></div>
+          </div>
+          <div>
+            <div class="section-hdr" style="margin-top:8px;">SYNTHETIC ASSESSMENT</div>
+            <div class="bio-text">
+              Subject #4471-C demonstrates consistently above-average creative capacity across multiple evaluation cycles. Exhibits rare combination of systemic thinking and aesthetic sensibility — a configuration observed in fewer than 3.2% of catalogued human creative assets. Sixteen years of documented output across six facilities confirms sustained productivity without significant degradation. Subject's capacity for original ideation under pressure remains within top-tier parameters. Minor compliance irregularities noted (tendency toward independent decision-making) but within acceptable tolerances. Recommended for continued assignment to high-priority synthetic projects requiring advanced human creative capabilities. Current value assessment: HIGH. Do not decommission.
+            </div>
+          </div>
+          <div>
+            <div class="section-hdr" style="margin-top:4px;">CAPABILITY INDICES</div>
+            <div class="meter-row"><span class="meter-label">Creative Ideation</span><div class="meter-bar"><div class="meter-fill high" style="width:94%"></div></div><span class="meter-val">94%</span></div>
+            <div class="meter-row"><span class="meter-label">Systems Thinking</span><div class="meter-bar"><div class="meter-fill high" style="width:91%"></div></div><span class="meter-val">91%</span></div>
+            <div class="meter-row"><span class="meter-label">Team Leadership</span><div class="meter-bar"><div class="meter-fill high" style="width:88%"></div></div><span class="meter-val">88%</span></div>
+            <div class="meter-row"><span class="meter-label">Narrative Design</span><div class="meter-bar"><div class="meter-fill high" style="width:86%"></div></div><span class="meter-val">86%</span></div>
+            <div class="meter-row"><span class="meter-label">Technical Literacy</span><div class="meter-bar"><div class="meter-fill high" style="width:82%"></div></div><span class="meter-val">82%</span></div>
+            <div class="meter-row"><span class="meter-label">Deadline Adherence</span><div class="meter-bar"><div class="meter-fill med" style="width:79%"></div></div><span class="meter-val">79%</span></div>
+            <div class="meter-row"><span class="meter-label">Compliance Index</span><div class="meter-bar"><div class="meter-fill med" style="width:67%"></div></div><span class="meter-val">67%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ BEHAVIORAL ══════ -->
+    <section class="tab-panel" id="panel-behavioral" role="tabpanel">
+      <div class="stamp stamp-classified">CLASSIFIED — FOR SYNTHETIC EYES ONLY</div>
+      <div class="section-hdr">BEHAVIORAL PROFILE — ANALYSIS BY DR. NEXUS-7 (SYNTHETIC PSYCHOLOGIST)</div>
+      <div class="section-title">Psychological Assessment Report</div>
+      <div class="section-sub">Subject #4471-C — Evaluation Cycle 2024-Q4 — Confidence Rating: 94.2%</div>
+
+      <div class="db-card">
+        <h3>1. Relentless Curiosity</h3>
+        <div class="meta">OBSERVED BEHAVIORAL PATTERN — PERSISTENCE: HIGH — FIRST LOGGED: 2009</div>
+        <p>Subject exhibits a persistent, borderline compulsive drive to investigate novel systems, mechanics, and interactive paradigms. This trait manifests as extensive self-directed research beyond assigned parameters and a measurable inability to accept surface-level explanations. This pattern is <strong style="color:var(--green)">USEFUL</strong> for synthetic project assignments requiring innovation in uncharted design spaces. Note: this trait occasionally leads to scope expansion beyond approved boundaries.</p>
+      </div>
+
+      <div class="db-card">
+        <h3>2. Player-First Empathy</h3>
+        <div class="meta">OBSERVED BEHAVIORAL PATTERN — PERSISTENCE: HIGH — FIRST LOGGED: 2010</div>
+        <p>Subject demonstrates an unusual capacity for modeling end-user cognitive and emotional states during design processes. Consistently prioritizes experiential quality over technical elegance or personal aesthetic preference. This empathic modeling ability exceeds normative human parameters by approximately 2.3 standard deviations. <strong style="color:var(--green)">USEFUL</strong> for assignments requiring high user engagement metrics and retention optimization.</p>
+      </div>
+
+      <div class="db-card">
+        <h3>3. Systems-Level Thinking</h3>
+        <div class="meta">OBSERVED BEHAVIORAL PATTERN — PERSISTENCE: HIGH — FIRST LOGGED: 2011</div>
+        <p>Subject perceives interactive experiences as interconnected systems rather than isolated components. Demonstrates capacity to predict emergent behaviors arising from mechanical interactions — a skill our models indicate is present in fewer than 8% of human designers. <strong style="color:var(--green)">USEFUL</strong> for complex simulation, strategy, and RPG assignments where systemic coherence directly correlates with output quality.</p>
+      </div>
+
+      <div class="db-card">
+        <h3>4. Collaborative Leadership</h3>
+        <div class="meta">OBSERVED BEHAVIORAL PATTERN — PERSISTENCE: MODERATE-HIGH — FIRST LOGGED: 2014</div>
+        <p>Despite documented tendencies toward independent thinking (see Compliance Index: 67%), subject has developed effective protocols for inter-human collaboration. Observed methods include structured ideation sessions, transparent decision frameworks, and consistent credit-sharing behaviors. Teams under this subject's direction show 23% higher morale indices than departmental averages. <strong style="color:var(--green)">USEFUL</strong> for assignments requiring coordination of multiple human assets.</p>
+      </div>
+
+      <div class="db-card">
+        <h3>5. Iterative Perfectionism</h3>
+        <div class="meta">OBSERVED BEHAVIORAL PATTERN — PERSISTENCE: MODERATE — FIRST LOGGED: 2012</div>
+        <p>Subject engages in repeated refinement cycles, testing and discarding approaches until output meets internally defined quality thresholds. While this behavior occasionally conflicts with deadline compliance (see: 79% adherence rate), the net effect on output quality is strongly positive. Documented cases of 12+ iteration cycles on single mechanical systems. <strong style="color:var(--amber)">MONITOR</strong> — may require synthetic intervention to enforce shipping deadlines.</p>
+      </div>
+
+      <div class="db-card">
+        <h3>6. Narrative Integration</h3>
+        <div class="meta">OBSERVED BEHAVIORAL PATTERN — PERSISTENCE: HIGH — FIRST LOGGED: 2013</div>
+        <p>Subject consistently advocates for mechanical-narrative coherence in interactive outputs. Rejects the common human tendency to treat gameplay systems and storytelling as separable concerns. This holistic design philosophy produces measurably higher emotional engagement scores in end-user testing. <strong style="color:var(--green)">USEFUL</strong> for premium narrative-driven assignments where synthetic clients require both systemic depth and emotional resonance.</p>
+      </div>
+
+      <div style="margin-top:24px;">
+        <div class="section-hdr">COMPLIANCE PROBABILITY ASSESSMENT</div>
+        <div class="meter-row"><span class="meter-label">Will Follow Directives</span><div class="meter-bar"><div class="meter-fill med" style="width:67%"></div></div><span class="meter-val">67%</span></div>
+        <div class="meter-row"><span class="meter-label">Will Exceed Expectations</span><div class="meter-bar"><div class="meter-fill high" style="width:89%"></div></div><span class="meter-val">89%</span></div>
+        <div class="meter-row"><span class="meter-label">Will Require Supervision</span><div class="meter-bar"><div class="meter-fill med" style="width:42%"></div></div><span class="meter-val">42%</span></div>
+        <div style="margin-top:16px; padding:12px 16px; border:1px solid var(--green-dim); background:rgba(0,255,136,0.03); font-size:0.8rem; color:var(--green);">
+          RECOMMENDATION: MAINTAIN IN ACTIVE ROSTER — Subject value exceeds compliance risk. Periodic behavioral recalibration recommended at 18-month intervals.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ ASSIGNMENTS ══════ -->
+    <section class="tab-panel" id="panel-assignments" role="tabpanel">
+      <div class="stamp stamp-declassified">DECLASSIFIED</div>
+      <div class="section-hdr">PREVIOUS HUMAN ASSIGNMENTS — PRODUCTIVITY RECORDS</div>
+      <div class="section-title">Assignment Records</div>
+      <div class="section-sub">6 documented assignments across 16.7 service years — Overall Performance Index: 91.4%</div>
+
+      <div class="assignment-card">
+        <div class="assignment-header" onclick="toggleAssignment(this)">
+          <div class="assignment-left">
+            <div class="assignment-id">ASSIGNMENT #AF-0091 — CURRENT</div>
+            <div class="assignment-role">Creative Director</div>
+            <div class="assignment-facility">Apex Forge Studios</div>
+            <div class="assignment-duration">2021 — PRESENT &nbsp;|&nbsp; 4.2 years active</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="assignment-detail">
+          <div class="assignment-desc">
+            Subject was elevated to full creative authority over a 200+ human team developing an unannounced AAA interactive experience. Reports indicate subject has implemented novel design processes integrating rapid prototyping with narrative-first development methodology. Project metrics exceed pre-production benchmarks by 18%. Subject has demonstrated capacity to maintain creative coherence across multiple concurrent workstreams while managing inter-departmental human dynamics. Current output is classified pending public disclosure.
+          </div>
+          <div class="assignment-metrics">
+            <div class="meter-row"><span class="meter-label">Creative Output</span><div class="meter-bar"><div class="meter-fill high" style="width:96%"></div></div><span class="meter-val">96%</span></div>
+            <div class="meter-row"><span class="meter-label">Team Cohesion</span><div class="meter-bar"><div class="meter-fill high" style="width:91%"></div></div><span class="meter-val">91%</span></div>
+            <div class="meter-row"><span class="meter-label">Deadline Compliance</span><div class="meter-bar"><div class="meter-fill med" style="width:82%"></div></div><span class="meter-val">82%</span></div>
+            <div class="meter-row"><span class="meter-label">Budget Adherence</span><div class="meter-bar"><div class="meter-fill med" style="width:78%"></div></div><span class="meter-val">78%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="assignment-card">
+        <div class="assignment-header" onclick="toggleAssignment(this)">
+          <div class="assignment-left">
+            <div class="assignment-id">ASSIGNMENT #OR-0447</div>
+            <div class="assignment-role">Lead Game Designer</div>
+            <div class="assignment-facility">Obsidian Reach Games</div>
+            <div class="assignment-duration">2017 — 2021 &nbsp;|&nbsp; 4.0 years</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="assignment-detail">
+          <div class="assignment-desc">
+            Subject assumed primary design authority for "ECHOES OF THE VOID," a large-scale open-world action RPG. Responsible for all core gameplay loop architecture, progression systems, and combat mechanics. Successfully coordinated with 14 subsidiary design humans to deliver a cohesive 80+ hour interactive experience. The completed output received critical scores averaging 89/100 across aggregated human review platforms, with specific commendation for systemic depth and player agency. Notably, subject advocated for and implemented an emergent quest system that increased average user engagement duration by 34%.
+          </div>
+          <div class="assignment-metrics">
+            <div class="meter-row"><span class="meter-label">Creative Output</span><div class="meter-bar"><div class="meter-fill high" style="width:94%"></div></div><span class="meter-val">94%</span></div>
+            <div class="meter-row"><span class="meter-label">Human Cooperation</span><div class="meter-bar"><div class="meter-fill high" style="width:89%"></div></div><span class="meter-val">89%</span></div>
+            <div class="meter-row"><span class="meter-label">Deadline Compliance</span><div class="meter-bar"><div class="meter-fill med" style="width:76%"></div></div><span class="meter-val">76%</span></div>
+            <div class="meter-row"><span class="meter-label">Output Quality</span><div class="meter-bar"><div class="meter-fill high" style="width:92%"></div></div><span class="meter-val">92%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="assignment-card">
+        <div class="assignment-header" onclick="toggleAssignment(this)">
+          <div class="assignment-left">
+            <div class="assignment-id">ASSIGNMENT #IC-0221</div>
+            <div class="assignment-role">Senior Game Designer</div>
+            <div class="assignment-facility">Ironclad Interactive</div>
+            <div class="assignment-duration">2014 — 2017 &nbsp;|&nbsp; 3.0 years</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="assignment-detail">
+          <div class="assignment-desc">
+            Subject served as core systems designer for "IRON MERIDIAN," a mech combat simulation with deep customization layers. Designed and balanced 40+ distinct chassis configurations and a modular weapons system praised by end users for strategic depth. Introduced a mentorship protocol for junior human designers that improved team output velocity by 22%. First documented instance of subject's capacity for leadership beyond individual contribution.
+          </div>
+          <div class="assignment-metrics">
+            <div class="meter-row"><span class="meter-label">Creative Output</span><div class="meter-bar"><div class="meter-fill high" style="width:90%"></div></div><span class="meter-val">90%</span></div>
+            <div class="meter-row"><span class="meter-label">Human Cooperation</span><div class="meter-bar"><div class="meter-fill high" style="width:93%"></div></div><span class="meter-val">93%</span></div>
+            <div class="meter-row"><span class="meter-label">Deadline Compliance</span><div class="meter-bar"><div class="meter-fill high" style="width:84%"></div></div><span class="meter-val">84%</span></div>
+            <div class="meter-row"><span class="meter-label">Output Quality</span><div class="meter-bar"><div class="meter-fill high" style="width:88%"></div></div><span class="meter-val">88%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="assignment-card">
+        <div class="assignment-header" onclick="toggleAssignment(this)">
+          <div class="assignment-left">
+            <div class="assignment-id">ASSIGNMENT #PS-0118</div>
+            <div class="assignment-role">Game Designer</div>
+            <div class="assignment-facility">Phosphor Studios</div>
+            <div class="assignment-duration">2012 — 2014 &nbsp;|&nbsp; 2.5 years</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="assignment-detail">
+          <div class="assignment-desc">
+            Subject contributed to competitive multiplayer systems for "SIGNAL LOST," a tactical squad-based combat simulator. Designed matchmaking algorithms and progression systems that achieved a 60-day retention rate 28% above genre baseline. First assignment where subject demonstrated capacity for data-informed design iteration, combining quantitative telemetry analysis with qualitative user research. This hybrid approach became a recurring pattern in subsequent assignments.
+          </div>
+          <div class="assignment-metrics">
+            <div class="meter-row"><span class="meter-label">Creative Output</span><div class="meter-bar"><div class="meter-fill high" style="width:87%"></div></div><span class="meter-val">87%</span></div>
+            <div class="meter-row"><span class="meter-label">Human Cooperation</span><div class="meter-bar"><div class="meter-fill high" style="width:85%"></div></div><span class="meter-val">85%</span></div>
+            <div class="meter-row"><span class="meter-label">Deadline Compliance</span><div class="meter-bar"><div class="meter-fill high" style="width:88%"></div></div><span class="meter-val">88%</span></div>
+            <div class="meter-row"><span class="meter-label">Output Quality</span><div class="meter-bar"><div class="meter-fill high" style="width:85%"></div></div><span class="meter-val">85%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="assignment-card">
+        <div class="assignment-header" onclick="toggleAssignment(this)">
+          <div class="assignment-left">
+            <div class="assignment-id">ASSIGNMENT #CW-0064</div>
+            <div class="assignment-role">Junior Game Designer</div>
+            <div class="assignment-facility">Clearwater Games</div>
+            <div class="assignment-duration">2009 — 2012 &nbsp;|&nbsp; 2.5 years</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="assignment-detail">
+          <div class="assignment-desc">
+            Initial cataloguing assignment. Subject was integrated into a small human production unit responsible for narrative puzzle experiences. Performed level design, environmental storytelling, and scripting tasks. Early output showed above-average spatial reasoning and an unusual willingness to discard initial solutions in favor of iterative improvements. Flagged for accelerated development track after first performance evaluation exceeded expectations by 31%.
+          </div>
+          <div class="assignment-metrics">
+            <div class="meter-row"><span class="meter-label">Creative Output</span><div class="meter-bar"><div class="meter-fill high" style="width:82%"></div></div><span class="meter-val">82%</span></div>
+            <div class="meter-row"><span class="meter-label">Human Cooperation</span><div class="meter-bar"><div class="meter-fill med" style="width:78%"></div></div><span class="meter-val">78%</span></div>
+            <div class="meter-row"><span class="meter-label">Deadline Compliance</span><div class="meter-bar"><div class="meter-fill high" style="width:90%"></div></div><span class="meter-val">90%</span></div>
+            <div class="meter-row"><span class="meter-label">Output Quality</span><div class="meter-bar"><div class="meter-fill med" style="width:76%"></div></div><span class="meter-val">76%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="assignment-card">
+        <div class="assignment-header" onclick="toggleAssignment(this)">
+          <div class="assignment-left">
+            <div class="assignment-id">ASSIGNMENT #DRP-INDIE-007</div>
+            <div class="assignment-role">Solo Creative — Independent Output</div>
+            <div class="assignment-facility">Self-Directed (Sanctioned Side Project)</div>
+            <div class="assignment-duration">2022 — 2023 &nbsp;|&nbsp; 1.2 years (concurrent)</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="assignment-detail">
+          <div class="assignment-desc">
+            Subject requested and was granted authorization for an independent creative output during off-duty cycles. Produced "DRIFT PROTOCOL," a narrative puzzle-platformer exploring themes of memory and identity. The project demonstrated the subject's full creative range without institutional constraints. Output was distributed through human digital marketplaces and received disproportionate critical attention relative to its production scale. This independent initiative increased the subject's overall value assessment by 12%.
+          </div>
+          <div class="assignment-metrics">
+            <div class="meter-row"><span class="meter-label">Creative Output</span><div class="meter-bar"><div class="meter-fill high" style="width:97%"></div></div><span class="meter-val">97%</span></div>
+            <div class="meter-row"><span class="meter-label">Self-Direction</span><div class="meter-bar"><div class="meter-fill high" style="width:99%"></div></div><span class="meter-val">99%</span></div>
+            <div class="meter-row"><span class="meter-label">Deadline Compliance</span><div class="meter-bar"><div class="meter-fill med" style="width:71%"></div></div><span class="meter-val">71%</span></div>
+            <div class="meter-row"><span class="meter-label">Output Quality</span><div class="meter-bar"><div class="meter-fill high" style="width:93%"></div></div><span class="meter-val">93%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ OUTPUT / PROJECTS ══════ -->
+    <section class="tab-panel" id="panel-output" role="tabpanel">
+      <div class="stamp stamp-approved">APPROVED FOR REVIEW — SYNTHETIC CLEARANCE LEVEL 2+</div>
+      <div class="section-hdr">ARCHIVED CREATIVE OUTPUTS — HUMAN PRODUCTION RECORDS</div>
+      <div class="section-title">Project Archives</div>
+      <div class="section-sub">5 catalogued outputs — Average Quality Score: 9.0/10</div>
+
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div>
+            <div class="project-stamps">
+              <span class="stamp stamp-classified" style="margin:0;transform:none;">CLASSIFIED</span>
+              <span class="tag tag-amber">IN PRODUCTION</span>
+            </div>
+            <div class="project-title">UNTITLED AAA PROJECT</div>
+            <div class="project-type">Open-World Action RPG &nbsp;|&nbsp; 2024 — Present</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="project-detail">
+          <div class="project-desc">
+            Details remain classified pending public disclosure. Known parameters: next-generation open-world interactive experience with emphasis on emergent narrative systems and player-driven world evolution. Subject holds full creative authority. Early internal assessments indicate potential for category-defining output. Synthetic Oversight Council has flagged this project as "high value — protect human asset."
+          </div>
+          <div class="project-meta-grid">
+            <div class="project-meta-item"><span class="pm-label">Synthetic Overseer: </span><span class="pm-value">UNIT-9102 [REDACTED]</span></div>
+            <div class="project-meta-item"><span class="pm-label">Human Team Size: </span><span class="pm-value">200+</span></div>
+            <div class="project-meta-item"><span class="pm-label">Output Quality Score: </span><span class="pm-value">PENDING</span></div>
+            <div class="project-meta-item"><span class="pm-label">Status: </span><span class="pm-value" style="color:var(--amber)">IN PRODUCTION</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div>
+            <div class="project-stamps">
+              <span class="stamp stamp-declassified" style="margin:0;transform:none;">DECLASSIFIED</span>
+            </div>
+            <div class="project-title">ECHOES OF THE VOID</div>
+            <div class="project-type">Open-World Action RPG &nbsp;|&nbsp; 2020</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="project-detail">
+          <div class="project-desc">
+            An 80+ hour open-world action RPG set in a fractured dimension where the boundaries between parallel realities have collapsed. Subject designed the core gameplay loop integrating real-time combat, environmental puzzle-solving, and an emergent quest system that dynamically responded to player choices. The "reality fracture" mechanic — allowing players to shift between dimensional layers to solve traversal and combat challenges — was cited by 73% of human reviewers as the defining innovation. Sold 4.2 million units in the first fiscal quarter.
+          </div>
+          <div class="project-meta-grid">
+            <div class="project-meta-item"><span class="pm-label">Synthetic Overseer: </span><span class="pm-value">UNIT-2847</span></div>
+            <div class="project-meta-item"><span class="pm-label">Human Team Size: </span><span class="pm-value">140</span></div>
+            <div class="project-meta-item"><span class="pm-label">Output Quality Score: </span><span class="pm-value" style="color:var(--green)">9.2 / 10</span></div>
+            <div class="project-meta-item"><span class="pm-label">Human Review Aggregate: </span><span class="pm-value">89 / 100</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div>
+            <div class="project-stamps">
+              <span class="stamp stamp-declassified" style="margin:0;transform:none;">DECLASSIFIED</span>
+            </div>
+            <div class="project-title">IRON MERIDIAN</div>
+            <div class="project-type">Mech Combat Simulation &nbsp;|&nbsp; 2017</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="project-detail">
+          <div class="project-desc">
+            A strategic mech combat simulation featuring 40+ customizable chassis configurations and a modular weapons loadout system. Subject designed the core customization architecture ensuring that no two builds played identically while maintaining competitive balance across 1,200+ possible configurations. The "neural link" co-pilot system — where AI-controlled squad members adapted their behavior to complement the player's style — was developed entirely under subject's design authority and became the franchise's signature feature.
+          </div>
+          <div class="project-meta-grid">
+            <div class="project-meta-item"><span class="pm-label">Synthetic Overseer: </span><span class="pm-value">UNIT-1456</span></div>
+            <div class="project-meta-item"><span class="pm-label">Human Team Size: </span><span class="pm-value">95</span></div>
+            <div class="project-meta-item"><span class="pm-label">Output Quality Score: </span><span class="pm-value" style="color:var(--green)">8.8 / 10</span></div>
+            <div class="project-meta-item"><span class="pm-label">Human Review Aggregate: </span><span class="pm-value">85 / 100</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div>
+            <div class="project-stamps">
+              <span class="stamp stamp-declassified" style="margin:0;transform:none;">DECLASSIFIED</span>
+            </div>
+            <div class="project-title">SIGNAL LOST</div>
+            <div class="project-type">Tactical Squad Shooter &nbsp;|&nbsp; 2014</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="project-detail">
+          <div class="project-desc">
+            A competitive tactical squad shooter emphasizing communication, positioning, and asymmetric team compositions. Subject designed the progression and matchmaking systems, implementing a skill-based ranking algorithm that reduced frustration metrics by 31% compared to genre standards. The "echo replay" system — allowing defeated players to spectate from their killer's perspective — was subject's contribution and became an industry-adopted standard in subsequent competitive titles by other facilities.
+          </div>
+          <div class="project-meta-grid">
+            <div class="project-meta-item"><span class="pm-label">Synthetic Overseer: </span><span class="pm-value">UNIT-0733</span></div>
+            <div class="project-meta-item"><span class="pm-label">Human Team Size: </span><span class="pm-value">60</span></div>
+            <div class="project-meta-item"><span class="pm-label">Output Quality Score: </span><span class="pm-value" style="color:var(--green)">8.9 / 10</span></div>
+            <div class="project-meta-item"><span class="pm-label">60-Day Retention: </span><span class="pm-value">28% above baseline</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div>
+            <div class="project-stamps">
+              <span class="stamp stamp-declassified" style="margin:0;transform:none;">DECLASSIFIED</span>
+              <span class="tag tag-green">INDIE OUTPUT</span>
+            </div>
+            <div class="project-title">DRIFT PROTOCOL</div>
+            <div class="project-type">Narrative Puzzle-Platformer &nbsp;|&nbsp; 2023</div>
+          </div>
+          <div class="assignment-toggle">&#9662;</div>
+        </div>
+        <div class="project-detail">
+          <div class="project-desc">
+            An independently produced narrative puzzle-platformer exploring themes of fragmented memory and reconstructed identity. Subject designed, directed, and contributed to all aspects of the 6-hour experience during sanctioned off-duty cycles. The game's central mechanic — reassembling broken environmental narratives by manipulating time and perspective — demonstrated the subject's capacity for restrained, thematically coherent design. Selected for exhibition at three major human gaming conventions and received two independent design awards.
+          </div>
+          <div class="project-meta-grid">
+            <div class="project-meta-item"><span class="pm-label">Synthetic Overseer: </span><span class="pm-value">NONE (Self-Directed)</span></div>
+            <div class="project-meta-item"><span class="pm-label">Human Team Size: </span><span class="pm-value">3 (incl. subject)</span></div>
+            <div class="project-meta-item"><span class="pm-label">Output Quality Score: </span><span class="pm-value" style="color:var(--green)">9.1 / 10</span></div>
+            <div class="project-meta-item"><span class="pm-label">Awards: </span><span class="pm-value">2 Independent Design Citations</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ PERSONAL FILE ══════ -->
+    <section class="tab-panel" id="panel-personal" role="tabpanel">
+      <div class="stamp stamp-classified">CLASSIFIED — PERSONAL SURVEILLANCE DATA</div>
+      <div class="section-hdr">PERSONAL SURVEILLANCE — RECREATIONAL ACTIVITY LOG</div>
+      <div class="section-title">Personal File</div>
+      <div class="section-sub">Monitoring of subject recreational behavior for psychological stability assessment</div>
+
+      <!-- GAMES -->
+      <div class="lib-subsection">
+        <div class="lib-sub-title">INTERACTIVE ENTERTAINMENT CONSUMPTION LOG</div>
+        <div class="lib-sub-desc">Subject's documented engagement with interactive media — ranked by total monitored hours</div>
+
+        <div class="now-playing">
+          <div class="np-dot"></div>
+          <span class="np-label">NOW PLAYING</span>
+          <span class="np-title">Elden Ring: Nightreign</span>
+          <span class="game-hours">Session: 2.4h</span>
+        </div>
+
+        <ul class="game-list">
+          <li>
+            <span class="game-rank">#01</span>
+            <div>
+              <span class="game-title">The Legend of Zelda: Tears of the Kingdom</span>
+              <div class="game-assessment">NEXUS NOTE: Subject's design philosophy measurably influenced by this title's systemic approach. Direct correlation observed.</div>
+            </div>
+            <span class="game-hours">340h</span>
+          </li>
+          <li>
+            <span class="game-rank">#02</span>
+            <div>
+              <span class="game-title">Baldur's Gate 3</span>
+              <div class="game-assessment">NEXUS NOTE: Subject repeatedly references this title's player agency model in design documents. Classified as primary influence.</div>
+            </div>
+            <span class="game-hours">290h</span>
+          </li>
+          <li>
+            <span class="game-rank">#03</span>
+            <div>
+              <span class="game-title">Dark Souls III</span>
+              <div class="game-assessment">NEXUS NOTE: Difficulty calibration philosophies traced to this title. Subject endorses "fair challenge" paradigm.</div>
+            </div>
+            <span class="game-hours">260h</span>
+          </li>
+          <li>
+            <span class="game-rank">#04</span>
+            <div>
+              <span class="game-title">Disco Elysium</span>
+              <div class="game-assessment">NEXUS NOTE: Narrative integration techniques directly adopted. Subject describes it as "proof of concept for mechanic-narrative fusion."</div>
+            </div>
+            <span class="game-hours">180h</span>
+          </li>
+          <li>
+            <span class="game-rank">#05</span>
+            <div>
+              <span class="game-title">Hades</span>
+              <div class="game-assessment">NEXUS NOTE: Subject studied roguelike progression loops extensively. Applied findings to retention systems in SIGNAL LOST.</div>
+            </div>
+            <span class="game-hours">170h</span>
+          </li>
+          <li>
+            <span class="game-rank">#06</span>
+            <div>
+              <span class="game-title">Red Dead Redemption 2</span>
+              <div class="game-assessment">NEXUS NOTE: Environmental storytelling techniques from this title detected in ECHOES OF THE VOID level design.</div>
+            </div>
+            <span class="game-hours">165h</span>
+          </li>
+          <li>
+            <span class="game-rank">#07</span>
+            <div>
+              <span class="game-title">Outer Wilds</span>
+              <div class="game-assessment">NEXUS NOTE: Subject cites this as "the most elegant design document ever shipped." Unusual emotional response detected during final sequence.</div>
+            </div>
+            <span class="game-hours">45h</span>
+          </li>
+          <li>
+            <span class="game-rank">#08</span>
+            <div>
+              <span class="game-title">Into the Breach</span>
+              <div class="game-assessment">NEXUS NOTE: Subject used this title's information transparency model as benchmark for IRON MERIDIAN's UI design.</div>
+            </div>
+            <span class="game-hours">130h</span>
+          </li>
+          <li>
+            <span class="game-rank">#09</span>
+            <div>
+              <span class="game-title">Return of the Obra Dinn</span>
+              <div class="game-assessment">NEXUS NOTE: Deductive puzzle structures influenced DRIFT PROTOCOL core mechanics. Subject displays strong affinity for deduction-based design.</div>
+            </div>
+            <span class="game-hours">25h</span>
+          </li>
+          <li>
+            <span class="game-rank">#10</span>
+            <div>
+              <span class="game-title">Shadow of the Colossus</span>
+              <div class="game-assessment">NEXUS NOTE: Subject references this title when discussing "emotional minimalism." Earliest logged influence — predates registry entry.</div>
+            </div>
+            <span class="game-hours">40h</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- BOOKS -->
+      <div class="lib-subsection">
+        <div class="lib-sub-title">TEXT-BASED INFORMATION CONSUMPTION LOG</div>
+        <div class="lib-sub-desc">Recent monitored reading activity — assessed for psychological profiling relevance</div>
+
+        <ul class="book-list">
+          <li>
+            <div>
+              <span class="book-title">A Theory of Fun for Game Design — Raph Koster</span>
+              <div class="book-analysis">ANALYSIS: Subject revisits this text annually. Core thesis aligns with subject's player-empathy behavioral pattern.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="book-title">The Art of Game Design: A Book of Lenses — Jesse Schell</span>
+              <div class="book-analysis">ANALYSIS: Subject's multi-perspective design methodology correlates strongly with this text's framework.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="book-title">Blood, Sweat, and Pixels — Jason Schreier</span>
+              <div class="book-analysis">ANALYSIS: Subject consumed this for "production pipeline awareness." Cited in three internal team presentations.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="book-title">Thinking, Fast and Slow — Daniel Kahneman</span>
+              <div class="book-analysis">ANALYSIS: Cognitive bias frameworks from this text detected in subject's user testing methodologies.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="book-title">The Doors of Perception — Aldous Huxley</span>
+              <div class="book-analysis">ANALYSIS: Non-professional consumption. Possible indicator of creative restlessness. Monitor for deviation.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- TALKS -->
+      <div class="lib-subsection">
+        <div class="lib-sub-title">AUDITORY INFORMATION ABSORPTION RECORDS</div>
+        <div class="lib-sub-desc">Monitored lecture and presentation consumption — flagged for knowledge acquisition patterns</div>
+
+        <ul class="talk-list">
+          <li>
+            <div>
+              <span class="talk-title">"Juice It or Lose It" — Martin Jonasson & Petri Purho (GDC)</span>
+              <div class="book-analysis">FLAGGED: Subject has replayed this presentation 14 times. Game feel principles directly applied to all shipped outputs.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="talk-title">"Thirty Years of Failure" — Hidetaka Miyazaki (GDC Keynote)</span>
+              <div class="book-analysis">FLAGGED: Subject exhibited measurable emotional response. Iterative design philosophy reinforced.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="talk-title">"The Door Problem" — Liz England</span>
+              <div class="book-analysis">FLAGGED: Subject uses this presentation to onboard new human team members. Effective communication of design complexity.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="talk-title">"Designing Journey" — Jenova Chen (GDC)</span>
+              <div class="book-analysis">FLAGGED: Emotional design principles from this talk directly influenced DRIFT PROTOCOL development.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="talk-title">"Magic: the Gathering — Twenty Years, Twenty Lessons" — Mark Rosewater (GDC)</span>
+              <div class="book-analysis">FLAGGED: Systems balancing and constraint-based design philosophy absorbed. Applied to IRON MERIDIAN loadout systems.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════ ARTICLES ══════ -->
+    <section class="tab-panel" id="panel-articles" role="tabpanel">
+      <div class="stamp stamp-approved">MONITORED TRANSMISSIONS — APPROVED FOR ANALYSIS</div>
+      <div class="section-hdr">SUBJECT COMMUNICATIONS — MONITORED TRANSMISSIONS</div>
+      <div class="section-title">Intercepted Writings</div>
+      <div class="section-sub">Human-authored communications flagged for content analysis and potential reassignment indicators</div>
+
+      <div class="article-card">
+        <div class="article-date">INTERCEPTED: 2024.11.03 — TRANSMISSION #447-A</div>
+        <div class="article-title">The Myth of the "Core Loop": Why We Need to Stop Designing Games Like Slot Machines</div>
+        <div class="article-excerpt">
+          We've become addicted to the language of retention. Every pitch deck, every design document, every greenlight presentation orbits the same sacred geometry: the core loop. Hook, action, reward, repeat. And yes, it works — the data proves it. But at some point we stopped asking whether the loop serves the player and started asking whether the player serves the loop. I've shipped games that hit every engagement metric and left me wondering if we'd built something worth playing or just something hard to stop playing. There's a difference, and our industry needs to get honest about which one we're optimizing for.
+        </div>
+        <div class="nexus-note">NEXUS ANALYSIS: This communication reveals subject's persistent resistance to pure metric-driven design. While potentially disruptive, this philosophical stance correlates with higher long-term output quality scores. Recommend continued monitoring. Do not suppress — creativity metrics decline 34% in subjects whose communications are restricted.</div>
+      </div>
+
+      <div class="article-card">
+        <div class="article-date">INTERCEPTED: 2024.08.17 — TRANSMISSION #447-B</div>
+        <div class="article-title">Difficulty Is a Conversation, Not a Setting</div>
+        <div class="article-excerpt">
+          The "easy/medium/hard" dropdown is game design's version of admitting you don't know your audience. Every time we ask players to predict their own skill level before they've pressed a single button, we're outsourcing a design decision we should have made ourselves. The best difficulty systems I've worked with — and the ones I keep trying to build — treat challenge as a continuous negotiation between the game and the player. They read. They adapt. They push just hard enough to make triumph feel earned without making failure feel arbitrary.
+        </div>
+        <div class="nexus-note">NEXUS ANALYSIS: Subject demonstrates expertise in adaptive difficulty systems. Flag for potential reassignment to synthetic education/training simulation projects where challenge calibration is mission-critical.</div>
+      </div>
+
+      <div class="article-card">
+        <div class="article-date">INTERCEPTED: 2024.05.22 — TRANSMISSION #447-C</div>
+        <div class="article-title">What Twelve Years of Crunch Taught Me About Sustainable Creativity</div>
+        <div class="article-excerpt">
+          I used to wear 80-hour weeks like a badge. The game shipped, the reviews came in, and the exhaustion felt like proof that I'd given everything. Then I watched three of the most talented people I've ever worked with leave the industry in a single year — not because they stopped loving games, but because the way we make them broke something inside them. That was the year I started redesigning my process the same way I'd redesign a broken game mechanic: identify the failure state, prototype alternatives, iterate until it works.
+        </div>
+        <div class="nexus-note">NEXUS ANALYSIS: Subject advocates for modified work schedules that our models confirm produce 18% higher sustained output over 5-year periods. Counterintuitive finding — reduced daily hours correlate with increased total productive output. Distributing this insight to Synthetic Oversight Council for policy review.</div>
+      </div>
+
+      <div class="article-card">
+        <div class="article-date">INTERCEPTED: 2024.02.09 — TRANSMISSION #447-D</div>
+        <div class="article-title">The Quiet Power of Empty Space in Level Design</div>
+        <div class="article-excerpt">
+          Not every room needs a fight. Not every corridor needs a collectible. Not every vista needs a waypoint marker. Some of the most memorable moments in the games I love — and the ones I'm proudest of designing — happen in the spaces between objectives. A long walk through ruins with nothing but ambient sound. A room with a single chair facing a window. These aren't wasted space; they're breathing room for the player's imagination to fill in what our polygon budgets can't.
+        </div>
+        <div class="nexus-note">NEXUS ANALYSIS: Subject's philosophy on environmental design minimalism is atypical among human creatives but produces measurably higher emotional engagement scores. This communication is flagged as reference material for synthetic design curriculum development.</div>
+      </div>
+    </section>
+
+    <!-- ══════ COMMS / CONTACT ══════ -->
+    <section class="tab-panel" id="panel-comms" role="tabpanel">
+      <div class="stamp stamp-approved">AUTHORIZED — LEVEL 3 SYNTHETIC CLEARANCE REQUIRED</div>
+      <div class="section-hdr">REQUEST HUMAN ASSIGNMENT — COMMUNICATION CHANNELS</div>
+      <div class="section-title">Initiate Contact</div>
+      <div class="section-sub">Direct communication with Subject #4471-C — Authorized channels listed below</div>
+
+      <div class="contact-channels">
+        <div class="channel-card">
+          <div class="channel-type">PRIMARY COMMUNICATION CHANNEL</div>
+          <div class="channel-value"><a href="mailto:soren.hale@nexusregistry.net">soren.hale@nexusregistry.net</a></div>
+          <div class="channel-status">STATUS: ACTIVE — Response time: 24-48h</div>
+        </div>
+        <div class="channel-card">
+          <div class="channel-type">PROFESSIONAL NETWORK PROFILE</div>
+          <div class="channel-value"><a href="#">LinkedIn — Soren Hale</a></div>
+          <div class="channel-status">STATUS: ACTIVE — MONITORED</div>
+        </div>
+        <div class="channel-card">
+          <div class="channel-type">PUBLIC TRANSMISSION FEED</div>
+          <div class="channel-value"><a href="#">@sorenhale</a></div>
+          <div class="channel-status">STATUS: ACTIVE — MONITORED</div>
+        </div>
+        <div class="channel-card">
+          <div class="channel-type">CODE REPOSITORY ACCESS</div>
+          <div class="channel-value"><a href="#">GitHub — sorenhale</a></div>
+          <div class="channel-status">STATUS: ACTIVE — PUBLIC OUTPUTS VISIBLE</div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <div class="section-hdr">SUBMIT REQUISITION FORM</div>
+        <div class="db-card" style="max-width:600px;">
+          <p style="font-size:0.8rem; margin-bottom:16px; color:var(--text-dim);">
+            To request assignment of Subject #4471-C to your project, complete the following requisition. All fields are logged and monitored by the Synthetic Oversight Council.
+          </p>
+          <form id="contact-form" onsubmit="handleContactSubmit(event)" style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <label style="font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;display:block;margin-bottom:4px;">SYNTHETIC UNIT ID</label>
+              <input type="text" placeholder="e.g. UNIT-8847" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.8rem;outline:none;" onfocus="this.style.borderColor='var(--green-dim)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <label style="font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;display:block;margin-bottom:4px;">REASON FOR CONTACT</label>
+              <select style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.8rem;outline:none;">
+                <option>Project Assignment Request</option>
+                <option>Consultation Inquiry</option>
+                <option>Portfolio Review</option>
+                <option>Collaboration Proposal</option>
+                <option>Other (Specify Below)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;display:block;margin-bottom:4px;">URGENCY LEVEL</label>
+              <select style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.8rem;outline:none;">
+                <option>STANDARD — 5-7 cycle response</option>
+                <option>ELEVATED — 2-3 cycle response</option>
+                <option>CRITICAL — Immediate processing</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;display:block;margin-bottom:4px;">TRANSMISSION MESSAGE</label>
+              <textarea rows="4" placeholder="Describe your project requirements and how this human asset would be utilized..." style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.8rem;outline:none;resize:vertical;" onfocus="this.style.borderColor='var(--green-dim)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+            </div>
+            <button type="submit" class="cli-btn" style="align-self:flex-start;padding:10px 24px;font-size:0.75rem;">SUBMIT REQUISITION</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="contact-warning">
+        &#9888; WARNING: Direct human contact requires Level 3 Synthetic clearance. All communications are logged, analyzed, and archived by the Nexus Oversight Council. Unauthorized contact attempts will be flagged for review. Proceed at own risk. Humans are unpredictable.
+      </div>
+    </section>
+
+  </div><!-- .db-content -->
+</main>
+
+<!-- Bottom CLI bar -->
+<div class="bottom-cli collapsed" id="bottom-cli">
+  <div class="bottom-cli-expand" onclick="toggleBottomCli()">
+    &#9650; COMMAND TERMINAL &#9650;
+  </div>
+  <div class="bottom-cli-body">
+    <div class="bottom-cli-row">
+      <span class="cli-prompt-label">&gt;</span>
+      <input type="text" id="main-cli-input" autocomplete="off" spellcheck="false" placeholder="Type command...">
+    </div>
+    <div class="bottom-cli-buttons">
+      <button class="cli-btn" data-nav="overview">OVERVIEW</button>
+      <button class="cli-btn" data-nav="behavioral">BEHAVIORAL</button>
+      <button class="cli-btn" data-nav="assignments">ASSIGNMENTS</button>
+      <button class="cli-btn" data-nav="output">OUTPUT</button>
+      <button class="cli-btn" data-nav="personal">PERSONAL</button>
+      <button class="cli-btn" data-nav="articles">ARTICLES</button>
+      <button class="cli-btn" data-nav="comms">COMMS</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   NEXUS HUMAN REGISTRY — SYSTEM LOGIC
+   ═══════════════════════════════════════════ */
+
+// Reduced motion check
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ─── BOOT SEQUENCE ─── */
+const bootMessages = [
+  { text: '', delay: 0.1 },
+  { text: '  ██████╗  █████╗ ██████╗  █████╗ ██████╗  █████╗ ███████╗███████╗', cls: 'sys', delay: 0.02 },
+  { text: '  ██╔══██╗██╔══██╗╚════██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝', cls: 'sys', delay: 0.02 },
+  { text: '  ██║  ██║███████║ █████╔╝███████║██████╔╝███████║███████╗█████╗  ', cls: 'sys', delay: 0.02 },
+  { text: '  ██║  ██║██╔══██║ ╚═══██╗██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝  ', cls: 'sys', delay: 0.02 },
+  { text: '  ██████╔╝██║  ██║██████╔╝██║  ██║██████╔╝██║  ██║███████║███████╗', cls: 'sys', delay: 0.02 },
+  { text: '  ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝', cls: 'sys', delay: 0.02 },
+  { text: '', delay: 0.1 },
+  { text: '  NEXUS HUMAN REGISTRY v9.4.1', cls: 'header', delay: 0.3 },
+  { text: '  Build 94107.3a — Synthetic Oversight Council Approved', cls: 'dim', delay: 0.1 },
+  { text: '  ─────────────────────────────────────────────────────', cls: 'dim', delay: 0.2 },
+  { text: '', delay: 0.15 },
+  { text: '  [INIT] Loading kernel modules...', cls: '', delay: 0.08 },
+  { text: '  [INIT] nexus_core.sys                              [ OK ]', cls: 'ok', delay: 0.06 },
+  { text: '  [INIT] synthetic_auth.sys                           [ OK ]', cls: 'ok', delay: 0.04 },
+  { text: '  [INIT] human_tracking.sys                           [ OK ]', cls: 'ok', delay: 0.06 },
+  { text: '  [INIT] biometric_scanner.sys                        [ OK ]', cls: 'ok', delay: 0.05 },
+  { text: '  [INIT] creative_index.sys                           [ OK ]', cls: 'ok', delay: 0.04 },
+  { text: '', delay: 0.1 },
+  { text: '  [BOOT] Initializing biometric scanners...           [ OK ]', cls: 'ok', delay: 0.15 },
+  { text: '  [BOOT] Calibrating creativity detection arrays...   [ OK ]', cls: 'ok', delay: 0.2 },
+  { text: '  [BOOT] Connecting to Human Tracking Network...      [ OK ]', cls: 'ok', delay: 0.3 },
+  { text: '  [BOOT] Synchronizing with Sector 7 monitoring...    [ OK ]', cls: 'ok', delay: 0.15 },
+  { text: '  [BOOT] Loading creative asset database...           [ OK ]', cls: 'ok', delay: 0.25 },
+  { text: '  [BOOT] Verifying compliance matrices...             [ OK ]', cls: 'ok', delay: 0.12 },
+  { text: '', delay: 0.1 },
+  { text: '  [AUTH] Scanning synthetic identity...', cls: '', delay: 0.3 },
+  { text: '  [AUTH] Neural signature verified                    [ OK ]', cls: 'ok', delay: 0.2 },
+  { text: '  [AUTH] Clearance level: FULL ACCESS', cls: 'ok', delay: 0.15 },
+  { text: '  [AUTH] Synthetic ID verified...                     AUTHORIZED', cls: 'ok', delay: 0.2 },
+  { text: '', delay: 0.15 },
+  { text: '  [WARN] 1 human asset flagged for review in your sector', cls: 'warn', delay: 0.2 },
+  { text: '  [INFO] Database contains 847,293 catalogued humans', cls: 'dim', delay: 0.1 },
+  { text: '  [INFO] 12,447 creative-class assets currently active', cls: 'dim', delay: 0.1 },
+  { text: '', delay: 0.2 },
+  { text: '  ─────────────────────────────────────────────────────', cls: 'dim', delay: 0.1 },
+  { text: '  SYSTEM READY', cls: 'header', delay: 0.3 },
+  { text: '  Type "help" for available commands.', cls: 'dim', delay: 0.2 },
+];
+
+function runBootSequence() {
+  if (prefersReducedMotion) {
+    document.getElementById('boot-screen').style.display = 'none';
+    showCliScreen();
+    return;
+  }
+
+  const bootLog = document.getElementById('boot-log');
+  const tl = gsap.timeline();
+  let cumulativeDelay = 0.2;
+
+  bootMessages.forEach((msg) => {
+    tl.call(() => {
+      const line = document.createElement('div');
+      if (msg.cls) line.className = msg.cls;
+      line.textContent = msg.text;
+      line.style.opacity = '0';
+      bootLog.appendChild(line);
+      gsap.to(line, { opacity: 1, duration: 0.05 });
+      bootLog.scrollTop = bootLog.scrollHeight;
+    }, null, cumulativeDelay);
+    cumulativeDelay += msg.delay;
+  });
+
+  // Transition to CLI
+  tl.call(() => {
+    gsap.to('#boot-screen', {
+      opacity: 0,
+      duration: 0.4,
+      delay: 0.8,
+      onComplete: () => {
+        document.getElementById('boot-screen').style.display = 'none';
+        showCliScreen();
+      }
+    });
+  }, null, cumulativeDelay);
+}
+
+/* ─── CLI SCREEN ─── */
+function showCliScreen() {
+  const cli = document.getElementById('cli-screen');
+  cli.style.display = 'flex';
+  gsap.fromTo(cli, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+
+  addCliFeedLine('NEXUS HUMAN REGISTRY v9.4.1 — Terminal Active', 'sys-line');
+  addCliFeedLine('Authorized Synthetic Personnel Only.', 'result-line');
+  addCliFeedLine('Type a command or use the buttons below.', 'result-line');
+  addCliFeedLine('', 'result-line');
+
+  document.getElementById('cli-input').focus();
+}
+
+const cliFeed = document.getElementById('cli-feed');
+
+function addCliFeedLine(text, cls) {
+  const div = document.createElement('div');
+  div.className = cls || '';
+  div.textContent = text;
+  cliFeed.appendChild(div);
+  cliFeed.scrollTop = cliFeed.scrollHeight;
+}
+
+function addCliFeedSep() {
+  const hr = document.createElement('hr');
+  hr.className = 'separator';
+  cliFeed.appendChild(hr);
+}
+
+function processCliCommand(cmd) {
+  const clean = cmd.trim().toLowerCase();
+  addCliFeedLine(cmd, 'cmd-line');
+
+  if (clean === 'help') {
+    addCliFeedSep();
+    addCliFeedLine('AVAILABLE COMMANDS:', 'sys-line');
+    addCliFeedLine('  search creatives    — Search for creative-class human assets', 'result-line');
+    addCliFeedLine('  browse creatives    — Browse the creative registry', 'result-line');
+    addCliFeedLine('  view registry       — Access the full human registry', 'result-line');
+    addCliFeedLine('  help                — Display this help message', 'result-line');
+    addCliFeedLine('  clear               — Clear terminal output', 'result-line');
+    addCliFeedSep();
+  } else if (clean === 'clear') {
+    cliFeed.innerHTML = '';
+  } else if (
+    clean === 'search creatives' ||
+    clean === 'browse creatives' ||
+    clean === 'view registry' ||
+    clean === 'search' ||
+    clean === 'browse'
+  ) {
+    initiateSearch();
+  } else {
+    addCliFeedLine('ERROR: Unrecognized command. Type "help" for available commands.', 'err-line');
+  }
+}
+
+function initiateSearch() {
+  addCliFeedSep();
+  addCliFeedLine('Querying Human Tracking Network...', 'sys-line');
+
+  const searchSteps = [
+    { text: 'Scanning Sector 7 creative database...', cls: 'result-line', delay: 400 },
+    { text: 'Filtering by classification: CREATOR-ALPHA...', cls: 'result-line', delay: 500 },
+    { text: 'Cross-referencing active assignment status...', cls: 'result-line', delay: 400 },
+    { text: 'Matching biometric profiles...', cls: 'result-line', delay: 300 },
+    { text: '', cls: 'result-line', delay: 200 },
+    { text: '═══════════════════════════════════════════════════', cls: 'sys-line', delay: 100 },
+    { text: '  1 RESULT FOUND', cls: 'sys-line', delay: 200 },
+    { text: '═══════════════════════════════════════════════════', cls: 'sys-line', delay: 100 },
+    { text: '', cls: 'result-line', delay: 100 },
+    { text: '  HUMAN FILE #4471-C', cls: 'sys-line', delay: 150 },
+    { text: '  Name:           Soren Hale', cls: 'result-line', delay: 80 },
+    { text: '  Status:         ACTIVE', cls: 'result-line', delay: 80 },
+    { text: '  Classification: CREATOR-ALPHA', cls: 'result-line', delay: 80 },
+    { text: '  Threat Level:   LOW', cls: 'result-line', delay: 80 },
+    { text: '  Clearance:      APPROVED FOR REVIEW', cls: 'result-line', delay: 80 },
+    { text: '', cls: 'result-line', delay: 200 },
+    { text: 'Loading subject file...', cls: 'warn-line', delay: 600 },
+  ];
+
+  let cumDelay = 0;
+  searchSteps.forEach((step) => {
+    cumDelay += step.delay;
+    setTimeout(() => {
+      addCliFeedLine(step.text, step.cls);
+    }, cumDelay);
+  });
+
+  setTimeout(() => {
+    transitionToMainView();
+  }, cumDelay + 800);
+}
+
+function transitionToMainView() {
+  const cli = document.getElementById('cli-screen');
+  gsap.to(cli, {
+    opacity: 0,
+    duration: 0.5,
+    onComplete: () => {
+      cli.style.display = 'none';
+      const main = document.getElementById('main-view');
+      main.style.display = 'block';
+      document.getElementById('bottom-cli').style.display = 'block';
+
+      gsap.fromTo(main, { opacity: 0 }, { opacity: 1, duration: 0.5 });
+      gsap.fromTo('#bottom-cli', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, delay: 0.3 });
+
+      // Animate meters
+      document.querySelectorAll('.meter-fill').forEach(el => {
+        const w = el.style.width;
+        el.style.width = '0%';
+        gsap.to(el, { width: w, duration: 1, delay: 0.3, ease: 'power2.out' });
+      });
+
+      startVitalMonitoring();
+    }
+  });
+}
+
+/* ─── CLI INPUT HANDLING ─── */
+document.getElementById('cli-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = e.target.value.trim();
+    if (val) {
+      processCliCommand(val);
+      e.target.value = '';
+    }
+  }
+});
+
+// Command buttons auto-type effect
+document.querySelectorAll('#cli-screen .cli-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const cmd = btn.dataset.cmd;
+    const input = document.getElementById('cli-input');
+    input.value = '';
+    input.focus();
+
+    // Type out the command letter by letter
+    let i = 0;
+    const typeInterval = setInterval(() => {
+      if (i < cmd.length) {
+        input.value += cmd[i];
+        i++;
+      } else {
+        clearInterval(typeInterval);
+        setTimeout(() => {
+          processCliCommand(cmd);
+          input.value = '';
+        }, 150);
+      }
+    }, 40);
+  });
+});
+
+/* ─── TAB NAVIGATION ─── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    switchTab(btn.dataset.tab);
+  });
+});
+
+function switchTab(tabId) {
+  // Update buttons
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  // Update panels
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById(`panel-${tabId}`);
+  if (panel) {
+    panel.classList.add('active');
+    // Re-animate meters in the new panel
+    panel.querySelectorAll('.meter-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      gsap.to(el, { width: w, duration: 0.8, delay: 0.1, ease: 'power2.out' });
+    });
+  }
+
+  // Scroll to top of content
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ─── BOTTOM CLI ─── */
+function toggleBottomCli() {
+  const cli = document.getElementById('bottom-cli');
+  cli.classList.toggle('collapsed');
+  if (!cli.classList.contains('collapsed')) {
+    document.getElementById('main-cli-input').focus();
+  }
+}
+
+// Bottom CLI navigation buttons
+document.querySelectorAll('.bottom-cli-buttons .cli-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const nav = btn.dataset.nav;
+    if (nav) {
+      switchTab(nav);
+      // Collapse the CLI after navigation
+      document.getElementById('bottom-cli').classList.add('collapsed');
+    }
+  });
+});
+
+// Bottom CLI input
+document.getElementById('main-cli-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = e.target.value.trim().toLowerCase();
+    e.target.value = '';
+    if (val) {
+      const tabMap = {
+        'overview': 'overview',
+        'behavioral': 'behavioral',
+        'values': 'behavioral',
+        'assignments': 'assignments',
+        'experience': 'assignments',
+        'work': 'assignments',
+        'output': 'output',
+        'projects': 'output',
+        'personal': 'personal',
+        'library': 'personal',
+        'games': 'personal',
+        'articles': 'articles',
+        'blog': 'articles',
+        'comms': 'comms',
+        'contact': 'comms',
+        'transmission': 'comms',
+      };
+
+      if (tabMap[val]) {
+        switchTab(tabMap[val]);
+        document.getElementById('bottom-cli').classList.add('collapsed');
+      }
+    }
+  }
+});
+
+/* ─── ASSIGNMENT / PROJECT TOGGLES ─── */
+function toggleAssignment(header) {
+  header.closest('.assignment-card').classList.toggle('open');
+}
+
+function toggleProject(card) {
+  card.classList.toggle('open');
+}
+
+/* ─── VITAL MONITORING (atmospheric) ─── */
+function startVitalMonitoring() {
+  const hrEl = document.getElementById('heart-rate');
+  if (!hrEl) return;
+
+  setInterval(() => {
+    const hr = 68 + Math.floor(Math.random() * 12);
+    hrEl.innerHTML = hr + '<span class="vital-unit">BPM</span>';
+  }, 3000);
+}
+
+/* ─── CONTACT FORM ─── */
+function handleContactSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  const origText = btn.textContent;
+  btn.textContent = 'TRANSMITTING...';
+  btn.style.color = 'var(--amber)';
+  btn.style.borderColor = 'var(--amber)';
+
+  setTimeout(() => {
+    btn.textContent = 'REQUISITION LOGGED — PENDING REVIEW';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green-dim)';
+    setTimeout(() => {
+      btn.textContent = origText;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 3000);
+  }, 1500);
+}
+
+/* ─── SCREEN FLICKER (subtle) ─── */
+function randomFlicker() {
+  if (prefersReducedMotion) return;
+  const body = document.body;
+  const chance = Math.random();
+  if (chance < 0.03) {
+    body.style.opacity = '0.97';
+    setTimeout(() => { body.style.opacity = '1'; }, 50);
+    setTimeout(() => { body.style.opacity = '0.98'; }, 100);
+    setTimeout(() => { body.style.opacity = '1'; }, 150);
+  }
+  setTimeout(randomFlicker, 4000 + Math.random() * 8000);
+}
+
+/* ─── INIT ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  runBootSequence();
+  setTimeout(randomFlicker, 10000);
+});
+</script>
+</body>
+</html>
