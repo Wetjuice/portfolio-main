@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cmdr. Ryn Vasquez — FTL Ship Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a12;color:#c8d6e5;font-family:'Inter',sans-serif}
+canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+canvas#ship{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;image-rendering:pixelated;cursor:crosshair}
+#ui-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none}
+#room-label{position:fixed;top:16px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P',monospace;font-size:11px;color:#5cdb5c;text-shadow:0 0 8px #5cdb5c80;z-index:10;opacity:0;transition:opacity .3s;letter-spacing:1px;pointer-events:none}
+#room-label.visible{opacity:1}
+#hud-top{position:fixed;top:12px;left:16px;z-index:10;pointer-events:none}
+#hud-top .hud-title{font-family:'Press Start 2P',monospace;font-size:9px;color:#5cdb5c;text-shadow:0 0 6px #5cdb5c60;letter-spacing:1px}
+#hud-top .hud-sub{font-family:'Press Start 2P',monospace;font-size:7px;color:#4a8;margin-top:4px;letter-spacing:.5px}
+#hotkeys{position:fixed;top:12px;right:16px;z-index:10;font-family:'Press Start 2P',monospace;font-size:7px;color:#445;pointer-events:none;text-align:right;line-height:1.8}
+#power-bar{position:fixed;bottom:0;left:0;width:100%;z-index:10;background:linear-gradient(0deg,#0d0d18 0%,#0d0d18ee 70%,transparent 100%);padding:12px 20px 14px;display:flex;gap:14px;justify-content:center;align-items:flex-end;pointer-events:auto}
+.power-system{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;user-select:none;transition:transform .1s}
+.power-system:hover{transform:scale(1.08)}
+.power-system:active{transform:scale(.95)}
+.power-label{font-family:'Press Start 2P',monospace;font-size:6px;letter-spacing:.5px;color:#667;white-space:nowrap}
+.power-bars{display:flex;gap:2px;height:20px;align-items:flex-end}
+.power-pip{width:8px;border-radius:1px;transition:height .3s,background .3s}
+.power-pip.on{height:16px}
+.power-pip.off{height:16px;background:#1a1a2e !important;border:1px solid #222}
+
+/* Content panel */
+#content-panel{position:fixed;top:0;right:-480px;width:460px;max-width:90vw;height:100%;z-index:20;background:#0c0c18ee;border-left:2px solid #2a3a2a;backdrop-filter:blur(8px);overflow-y:auto;pointer-events:auto;transition:right .4s cubic-bezier(.25,.8,.25,1);padding:60px 28px 80px}
+#content-panel.open{right:0}
+#content-panel::-webkit-scrollbar{width:4px}
+#content-panel::-webkit-scrollbar-thumb{background:#2a3a2a;border-radius:2px}
+#panel-close{position:absolute;top:16px;right:16px;font-family:'Press Start 2P',monospace;font-size:10px;color:#5cdb5c;cursor:pointer;background:none;border:1px solid #2a3a2a;padding:6px 10px;pointer-events:auto;z-index:21;transition:background .2s}
+#panel-close:hover{background:#1a2a1a}
+.panel-room-title{font-family:'Press Start 2P',monospace;font-size:13px;color:#5cdb5c;text-shadow:0 0 10px #5cdb5c60;margin-bottom:6px;line-height:1.6}
+.panel-room-sub{font-family:'Press Start 2P',monospace;font-size:7px;color:#4a8;margin-bottom:20px;letter-spacing:1px}
+.panel-section{margin-bottom:24px}
+.panel-section h3{font-family:'Press Start 2P',monospace;font-size:8px;color:#e8a735;margin-bottom:10px;letter-spacing:1px}
+.panel-text{font-size:14px;line-height:1.7;color:#99aabb}
+.panel-text strong{color:#c8d6e5}
+.panel-text a{color:#5cdb5c;text-decoration:none;border-bottom:1px solid #5cdb5c40}
+.panel-text a:hover{border-bottom-color:#5cdb5c}
+
+/* Weapon cards */
+.weapon-card{background:#111828;border:1px solid #1e2d3d;border-radius:4px;padding:14px;margin-bottom:10px;transition:border-color .2s}
+.weapon-card:hover{border-color:#e8a735}
+.weapon-name{font-family:'Press Start 2P',monospace;font-size:8px;color:#e8a735;margin-bottom:4px}
+.weapon-type{font-size:10px;color:#667;font-family:'Press Start 2P',monospace;margin-bottom:6px}
+.weapon-desc{font-size:13px;color:#8899aa;line-height:1.5}
+
+/* Skill bars */
+.skill-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.skill-name{font-family:'Press Start 2P',monospace;font-size:7px;color:#88aacc;width:120px;text-align:right;flex-shrink:0}
+.skill-pips{display:flex;gap:3px}
+.skill-pip{width:18px;height:10px;border-radius:1px;border:1px solid #2a3a4a}
+.skill-pip.filled{border:none}
+
+/* Star map nodes */
+.starmap-node{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;padding-left:20px}
+.starmap-node::before{content:'';position:absolute;left:6px;top:24px;width:2px;height:calc(100% + 2px);background:#1a2a3a}
+.starmap-node:last-child::before{display:none}
+.starmap-dot{width:14px;height:14px;border-radius:50%;border:2px solid;flex-shrink:0;position:relative;z-index:1}
+.starmap-info .node-title{font-family:'Press Start 2P',monospace;font-size:8px;margin-bottom:3px}
+.starmap-info .node-year{font-size:11px;color:#556}
+.starmap-info .node-desc{font-size:12px;color:#778;margin-top:2px}
+
+/* Contact links */
+.contact-freq{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1a1a2e}
+.freq-band{font-family:'Press Start 2P',monospace;font-size:7px;color:#5cdb5c;width:80px}
+.freq-val{font-size:13px;color:#8899aa}
+.freq-val a{color:#5cdb5c;text-decoration:none}
+
+/* Mobile fallback */
+#mobile-fallback{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:50;background:#0a0a12;overflow-y:auto;padding:20px}
+.mobile-room-btn{display:block;width:100%;background:#111828;border:1px solid #1e2d3d;border-radius:6px;padding:16px;margin-bottom:8px;text-align:left;color:#c8d6e5;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;transition:border-color .2s}
+.mobile-room-btn:hover,.mobile-room-btn:active{border-color:#5cdb5c}
+.mobile-room-btn .room-num{color:#5cdb5c;font-size:7px}
+.mobile-header{font-family:'Press Start 2P',monospace;font-size:11px;color:#5cdb5c;margin-bottom:16px;text-align:center}
+
+@media(max-width:600px){
+  #mobile-fallback{display:block}
+  canvas#ship,#power-bar,#hotkeys,#hud-top,#room-label{display:none}
+  #content-panel{position:fixed;right:-100%;width:100%;max-width:100%}
+  #content-panel.open{right:0}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<canvas id="ship"></canvas>
+
+<div id="ui-overlay">
+  <div id="hud-top">
+    <div class="hud-title">USS VASQUEZ</div>
+    <div class="hud-sub">HULL 100% &bull; SECTOR 7</div>
+  </div>
+  <div id="room-label"></div>
+  <div id="hotkeys">
+    [1] BRIDGE<br>[2] QUARTERS<br>[3] WEAPONS<br>[4] ENGINEER<br>[5] NAV<br>[6] COMMS<br>[ESC] CLOSE
+  </div>
+</div>
+
+<div id="power-bar"></div>
+
+<div id="content-panel">
+  <button id="panel-close">[X]</button>
+  <div id="panel-content"></div>
+</div>
+
+<div id="mobile-fallback">
+  <div class="mobile-header">USS VASQUEZ</div>
+  <div id="mobile-rooms"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+// ─── ROOM DATA ───
+const ROOMS = [
+  {id:'bridge',name:'BRIDGE',color:'#5cdb5c',sub:'COMMAND DECK',key:'1'},
+  {id:'quarters',name:'CREW QUARTERS',color:'#4a9eff',sub:'PERSONNEL',key:'2'},
+  {id:'weapons',name:'WEAPONS BAY',color:'#e8a735',sub:'ARMAMENT',key:'3'},
+  {id:'engineering',name:'ENGINEERING',color:'#ff6b4a',sub:'SUBSYSTEMS',key:'4'},
+  {id:'navigation',name:'NAVIGATION',color:'#c084fc',sub:'STAR MAP',key:'5'},
+  {id:'comms',name:'COMMS',color:'#4af0e8',sub:'TRANSMISSIONS',key:'6'}
+];
+
+// ─── CONTENT ───
+const CONTENT = {
+bridge: `
+<div class="panel-room-title">BRIDGE</div>
+<div class="panel-room-sub">COMMAND DECK</div>
+<div class="panel-section">
+  <div class="panel-text">
+    <strong style="font-size:18px;color:#fff">Commander Ryn Vasquez</strong><br><br>
+    15-year veteran game designer. Specialist in systems-driven narrative, emergent gameplay, and player agency architecture.<br><br>
+    Currently operating as an independent design consultant — charting new sectors, building prototypes, and advising studios on systemic design challenges.<br><br>
+    <span style="color:#5cdb5c;font-family:'Press Start 2P',monospace;font-size:8px">STATUS: ACCEPTING MISSIONS</span>
+  </div>
+</div>
+`,
+quarters: `
+<div class="panel-room-title">CREW QUARTERS</div>
+<div class="panel-room-sub">PERSONNEL FILE</div>
+<div class="panel-section">
+  <h3>BACKGROUND</h3>
+  <div class="panel-text">
+    Started in QA — learning every system from the inside out. Bug reports became design documents. Test plans became feature specs.<br><br>
+    Rose through the ranks from Junior Designer to Lead to Director, building expertise in <strong>systems design</strong>, <strong>narrative mechanics</strong>, and <strong>player psychology</strong>.<br><br>
+    Believes the best games emerge from interconnected systems rather than scripted moments. Every mechanic should tell a story.
+  </div>
+</div>
+<div class="panel-section">
+  <h3>DESIGN PHILOSOPHY</h3>
+  <div class="panel-text">
+    &bull; Systems-first thinking — mechanics that create emergent narratives<br>
+    &bull; Player agency over authored spectacle<br>
+    &bull; Constraints breed creativity<br>
+    &bull; If the tutorial is boring, the game is boring<br>
+    &bull; Ship it, learn, iterate
+  </div>
+</div>
+`,
+weapons: `
+<div class="panel-room-title">WEAPONS BAY</div>
+<div class="panel-room-sub">LOADOUT — 5 SHIPPED TITLES</div>
+<div class="panel-section">
+  <div class="weapon-card">
+    <div class="weapon-name">BREACH PROTOCOL</div>
+    <div class="weapon-type">// TACTICAL SHOOTER</div>
+    <div class="weapon-desc">Squad-based extraction shooter with destructible environments and dynamic AI directors. Led systems design for procedural mission generation and weapon modding pipeline.</div>
+  </div>
+  <div class="weapon-card">
+    <div class="weapon-name">TIDEWALKER</div>
+    <div class="weapon-type">// ACTION RPG</div>
+    <div class="weapon-desc">Oceanic action RPG with tide-based world transformation. Designed the core loop — explore at low tide, survive at high tide. Dynamic ecosystem simulation drives emergent encounters.</div>
+  </div>
+  <div class="weapon-card">
+    <div class="weapon-name">NULLPOINT</div>
+    <div class="weapon-type">// SURVIVAL HORROR</div>
+    <div class="weapon-desc">Psychological horror aboard a derelict space station. Designed the sanity system, environmental storytelling framework, and adaptive scare director that learns player behavior.</div>
+  </div>
+  <div class="weapon-card">
+    <div class="weapon-name">THE LONGEST SIGNAL</div>
+    <div class="weapon-type">// NARRATIVE EXPLORATION</div>
+    <div class="weapon-desc">Walking sim meets radio drama. Players decode alien transmissions to piece together a first-contact story. Designed the signal interpretation system and branching narrative graph.</div>
+  </div>
+  <div class="weapon-card">
+    <div class="weapon-name">FORGE & FRACTURE</div>
+    <div class="weapon-type">// STRATEGY</div>
+    <div class="weapon-desc">Colony builder where every structure decision permanently alters terrain and faction relations. Designed the cascading consequence system — build a forge, fracture alliances.</div>
+  </div>
+</div>
+`,
+engineering: `
+<div class="panel-room-title">ENGINEERING</div>
+<div class="panel-room-sub">SUBSYSTEM POWER LEVELS</div>
+<div class="panel-section">
+  <h3>DESIGN SYSTEMS</h3>
+  <div class="skill-row"><span class="skill-name">Systems Design</span><div class="skill-pips">${pip(4,'#5cdb5c')}</div></div>
+  <div class="skill-row"><span class="skill-name">Narrative Design</span><div class="skill-pips">${pip(4,'#5cdb5c')}</div></div>
+  <div class="skill-row"><span class="skill-name">Level Design</span><div class="skill-pips">${pip(3,'#5cdb5c')}</div></div>
+  <div class="skill-row"><span class="skill-name">Economy Design</span><div class="skill-pips">${pip(3,'#e8a735')}</div></div>
+  <div class="skill-row"><span class="skill-name">UX Design</span><div class="skill-pips">${pip(3,'#e8a735')}</div></div>
+</div>
+<div class="panel-section">
+  <h3>TECHNICAL</h3>
+  <div class="skill-row"><span class="skill-name">Unreal Engine</span><div class="skill-pips">${pip(3,'#4a9eff')}</div></div>
+  <div class="skill-row"><span class="skill-name">Unity</span><div class="skill-pips">${pip(3,'#4a9eff')}</div></div>
+  <div class="skill-row"><span class="skill-name">Prototyping</span><div class="skill-pips">${pip(4,'#4a9eff')}</div></div>
+  <div class="skill-row"><span class="skill-name">Scripting</span><div class="skill-pips">${pip(3,'#4a9eff')}</div></div>
+  <div class="skill-row"><span class="skill-name">Documentation</span><div class="skill-pips">${pip(4,'#c084fc')}</div></div>
+</div>
+<div class="panel-section">
+  <h3>LEADERSHIP</h3>
+  <div class="skill-row"><span class="skill-name">Team Leadership</span><div class="skill-pips">${pip(4,'#ff6b4a')}</div></div>
+  <div class="skill-row"><span class="skill-name">Mentorship</span><div class="skill-pips">${pip(4,'#ff6b4a')}</div></div>
+  <div class="skill-row"><span class="skill-name">Cross-Discipline</span><div class="skill-pips">${pip(3,'#ff6b4a')}</div></div>
+  <div class="skill-row"><span class="skill-name">Stakeholder Mgmt</span><div class="skill-pips">${pip(3,'#e8a735')}</div></div>
+</div>
+`,
+navigation: `
+<div class="panel-room-title">NAVIGATION</div>
+<div class="panel-room-sub">CAREER STAR MAP</div>
+<div class="panel-section">
+  <div class="starmap-node">
+    <div class="starmap-dot" style="border-color:#5cdb5c;background:#5cdb5c40"></div>
+    <div class="starmap-info">
+      <div class="node-title" style="color:#5cdb5c">INDEPENDENT CONSULTANT</div>
+      <div class="node-year">2023 — Present</div>
+      <div class="node-desc">Charting new sectors. Prototyping, advising, building.</div>
+    </div>
+  </div>
+  <div class="starmap-node">
+    <div class="starmap-dot" style="border-color:#c084fc;background:#c084fc40"></div>
+    <div class="starmap-info">
+      <div class="node-title" style="color:#c084fc">DESIGN DIRECTOR</div>
+      <div class="node-year">2020 — 2023</div>
+      <div class="node-desc">Led design vision across multiple titles. Built and mentored a team of 12 designers.</div>
+    </div>
+  </div>
+  <div class="starmap-node">
+    <div class="starmap-dot" style="border-color:#e8a735;background:#e8a73540"></div>
+    <div class="starmap-info">
+      <div class="node-title" style="color:#e8a735">LEAD DESIGNER</div>
+      <div class="node-year">2017 — 2020</div>
+      <div class="node-desc">Owned core gameplay systems. Shipped Breach Protocol and Tidewalker.</div>
+    </div>
+  </div>
+  <div class="starmap-node">
+    <div class="starmap-dot" style="border-color:#4a9eff;background:#4a9eff40"></div>
+    <div class="starmap-info">
+      <div class="node-title" style="color:#4a9eff">SENIOR DESIGNER</div>
+      <div class="node-year">2015 — 2017</div>
+      <div class="node-desc">Systems design specialist. Built economy and progression frameworks.</div>
+    </div>
+  </div>
+  <div class="starmap-node">
+    <div class="starmap-dot" style="border-color:#ff6b4a;background:#ff6b4a40"></div>
+    <div class="starmap-info">
+      <div class="node-title" style="color:#ff6b4a">JUNIOR DESIGNER</div>
+      <div class="node-year">2013 — 2015</div>
+      <div class="node-desc">First design role. Level scripting, encounter design, documentation.</div>
+    </div>
+  </div>
+  <div class="starmap-node">
+    <div class="starmap-dot" style="border-color:#667;background:#66740"></div>
+    <div class="starmap-info">
+      <div class="node-title" style="color:#667">QA TESTER</div>
+      <div class="node-year">2011 — 2013</div>
+      <div class="node-desc">Origin point. Learned every system by breaking it first.</div>
+    </div>
+  </div>
+</div>
+`,
+comms: `
+<div class="panel-room-title">COMMS</div>
+<div class="panel-room-sub">TRANSMISSION FREQUENCIES</div>
+<div class="panel-section">
+  <div class="contact-freq">
+    <span class="freq-band">FREQ 01</span>
+    <span class="freq-val"><a href="mailto:ryn@vasquezdesign.com">ryn@vasquezdesign.com</a></span>
+  </div>
+  <div class="contact-freq">
+    <span class="freq-band">FREQ 02</span>
+    <span class="freq-val"><a href="#">linkedin.com/in/rynvasquez</a></span>
+  </div>
+  <div class="contact-freq">
+    <span class="freq-band">FREQ 03</span>
+    <span class="freq-val"><a href="#">@rynvasquez on X</a></span>
+  </div>
+  <div class="contact-freq">
+    <span class="freq-band">FREQ 04</span>
+    <span class="freq-val"><a href="#">github.com/rynvasquez</a></span>
+  </div>
+  <div class="contact-freq">
+    <span class="freq-band">FREQ 05</span>
+    <span class="freq-val"><a href="#">vasquezdesign.com</a></span>
+  </div>
+</div>
+<div class="panel-section" style="margin-top:24px">
+  <div class="panel-text" style="font-family:'Press Start 2P',monospace;font-size:8px;color:#4af0e8;line-height:2.2">
+    &gt; OPEN TO COMMISSIONS<br>
+    &gt; CONSULTING AVAILABLE<br>
+    &gt; TRANSMISSION ENDS_
+  </div>
+</div>
+`
+};
+
+function pip(n, color) {
+  let s = '';
+  for (let i = 0; i < 4; i++) {
+    s += i < n
+      ? `<div class="skill-pip filled" style="background:${color}"></div>`
+      : `<div class="skill-pip"></div>`;
+  }
+  return s;
+}
+
+// ─── STARFIELD CANVAS ───
+const sfCanvas = document.getElementById('starfield');
+const sfCtx = sfCanvas.getContext('2d');
+let stars = [];
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 200; i++) {
+    stars.push({
+      x: Math.random() * sfCanvas.width,
+      y: Math.random() * sfCanvas.height,
+      size: Math.random() * 1.5 + 0.5,
+      speed: Math.random() * 0.4 + 0.1,
+      brightness: Math.random() * 0.6 + 0.4
+    });
+  }
+}
+function resizeStarfield() {
+  sfCanvas.width = window.innerWidth;
+  sfCanvas.height = window.innerHeight;
+  initStars();
+}
+function drawStars() {
+  sfCtx.fillStyle = '#0a0a12';
+  sfCtx.fillRect(0, 0, sfCanvas.width, sfCanvas.height);
+  for (const s of stars) {
+    s.x -= s.speed;
+    if (s.x < 0) { s.x = sfCanvas.width; s.y = Math.random() * sfCanvas.height; }
+    sfCtx.globalAlpha = s.brightness;
+    sfCtx.fillStyle = '#fff';
+    sfCtx.fillRect(Math.floor(s.x), Math.floor(s.y), Math.ceil(s.size), Math.ceil(s.size));
+  }
+  sfCtx.globalAlpha = 1;
+}
+
+// ─── SHIP CANVAS ───
+const shipCanvas = document.getElementById('ship');
+const ctx = shipCanvas.getContext('2d');
+const SCALE = 3;
+
+// Ship layout in pixel coords (before scale)
+// Ship is roughly 180x90 px, centered on canvas
+let shipX, shipY;
+const SHIP_W = 180, SHIP_H = 90;
+
+// Room rects relative to ship origin (px, pre-scale)
+const roomDefs = [
+  {id:'bridge',    x:140,y:20,w:35,h:50, color:'#1a3a1a', border:'#5cdb5c', labelX:152,labelY:10},
+  {id:'quarters',  x:95, y:5, w:40,h:35, color:'#0f1f3a', border:'#4a9eff', labelX:100,labelY:-2},
+  {id:'weapons',   x:95, y:50,w:40,h:35, color:'#2a1f0a', border:'#e8a735', labelX:100,labelY:90},
+  {id:'engineering',x:45,y:20,w:45,h:50, color:'#2a1008', border:'#ff6b4a', labelX:52, labelY:10},
+  {id:'navigation', x:5, y:5, w:35,h:35, color:'#1a0f2a', border:'#c084fc', labelX:8,  labelY:-2},
+  {id:'comms',      x:5, y:50,w:35,h:35, color:'#0a2a2a', border:'#4af0e8', labelX:8,  labelY:90}
+];
+
+// Doors between rooms (connecting lines)
+const doors = [
+  {x1:140,y1:45, x2:135,y2:45}, // bridge-quarters/weapons gap
+  {x1:95, y1:22, x2:95, y2:22},
+  {x1:95, y1:67, x2:95, y2:67},
+  {x1:90, y1:30, x2:90, y2:30},
+  {x1:90, y1:60, x2:90, y2:60},
+  {x1:45, y1:45, x2:45, y2:45},
+  {x1:40, y1:22, x2:40, y2:22},
+  {x1:40, y1:67, x2:40, y2:67},
+];
+
+// Crew sprites
+const crewColors = ['#5cdb5c','#4a9eff','#e8a735','#ff6b4a'];
+let crew = [];
+
+function initCrew() {
+  crew = [];
+  for (let i = 0; i < 4; i++) {
+    const room = roomDefs[Math.floor(Math.random() * roomDefs.length)];
+    crew.push({
+      x: room.x + 6 + Math.random() * (room.w - 14),
+      y: room.y + 6 + Math.random() * (room.h - 16),
+      color: crewColors[i],
+      targetX: 0, targetY: 0,
+      roomIdx: roomDefs.indexOf(room),
+      moveTimer: 0,
+      frame: 0,
+      frameTimer: 0
+    });
+    pickNewTarget(crew[i]);
+  }
+}
+
+function pickNewTarget(c) {
+  // Sometimes change rooms
+  if (Math.random() < 0.3) {
+    c.roomIdx = Math.floor(Math.random() * roomDefs.length);
+  }
+  const room = roomDefs[c.roomIdx];
+  c.targetX = room.x + 5 + Math.random() * (room.w - 12);
+  c.targetY = room.y + 5 + Math.random() * (room.h - 14);
+  c.moveTimer = 120 + Math.random() * 180;
+}
+
+function updateCrew() {
+  for (const c of crew) {
+    const dx = c.targetX - c.x;
+    const dy = c.targetY - c.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist > 1) {
+      c.x += (dx / dist) * 0.3;
+      c.y += (dy / dist) * 0.3;
+      c.frameTimer++;
+      if (c.frameTimer > 10) { c.frame = (c.frame + 1) % 2; c.frameTimer = 0; }
+    }
+    c.moveTimer--;
+    if (c.moveTimer <= 0 || dist < 1) pickNewTarget(c);
+  }
+}
+
+function drawCrew() {
+  for (const c of crew) {
+    const sx = shipX + c.x * SCALE;
+    const sy = shipY + c.y * SCALE;
+    // Body (4x6 px at scale)
+    ctx.fillStyle = c.color;
+    ctx.fillRect(sx + 1*SCALE, sy + 2*SCALE, 2*SCALE, 4*SCALE);
+    // Head (2x2)
+    ctx.fillStyle = '#ddd';
+    ctx.fillRect(sx + 1*SCALE, sy, 2*SCALE, 2*SCALE);
+    // Legs (walk animation)
+    ctx.fillStyle = c.color;
+    if (c.frame === 0) {
+      ctx.fillRect(sx + 1*SCALE, sy + 6*SCALE, 1*SCALE, 2*SCALE);
+      ctx.fillRect(sx + 2*SCALE, sy + 6*SCALE, 1*SCALE, 1*SCALE);
+    } else {
+      ctx.fillRect(sx + 1*SCALE, sy + 6*SCALE, 1*SCALE, 1*SCALE);
+      ctx.fillRect(sx + 2*SCALE, sy + 6*SCALE, 1*SCALE, 2*SCALE);
+    }
+  }
+}
+
+let hoverRoom = -1;
+let activeRoom = -1;
+let shieldPhase = 0;
+
+function resizeShip() {
+  shipCanvas.width = window.innerWidth;
+  shipCanvas.height = window.innerHeight;
+  shipX = Math.floor((shipCanvas.width - SHIP_W * SCALE) / 2);
+  shipY = Math.floor((shipCanvas.height - SHIP_H * SCALE) / 2) - 20;
+}
+
+function drawShip() {
+  ctx.clearRect(0, 0, shipCanvas.width, shipCanvas.height);
+
+  // Shield glow
+  shieldPhase += 0.02;
+  const shieldAlpha = 0.04 + Math.sin(shieldPhase) * 0.02;
+  ctx.save();
+  ctx.globalAlpha = shieldAlpha;
+  ctx.strokeStyle = '#4a9eff';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  // Elongated ellipse around ship
+  ctx.ellipse(
+    shipX + SHIP_W * SCALE / 2,
+    shipY + SHIP_H * SCALE / 2,
+    SHIP_W * SCALE / 2 + 20,
+    SHIP_H * SCALE / 2 + 16,
+    0, 0, Math.PI * 2
+  );
+  ctx.stroke();
+  ctx.globalAlpha = shieldAlpha * 0.3;
+  ctx.fillStyle = '#4a9eff';
+  ctx.fill();
+  ctx.restore();
+
+  // Hull outline
+  ctx.fillStyle = '#1a1c24';
+  ctx.strokeStyle = '#3a3e4a';
+  ctx.lineWidth = 2;
+  // Main hull shape
+  const hx = shipX, hy = shipY;
+  ctx.beginPath();
+  ctx.moveTo(hx + SHIP_W*SCALE, hy + 15*SCALE);
+  // Front nose
+  ctx.lineTo(hx + SHIP_W*SCALE + 10*SCALE, hy + SHIP_H*SCALE/2);
+  ctx.lineTo(hx + SHIP_W*SCALE, hy + (SHIP_H-15)*SCALE);
+  // Bottom edge
+  ctx.lineTo(hx + SHIP_W*SCALE, hy + SHIP_H*SCALE);
+  ctx.lineTo(hx, hy + SHIP_H*SCALE + 5*SCALE);
+  // Rear engines
+  ctx.lineTo(hx - 8*SCALE, hy + (SHIP_H-5)*SCALE);
+  ctx.lineTo(hx - 8*SCALE, hy + 5*SCALE);
+  ctx.lineTo(hx, hy - 5*SCALE);
+  ctx.lineTo(hx + SHIP_W*SCALE, hy);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Engine glow
+  ctx.fillStyle = '#ff6b4a';
+  ctx.globalAlpha = 0.6 + Math.sin(shieldPhase * 3) * 0.2;
+  ctx.fillRect(hx - 8*SCALE, hy + 10*SCALE, 3*SCALE, 12*SCALE);
+  ctx.fillRect(hx - 8*SCALE, hy + 58*SCALE, 3*SCALE, 12*SCALE);
+  // Engine exhaust
+  ctx.globalAlpha = 0.3 + Math.sin(shieldPhase * 5) * 0.15;
+  ctx.fillStyle = '#e8a735';
+  ctx.fillRect(hx - 14*SCALE, hy + 12*SCALE, 6*SCALE, 8*SCALE);
+  ctx.fillRect(hx - 14*SCALE, hy + 60*SCALE, 6*SCALE, 8*SCALE);
+  ctx.globalAlpha = 1;
+
+  // Draw rooms
+  for (let i = 0; i < roomDefs.length; i++) {
+    const r = roomDefs[i];
+    const rx = shipX + r.x * SCALE;
+    const ry = shipY + r.y * SCALE;
+    const rw = r.w * SCALE;
+    const rh = r.h * SCALE;
+
+    // Room interior
+    ctx.fillStyle = r.color;
+    if (i === hoverRoom) ctx.globalAlpha = 0.9;
+    else if (i === activeRoom) ctx.globalAlpha = 1;
+    else ctx.globalAlpha = 0.5;
+    ctx.fillRect(rx, ry, rw, rh);
+    ctx.globalAlpha = 1;
+
+    // Room border
+    ctx.strokeStyle = (i === hoverRoom || i === activeRoom) ? r.border : '#2a2c3a';
+    ctx.lineWidth = (i === hoverRoom || i === activeRoom) ? 2 : 1;
+    ctx.strokeRect(rx, ry, rw, rh);
+
+    // Room label (pixel font)
+    ctx.fillStyle = r.border;
+    ctx.globalAlpha = (i === hoverRoom || i === activeRoom) ? 1 : 0.5;
+    ctx.font = `${7*SCALE/2}px 'Press Start 2P', monospace`;
+    ctx.fillText(r.name, rx + 4, ry - 4);
+    ctx.globalAlpha = 1;
+
+    // Internal details — small squares as "consoles"
+    ctx.fillStyle = r.border;
+    ctx.globalAlpha = 0.3;
+    ctx.fillRect(rx + 3*SCALE, ry + 3*SCALE, 2*SCALE, 2*SCALE);
+    ctx.fillRect(rx + (r.w-5)*SCALE, ry + (r.h-5)*SCALE, 2*SCALE, 2*SCALE);
+    if (r.w > 35) {
+      ctx.fillRect(rx + Math.floor(r.w/2)*SCALE, ry + 3*SCALE, 2*SCALE, 2*SCALE);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Draw doors (connecting gaps between rooms)
+  ctx.fillStyle = '#3a3e4a';
+  // Vertical doors (between top/bottom rooms)
+  // Bridge connects to quarters/weapons
+  ctx.fillRect(shipX + 130*SCALE, shipY + 38*SCALE, 10*SCALE, 2*SCALE);  // bridge to left
+  ctx.fillRect(shipX + 130*SCALE, shipY + 52*SCALE, 10*SCALE, 2*SCALE);
+  // Center vertical
+  ctx.fillRect(shipX + 88*SCALE, shipY + 28*SCALE, 7*SCALE, 2*SCALE);   // quarters to engineering
+  ctx.fillRect(shipX + 88*SCALE, shipY + 60*SCALE, 7*SCALE, 2*SCALE);   // weapons to engineering
+  // Left connections
+  ctx.fillRect(shipX + 38*SCALE, shipY + 28*SCALE, 7*SCALE, 2*SCALE);   // nav to engineering
+  ctx.fillRect(shipX + 38*SCALE, shipY + 60*SCALE, 7*SCALE, 2*SCALE);   // comms to engineering
+  // Horizontal doors (between side rooms)
+  ctx.fillRect(shipX + 110*SCALE, shipY + 38*SCALE, 2*SCALE, 14*SCALE); // quarters-weapons
+  ctx.fillRect(shipX + 20*SCALE, shipY + 38*SCALE, 2*SCALE, 14*SCALE);  // nav-comms
+
+  drawCrew();
+}
+
+function hitTestRoom(mx, my) {
+  for (let i = 0; i < roomDefs.length; i++) {
+    const r = roomDefs[i];
+    const rx = shipX + r.x * SCALE;
+    const ry = shipY + r.y * SCALE;
+    if (mx >= rx && mx <= rx + r.w*SCALE && my >= ry && my <= ry + r.h*SCALE) return i;
+  }
+  return -1;
+}
+
+// ─── POWER BAR ───
+const powerSystems = [
+  {name:'SHIELDS', color:'#4a9eff', pips:3, max:4},
+  {name:'WEAPONS', color:'#e8a735', pips:3, max:4},
+  {name:'ENGINES', color:'#ff6b4a', pips:4, max:4},
+  {name:'SENSORS', color:'#c084fc', pips:2, max:4},
+  {name:'COMMS',   color:'#4af0e8', pips:3, max:4},
+  {name:'LIFE SUP',color:'#5cdb5c', pips:4, max:4}
+];
+
+function buildPowerBar() {
+  const bar = document.getElementById('power-bar');
+  bar.innerHTML = '';
+  powerSystems.forEach((sys, si) => {
+    const div = document.createElement('div');
+    div.className = 'power-system';
+    div.onclick = () => {
+      sys.pips = (sys.pips % sys.max) + 1;
+      buildPowerBar();
+    };
+    let pipsHtml = '<div class="power-bars">';
+    for (let i = 0; i < sys.max; i++) {
+      pipsHtml += `<div class="power-pip ${i < sys.pips ? 'on' : 'off'}" style="${i < sys.pips ? 'background:'+sys.color : ''}"></div>`;
+    }
+    pipsHtml += '</div>';
+    div.innerHTML = `<div class="power-label">${sys.name}</div>${pipsHtml}`;
+    bar.appendChild(div);
+  });
+}
+
+// ─── CONTENT PANEL ───
+const panel = document.getElementById('content-panel');
+const panelContent = document.getElementById('panel-content');
+const roomLabel = document.getElementById('room-label');
+
+function openRoom(idx) {
+  if (idx < 0 || idx >= ROOMS.length) return;
+  activeRoom = idx;
+  const room = ROOMS[idx];
+  panelContent.innerHTML = CONTENT[room.id];
+  panel.classList.add('open');
+  roomLabel.textContent = '';
+  roomLabel.classList.remove('visible');
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  activeRoom = -1;
+}
+
+document.getElementById('panel-close').onclick = closePanel;
+
+// ─── EVENTS ───
+shipCanvas.addEventListener('mousemove', (e) => {
+  const rect = shipCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  hoverRoom = hitTestRoom(mx, my);
+  if (hoverRoom >= 0) {
+    roomLabel.textContent = ROOMS[hoverRoom].name;
+    roomLabel.classList.add('visible');
+    shipCanvas.style.cursor = 'pointer';
+  } else {
+    roomLabel.classList.remove('visible');
+    shipCanvas.style.cursor = 'crosshair';
+  }
+});
+
+shipCanvas.addEventListener('click', (e) => {
+  const rect = shipCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const idx = hitTestRoom(mx, my);
+  if (idx >= 0) openRoom(idx);
+  else closePanel();
+});
+
+document.addEventListener('keydown', (e) => {
+  const num = parseInt(e.key);
+  if (num >= 1 && num <= 6) { openRoom(num - 1); e.preventDefault(); }
+  if (e.key === 'Escape') closePanel();
+});
+
+// ─── MOBILE FALLBACK ───
+function buildMobile() {
+  const cont = document.getElementById('mobile-rooms');
+  cont.innerHTML = '';
+  ROOMS.forEach((room, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mobile-room-btn';
+    btn.innerHTML = `<span class="room-num">[${i+1}]</span> ${room.name}`;
+    btn.onclick = () => openRoom(i);
+    cont.appendChild(btn);
+  });
+}
+
+// ─── ANIMATION LOOP ───
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function loop() {
+  if (!prefersReduced) {
+    drawStars();
+  } else {
+    sfCtx.fillStyle = '#0a0a12';
+    sfCtx.fillRect(0, 0, sfCanvas.width, sfCanvas.height);
+    sfCtx.fillStyle = '#fff';
+    sfCtx.globalAlpha = 0.3;
+    for (const s of stars) {
+      sfCtx.fillRect(Math.floor(s.x), Math.floor(s.y), Math.ceil(s.size), Math.ceil(s.size));
+    }
+    sfCtx.globalAlpha = 1;
+  }
+  if (!prefersReduced) updateCrew();
+  drawShip();
+  requestAnimationFrame(loop);
+}
+
+function init() {
+  resizeStarfield();
+  resizeShip();
+  initCrew();
+  buildPowerBar();
+  buildMobile();
+  // Open bridge by default
+  openRoom(0);
+  loop();
+}
+
+window.addEventListener('resize', () => {
+  resizeStarfield();
+  resizeShip();
+});
+
+init();
+})();
+</script>
+</body>
+</html>
