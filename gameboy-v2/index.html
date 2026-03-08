@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kira Tanaka — Game Director</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="desktop-bg"></div>
+
+  <div class="device">
+    <div class="device-top-ridge"></div>
+    <div class="device-body">
+      <!-- Screen surround -->
+      <div class="screen-surround">
+        <div class="screen-label">DOT MATRIX WITH STEREO SOUND</div>
+        <div class="screen-power-led"></div>
+        <div class="screen-bezel">
+          <div class="screen-area" id="screen">
+            <!-- BOOT SCREEN -->
+            <div class="game-screen active" id="screen-boot">
+              <div class="boot-black" id="boot-black"></div>
+              <div class="boot-logo" id="boot-logo">OBSIDIAN FORGE</div>
+              <div class="boot-flash" id="boot-flash"></div>
+              <div class="title-screen" id="title-screen">
+                <div class="title-border">
+                  <div class="title-name">KIRA</div>
+                  <div class="title-name">TANAKA</div>
+                  <div class="title-subtitle">GAME DIRECTOR</div>
+                  <div class="title-prompt" id="title-prompt">&#9654; PRESS START</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MAIN MENU -->
+            <div class="game-screen" id="screen-menu">
+              <div class="menu-header">SELECT MODE</div>
+              <ul class="menu-list" id="menu-list">
+                <li class="menu-item selected" data-target="screen-profile"><span class="cursor">&#9654;</span> PROFILE</li>
+                <li class="menu-item" data-target="screen-works"><span class="cursor">&nbsp;</span> WORKS</li>
+                <li class="menu-item" data-target="screen-career"><span class="cursor">&nbsp;</span> CAREER LOG</li>
+                <li class="menu-item" data-target="screen-codec"><span class="cursor">&nbsp;</span> CODEC</li>
+                <li class="menu-item" data-target="screen-contact"><span class="cursor">&nbsp;</span> CONTACT</li>
+              </ul>
+              <div class="menu-hint">A: SELECT&nbsp;&nbsp;B: BACK</div>
+            </div>
+
+            <!-- PROFILE -->
+            <div class="game-screen" id="screen-profile">
+              <div class="screen-header"><span class="header-text">DIRECTOR PROFILE</span></div>
+              <div class="screen-content">
+                <div class="profile-name">KIRA TANAKA</div>
+                <div class="profile-title">GAME DIRECTOR</div>
+                <div class="profile-studio">OBSIDIAN FORGE STUDIOS</div>
+                <p class="profile-bio">
+                  14 years directing games that trust the player. I build worlds
+                  driven by interconnected systems — where emergent play replaces
+                  scripted moments and player choice shapes every outcome.
+                  Three shipped titles. Each one a bet on agency over hand-holding.
+                </p>
+                <div class="profile-stats">
+                  <div class="stat-line">&#9632; SYSTEMS &gt; SPECTACLE</div>
+                  <div class="stat-line">&#9632; EMERGENT &gt; SCRIPTED</div>
+                  <div class="stat-line">&#9632; AGENCY &gt; HAND-HOLDING</div>
+                </div>
+                <div class="pixel-art-deco" aria-hidden="true"></div>
+              </div>
+              <button class="back-btn" data-target="screen-menu">&#9664; MENU</button>
+            </div>
+
+            <!-- WORKS -->
+            <div class="game-screen" id="screen-works">
+              <div class="screen-header"><span class="header-text">SELECTED WORKS</span></div>
+              <div class="screen-content">
+                <div class="save-slot">
+                  <div class="slot-header">
+                    <span class="slot-num">SLOT 1</span>
+                    <span class="slot-bar">&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;</span>
+                    <span class="slot-name">ASHFALL</span>
+                  </div>
+                  <div class="slot-genre">&#9632; SURVIVAL RPG &nbsp;&nbsp;&nbsp;&nbsp; 2023</div>
+                  <div class="slot-stats">&#9733; 92 META &nbsp;&#10022; 4.2M SOLD &nbsp;&#9670; DICE</div>
+                </div>
+
+                <div class="slot-divider"></div>
+
+                <div class="save-slot">
+                  <div class="slot-header">
+                    <span class="slot-num">SLOT 2</span>
+                    <span class="slot-bar">&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;</span>
+                    <span class="slot-name">VEILBREAKER</span>
+                  </div>
+                  <div class="slot-genre">&#9632; NARRATIVE ACT &nbsp;&nbsp;&nbsp; 2021</div>
+                  <div class="slot-stats">&#9733; 88 META &nbsp;&#10022; 2.1M SOLD &nbsp;&#9670; BAFTA</div>
+                </div>
+
+                <div class="slot-divider"></div>
+
+                <div class="save-slot">
+                  <div class="slot-header">
+                    <span class="slot-num">SLOT 3</span>
+                    <span class="slot-bar">&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;</span>
+                    <span class="slot-name small-name">ECHOES OF THE DEEP</span>
+                  </div>
+                  <div class="slot-genre">&#9632; EXPLORATION &nbsp;&nbsp;&nbsp;&nbsp; 2019</div>
+                  <div class="slot-stats">&#9733; 85 META &nbsp;&#10022; 1.5M SOLD &nbsp;&#9670; IGF</div>
+                </div>
+              </div>
+              <button class="back-btn" data-target="screen-menu">&#9664; MENU</button>
+            </div>
+
+            <!-- CAREER LOG -->
+            <div class="game-screen" id="screen-career">
+              <div class="screen-header"><span class="header-text">CAREER LOG</span></div>
+              <div class="screen-content career-log">
+                <div class="log-entry">
+                  <span class="log-year">[2024]</span>
+                  <span class="log-text">&gt; DIRECTOR — OBSIDIAN FORGE</span>
+                </div>
+                <div class="log-entry log-sub">
+                  <span class="log-text">&gt; PROJECT: [CLASSIFIED]</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-year">[2023]</span>
+                  <span class="log-text">&gt; SHIPPED: ASHFALL [SUCCESS]</span>
+                </div>
+                <div class="log-entry log-sub">
+                  <span class="log-text">&gt; SCORE: 92/100</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-year">[2021]</span>
+                  <span class="log-text">&gt; SHIPPED: VEILBREAKER [SUCCESS]</span>
+                </div>
+                <div class="log-entry log-sub">
+                  <span class="log-text">&gt; SCORE: 88/100</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-year">[2019]</span>
+                  <span class="log-text">&gt; SHIPPED: ECHOES OF THE DEEP</span>
+                </div>
+                <div class="log-entry log-sub">
+                  <span class="log-text">&gt; SCORE: 85/100</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-year">[2015]</span>
+                  <span class="log-text">&gt; LEAD DESIGNER — AAA STUDIO</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-year">[2011]</span>
+                  <span class="log-text">&gt; SR. DESIGNER — IND. STUDIO</span>
+                </div>
+              </div>
+              <button class="back-btn" data-target="screen-menu">&#9664; MENU</button>
+            </div>
+
+            <!-- CODEC -->
+            <div class="game-screen" id="screen-codec">
+              <div class="screen-header"><span class="header-text">CODEC</span></div>
+              <div class="screen-content codec-layout">
+                <div class="codec-portrait">
+                  <div class="codec-portrait-inner">
+                    <div class="portrait-pixel" aria-hidden="true"></div>
+                    <div class="portrait-label">K. TANAKA</div>
+                  </div>
+                </div>
+                <div class="codec-feed">
+                  <div class="codec-line">GDC 2024</div>
+                  <div class="codec-desc">'emergence over scripted experience'</div>
+                  <div class="codec-line">DICE SUMMIT 2023</div>
+                  <div class="codec-desc">keynote speaker</div>
+                  <div class="codec-line">EDGE MAGAZINE</div>
+                  <div class="codec-desc">featured interview</div>
+                  <div class="codec-line">GDC 2022</div>
+                  <div class="codec-desc">'building ashfall: systems in practice'</div>
+                  <div class="codec-line">WAYPOINT PODCAST</div>
+                  <div class="codec-desc">systems design deep-dive</div>
+                  <div class="codec-cursor">&#9608;</div>
+                </div>
+              </div>
+              <button class="back-btn" data-target="screen-menu">&#9664; MENU</button>
+            </div>
+
+            <!-- CONTACT -->
+            <div class="game-screen" id="screen-contact">
+              <div class="screen-header"><span class="header-text">TRANSMIT</span></div>
+              <div class="screen-content contact-content">
+                <div class="contact-line typed">&gt; INITIALIZING CONTACT PROTOCOL...</div>
+                <div class="contact-line typed">&gt; RECIPIENT: kira.tanaka@example.com</div>
+                <div class="contact-line typed">&gt; LINKEDIN: /in/kiratanaka</div>
+                <div class="contact-line typed">&gt; STATUS: AVAILABLE FOR</div>
+                <div class="contact-line typed">&nbsp;&nbsp;DIRECTOR ROLES</div>
+                <div class="contact-line typed">&nbsp;&nbsp;SPEAKING / CONSULTING</div>
+                <div class="contact-spacer"></div>
+                <div class="contact-line typed">&gt; SEND MESSAGE:</div>
+                <a href="mailto:kira.tanaka@example.com" class="transmit-btn">TRANSMIT &#9654;</a>
+              </div>
+              <button class="back-btn" data-target="screen-menu">&#9664; MENU</button>
+            </div>
+
+            <!-- Transition overlay -->
+            <div class="screen-transition" id="screen-transition"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-area">
+        <div class="controls-top">
+          <!-- D-Pad -->
+          <div class="dpad" aria-hidden="true">
+            <div class="dpad-v"></div>
+            <div class="dpad-h"></div>
+            <div class="dpad-center"></div>
+          </div>
+
+          <!-- A/B Buttons -->
+          <div class="ab-buttons" aria-hidden="true">
+            <div class="btn-group">
+              <div class="ab-btn">B</div>
+              <div class="ab-btn">A</div>
+            </div>
+            <div class="btn-labels">
+              <span>B</span>
+              <span>A</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Start/Select -->
+        <div class="ss-buttons" aria-hidden="true">
+          <div class="ss-btn-group">
+            <div class="ss-btn"></div>
+            <span class="ss-label">SELECT</span>
+          </div>
+          <div class="ss-btn-group">
+            <div class="ss-btn"></div>
+            <span class="ss-label">START</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Speaker grille -->
+      <div class="speaker-grille" aria-hidden="true">
+        <div class="speaker-label">GAME DIRECTOR PORTFOLIO</div>
+        <div class="speaker-dots" id="speaker-dots"></div>
+      </div>
+
+      <!-- TE orange stripe -->
+      <div class="te-stripe"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
