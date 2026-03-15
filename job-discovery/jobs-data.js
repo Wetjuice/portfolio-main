@@ -154,9 +154,20 @@ const initialJobs = [
 function isLocationEligible(location) {
     const loc = location.toLowerCase();
     
-    // Remote US positions
-    if (loc.includes('remote') && (loc.includes('us') || loc.includes('u.s.') || !loc.includes(','))) {
-        return true;
+    // Remote positions that specify US or have "remote" without foreign country
+    if (loc.includes('remote')) {
+        // Explicit remote US
+        if (loc.includes('us') || loc.includes('u.s.') || loc.includes('united states')) {
+            return true;
+        }
+        // Just "Remote" with no other location (assume US)
+        if (loc === 'remote') {
+            return true;
+        }
+        // "Location / Remote" or "Remote / Location" format with US cities
+        if (loc.includes('/')) {
+            return true; // Allow hybrid remote positions
+        }
     }
     
     // Seattle/WA area (in-office or hybrid)
