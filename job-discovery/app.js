@@ -8,7 +8,7 @@ function loadData() {
         return JSON.parse(stored);
     }
     return {
-        jobs: initialJobs,
+        jobs: eligibleJobs, // Use filtered jobs
         decisions: {}
     };
 }

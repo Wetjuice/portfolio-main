@@ -150,6 +150,23 @@ const initialJobs = [
     }
 ];
 
+// Location eligibility check
+function isLocationEligible(location) {
+    const loc = location.toLowerCase();
+    
+    // Remote US positions
+    if (loc.includes('remote') && (loc.includes('us') || loc.includes('u.s.') || !loc.includes(','))) {
+        return true;
+    }
+    
+    // Seattle/WA area (in-office or hybrid)
+    if (loc.includes('seattle') || loc.includes('washington') || loc.includes(' wa')) {
+        return true;
+    }
+    
+    return false;
+}
+
 // Add estimated salary data (APIs don't typically expose this)
 initialJobs.forEach(job => {
     // Skip if salary already set
@@ -168,3 +185,6 @@ initialJobs.forEach(job => {
         job.salary = '$150K - $250K';
     }
 });
+
+// Filter to location-eligible jobs only
+const eligibleJobs = initialJobs.filter(job => isLocationEligible(job.location));

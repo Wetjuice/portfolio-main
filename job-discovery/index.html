@@ -33,7 +33,25 @@
         .subtitle {
             font-size: 14px;
             color: #666;
+            margin-bottom: 16px;
+        }
+
+        .filter-indicator {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-left: 3px solid #ff7a1a;
             margin-bottom: 32px;
+        }
+
+        .filter-label {
+            color: #666;
+        }
+
+        .filter-value {
+            color: #000;
+            font-weight: 400;
         }
 
         .stats {
@@ -212,6 +230,11 @@
 <body>
     <h1>job discovery</h1>
     <div class="subtitle">curated opportunities · $200k+ · verified active</div>
+    
+    <div class="filter-indicator">
+        <span class="filter-label">📍 location filter:</span>
+        <span class="filter-value">remote (us) · seattle/wa (in-office or hybrid)</span>
+    </div>
 
     <div class="stats">
         <div class="stat">
@@ -246,7 +269,7 @@
         <div class="jobs-grid" id="jobs-archived"></div>
     </div>
 
-    <script src="jobs-data.js?v=20260315"></script>
-    <script src="app.js?v=20260315"></script>
+    <script src="jobs-data.js?v=20260315b"></script>
+    <script src="app.js?v=20260315b"></script>
 </body>
 </html>
