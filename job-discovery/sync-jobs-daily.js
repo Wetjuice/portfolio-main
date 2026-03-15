@@ -12,7 +12,7 @@
  * Usage: node sync-jobs-daily.js
  */
 
-const { discoverJobs } = require('./discover-jobs.js');
+const { discoverJobs } = require('./discover-jobs-v2.js');
 const fs = require('fs');
 const { execSync } = require('child_process');
 const path = require('path');
@@ -80,15 +80,13 @@ function loadCurrentJobs() {
 async function syncJobs() {
     console.log('🔄 Starting daily job sync...\n');
     
-    // Step 1: Fetch new jobs from APIs
-    console.log('📥 Fetching new jobs from APIs...');
-    const fetchedJobs = await discoverJobs(50); // Fetch more, filter down
-    console.log(`   Found ${fetchedJobs.length} jobs from APIs\n`);
+    // Step 1: Fetch new jobs from APIs (v2 scraper does filtering)
+    console.log('📥 Fetching curated jobs from APIs (location + role filters applied)...');
+    const fetchedJobs = await discoverJobs(); // Returns pre-filtered jobs
+    console.log(`   Found ${fetchedJobs.length} curated jobs from APIs\n`);
     
-    // Step 2: Filter by location
-    console.log('📍 Filtering by location (Remote US + Seattle/WA)...');
-    const locationFiltered = fetchedJobs.filter(job => isLocationEligible(job.location));
-    console.log(`   ${locationFiltered.length} jobs match location criteria\n`);
+    // Step 2: Location filtering already done by v2 scraper
+    const locationFiltered = fetchedJobs; // Already filtered at source
     
     // Step 3: Load existing jobs
     const existingJobs = loadCurrentJobs();
