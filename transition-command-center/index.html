@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>transition command center // berman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #ff7a1a;
+  --dark: #1a1a1a;
+  --mid: #666;
+  --light: #999;
+  --border: #e0e0e0;
+  --bg: #fafafa;
+  --card-bg: #fff;
+  --tag-bg: #f5f5f5;
+  --green: #22c55e;
+  --yellow: #eab308;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 8px 8px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--dark);
+  color: #fff;
+  padding: 12px 16px 8px;
+  border-bottom: 3px solid var(--orange);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.header h1 {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: lowercase;
+  letter-spacing: 1px;
+  color: var(--orange);
+}
+
+.header .status {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--light);
+}
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  background: var(--dark);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 8px;
+}
+
+.tab-nav::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  color: var(--light);
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+}
+
+.tab-btn:hover { color: #fff; }
+
+/* Content */
+.content {
+  position: relative;
+  z-index: 1;
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  color: var(--orange);
+  margin-bottom: 12px;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: var(--mid);
+  margin-bottom: 8px;
+}
+
+/* Timeline */
+.milestone {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.milestone:last-child { border-bottom: none; }
+
+.milestone-marker {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.milestone-info { flex: 1; }
+
+.milestone-label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.milestone-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--mid);
+}
+
+.milestone-countdown {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.countdown-urgent { color: var(--red); }
+.countdown-soon { color: var(--yellow); }
+.countdown-ok { color: var(--green); }
+.countdown-past { color: var(--light); text-decoration: line-through; }
+
+/* Phase indicator */
+.phase-bar {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  height: 32px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.phase-segment {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: lowercase;
+  color: #fff;
+  opacity: 0.4;
+  transition: all 0.3s;
+}
+
+.phase-segment.current {
+  opacity: 1;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--orange);
+}
+
+.phase-segment.completed { opacity: 0.7; }
+
+.phase-1 { background: var(--orange); }
+.phase-2 { background: var(--blue); }
+.phase-3 { background: var(--green); }
+.phase-4 { background: var(--purple); }
+
+/* Financial */
+.runway-bar {
+  height: 24px;
+  background: var(--tag-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0;
+  position: relative;
+}
+
+.runway-fill {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.5s;
+}
+
+.runway-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.income-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.income-row:last-child { border-bottom: none; }
+
+.income-source { color: var(--mid); }
+.income-amount { font-family: 'Space Mono', monospace; font-weight: 600; }
+
+.big-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--orange);
+  text-align: center;
+  padding: 16px 0;
+}
+
+.big-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--mid);
+  text-align: center;
+  text-transform: lowercase;
+  letter-spacing: 1px;
+}
+
+/* Pipeline */
+.pipeline-stage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--tag-bg);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pipeline-stage:hover { background: #eee; }
+
+.stage-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stage-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.app-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-item:last-child { border-bottom: none; }
+
+.app-company {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.app-role {
+  font-size: 12px;
+  color: var(--mid);
+}
+
+.app-stage-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: lowercase;
+  font-weight: 700;
+}
+
+.stage-discovered { background: var(--tag-bg); color: var(--mid); }
+.stage-applied { background: #dbeafe; color: var(--blue); }
+.stage-screening { background: #fef3c7; color: #92400e; }
+.stage-interview { background: #dcfce7; color: #166534; }
+.stage-offer { background: #f3e8ff; color: var(--purple); }
+.stage-rejected { background: #fee2e2; color: var(--red); }
+
+/* Add Application Form */
+.add-form {
+  display: none;
+  padding: 16px;
+  background: var(--card-bg);
+  border: 2px solid var(--orange);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.add-form.visible { display: block; }
+
+.form-row {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  text-transform: lowercase;
+  color: var(--mid);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  background: var(--bg);
+}
+
+.form-input:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--orange);
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  text-transform: lowercase;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--orange);
+  color: #fff;
+}
+
+.btn-primary:hover { background: #e56b0a; }
+
+.btn-secondary {
+  background: var(--tag-bg);
+  color: var(--mid);
+}
+
+.btn-full {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Action Items */
+.action-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.action-item:last-child { border-bottom: none; }
+
+.action-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: all 0.2s;
+}
+
+.action-check.checked {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.action-check.checked::after {
+  content: '✓';
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.action-text {
+  font-size: 14px;
+  flex: 1;
+}
+
+.action-text.done {
+  text-decoration: line-through;
+  color: var(--light);
+}
+
+.action-week {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--mid);
+  background: var(--tag-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.week-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: lowercase;
+  color: var(--orange);
+  padding: 12px 0 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+/* Asset Links */
+.asset-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: var(--dark);
+  transition: all 0.2s;
+}
+
+.asset-link:hover {
+  border-color: var(--orange);
+  transform: translateX(4px);
+}
+
+.asset-icon {
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tag-bg);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.asset-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.asset-desc {
+  font-size: 12px;
+  color: var(--mid);
+}
+
+.asset-status {
+  margin-left: auto;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* Notes */
+.notes-area {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  resize: vertical;
+  background: var(--bg);
+}
+
+.notes-area:focus {
+  outline: none;
+  border-color: var(--orange);
+}
+
+/* Section headers */
+.section-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  color: var(--dark);
+  margin: 20px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--orange);
+}
+
+/* Edit modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal-sheet {
+  background: var(--card-bg);
+  border-radius: 16px 16px 0 0;
+  padding: 20px 16px 32px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+/* Responsive tweaks */
+@media (min-width: 600px) {
+  .content { padding: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <h1>⚡ transition command center</h1>
+    <div class="status" id="currentDate"></div>
+  </div>
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="timeline">timeline</button>
+    <button class="tab-btn" data-tab="financial">financial</button>
+    <button class="tab-btn" data-tab="pipeline">pipeline</button>
+    <button class="tab-btn" data-tab="actions">actions</button>
+    <button class="tab-btn" data-tab="assets">arsenal</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- TIMELINE TAB -->
+<div class="tab-content active" id="tab-timeline">
+  <div class="card">
+    <div class="card-title">📍 current phase</div>
+    <div class="phase-bar" id="phaseBar">
+      <div class="phase-segment phase-1" data-phase="1">strike</div>
+      <div class="phase-segment phase-2" data-phase="2">baby</div>
+      <div class="phase-segment phase-3" data-phase="3">ramp</div>
+      <div class="phase-segment phase-4" data-phase="4">close</div>
+    </div>
+    <div id="phaseDescription" style="font-size:13px; color:var(--mid);"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⏱ key milestones</div>
+    <div id="milestones"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 this week</div>
+    <div id="thisWeekSummary" style="font-size:14px;"></div>
+  </div>
+</div>
+
+<!-- FINANCIAL TAB -->
+<div class="tab-content" id="tab-financial">
+  <div class="card">
+    <div class="card-title">💰 income runway</div>
+    <div class="big-number" id="runwayMonths">9</div>
+    <div class="big-label">months of income coverage</div>
+    <div class="runway-bar">
+      <div class="runway-fill" id="runwayFill" style="width:100%; background: linear-gradient(90deg, var(--orange), var(--green));"></div>
+      <div class="runway-label" id="runwayLabel"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 income phases</div>
+    <div id="incomePhases"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💵 estimated totals</div>
+    <div class="income-row">
+      <span class="income-source">current salary (remaining)</span>
+      <span class="income-amount" id="salaryRemaining"></span>
+    </div>
+    <div class="income-row">
+      <span class="income-source">severance (est. 8 weeks)</span>
+      <span class="income-amount">$26,150</span>
+    </div>
+    <div class="income-row">
+      <span class="income-source">WA PFML (12 weeks)</span>
+      <span class="income-amount">$19,764</span>
+    </div>
+    <div class="income-row">
+      <span class="income-source">unemployment (26 weeks max)</span>
+      <span class="income-amount">$42,822</span>
+    </div>
+    <div class="income-row" style="border-top: 2px solid var(--orange); font-weight: 700;">
+      <span class="income-source" style="color: var(--dark);">total safety net</span>
+      <span class="income-amount" style="color: var(--orange);" id="totalSafetyNet"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ action items</div>
+    <div class="action-item">
+      <div class="action-check" onclick="toggleFinAction(this)" data-key="fin-hr"></div>
+      <span class="action-text">Notify Bend HR of baby due date (30-day PFML req)</span>
+    </div>
+    <div class="action-item">
+      <div class="action-check" onclick="toggleFinAction(this)" data-key="fin-vest"></div>
+      <span class="action-text">Pull equity/401(k) vesting schedule</span>
+    </div>
+    <div class="action-item">
+      <div class="action-check" onclick="toggleFinAction(this)" data-key="fin-benefits"></div>
+      <span class="action-text">Locate benefits enrollment docs</span>
+    </div>
+    <div class="action-item">
+      <div class="action-check" onclick="toggleFinAction(this)" data-key="fin-cobra"></div>
+      <span class="action-text">Research COBRA vs ACA marketplace costs</span>
+    </div>
+  </div>
+</div>
+
+<!-- PIPELINE TAB -->
+<div class="tab-content" id="tab-pipeline">
+  <div class="card">
+    <div class="card-title">📊 pipeline overview</div>
+    <div id="pipelineStages"></div>
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="showAddForm()">+ add application</button>
+
+  <div class="add-form" id="addForm">
+    <div class="form-row">
+      <label class="form-label">company</label>
+      <input class="form-input" id="appCompany" placeholder="e.g. Epic Games">
+    </div>
+    <div class="form-row">
+      <label class="form-label">role</label>
+      <input class="form-input" id="appRole" placeholder="e.g. Product Director">
+    </div>
+    <div class="form-row">
+      <label class="form-label">comp range</label>
+      <input class="form-input" id="appComp" placeholder="e.g. $220K-$310K">
+    </div>
+    <div class="form-row">
+      <label class="form-label">resume variant</label>
+      <select class="form-select" id="appResume">
+        <option value="gaming">🎮 Gaming Resume</option>
+        <option value="tech">💼 Tech/Product Resume</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">stage</label>
+      <select class="form-select" id="appStage">
+        <option value="discovered">discovered</option>
+        <option value="applied">applied</option>
+        <option value="screening">screening</option>
+        <option value="interview">interview</option>
+        <option value="offer">offer</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">source / notes</label>
+      <input class="form-input" id="appNotes" placeholder="e.g. GDC contact, LinkedIn, referral...">
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveApp()">save</button>
+      <button class="btn btn-secondary" onclick="hideAddForm()">cancel</button>
+    </div>
+  </div>
+
+  <div class="section-title" id="appListTitle">all applications</div>
+  <div id="appList"></div>
+</div>
+
+<!-- ACTIONS TAB -->
+<div class="tab-content" id="tab-actions">
+  <div class="card">
+    <div class="card-title">🎯 90-day roadmap progress</div>
+    <div id="roadmapProgress"></div>
+  </div>
+
+  <div id="actionWeeks"></div>
+</div>
+
+<!-- ASSETS TAB -->
+<div class="tab-content" id="tab-assets">
+  <div class="section-title">career documents</div>
+  <a class="asset-link" href="https://drive.google.com/file/d/1l8C23s4GnD4fb7ro4TdrYvMpAx1A8unL/view" target="_blank">
+    <div class="asset-icon">🎮</div>
+    <div><div class="asset-name">Gaming Resume</div><div class="asset-desc">Game Director / Creative Director roles</div></div>
+    <div class="asset-status">ready</div>
+  </a>
+  <a class="asset-link" href="https://drive.google.com/file/d/1s-rXnmq5yHXoP74G1vRuHzg1JS0uSnFn/view" target="_blank">
+    <div class="asset-icon">💼</div>
+    <div><div class="asset-name">Tech/Product Resume</div><div class="asset-desc">Product Director / Head of Product roles</div></div>
+    <div class="asset-status">ready</div>
+  </a>
+  <a class="asset-link" href="https://docs.google.com/document/d/1WBftOTfYxql0eEn6fKW8RXwXjttRj8SGsVhmFasJy94/edit" target="_blank">
+    <div class="asset-icon">🎤</div>
+    <div><div class="asset-name">Interview Prep Toolkit</div><div class="asset-desc">STAR stories, tough questions, negotiation playbook</div></div>
+    <div class="asset-status">ready</div>
+  </a>
+  <a class="asset-link" href="https://docs.google.com/document/d/16Qe6o_Z4S6SkdeUUGvMXCcM6DK-lTxgRmBQNJvZDa2s/edit" target="_blank">
+    <div class="asset-icon">💰</div>
+    <div><div class="asset-name">Financial Playbook</div><div class="asset-desc">PFML, severance, unemployment, COBRA strategy</div></div>
+    <div class="asset-status">ready</div>
+  </a>
+  <a class="asset-link" href="https://docs.google.com/document/d/1BRcP_VOAdcM1eqLBw0hqqmCMN4ymqyPutsNnIfyAByA/edit" target="_blank">
+    <div class="asset-icon">🗺️</div>
+    <div><div class="asset-name">90-Day Transition Roadmap</div><div class="asset-desc">Week-by-week action plan through June 12</div></div>
+    <div class="asset-status">ready</div>
+  </a>
+
+  <div class="section-title">web tools</div>
+  <a class="asset-link" href="https://wetjuice.github.io/mberman-portfolio/v15/" target="_blank">
+    <div class="asset-icon">🌐</div>
+    <div><div class="asset-name">Portfolio (V15)</div><div class="asset-desc">Live portfolio site</div></div>
+    <div class="asset-status">live</div>
+  </a>
+  <a class="asset-link" href="https://wetjuice.github.io/mberman-portfolio/job-discovery/" target="_blank">
+    <div class="asset-icon">🔍</div>
+    <div><div class="asset-name">Job Discovery</div><div class="asset-desc">Curated $200K+ openings with swipe workflow</div></div>
+    <div class="asset-status">live</div>
+  </a>
+  <a class="asset-link" href="https://wetjuice.github.io/mberman-portfolio/gdc-companion/" target="_blank">
+    <div class="asset-icon">📱</div>
+    <div><div class="asset-name">GDC Pocket Companion</div><div class="asset-desc">Conference reference + follow-up tracker</div></div>
+    <div class="asset-status">live</div>
+  </a>
+
+  <div class="section-title">reference docs</div>
+  <a class="asset-link" href="https://docs.google.com/document/d/1_tOkVIvX6m-dS7ZIn91HRdMaBM5Dcbjg8cwiGbtUGV4/edit" target="_blank">
+    <div class="asset-icon">📊</div>
+    <div><div class="asset-name">Career Intel Report</div><div class="asset-desc">Market benchmarks, competitive positioning</div></div>
+    <div class="asset-status">ready</div>
+  </a>
+  <a class="asset-link" href="https://drive.google.com/file/d/1I2wQgNWowCLxRUs_wtITkSbrAGMzwffy/view" target="_blank">
+    <div class="asset-icon">🏠</div>
+    <div><div class="asset-name">Real Estate Market Strategy</div><div class="asset-desc">King County buying strategy + negotiation playbook</div></div>
+    <div class="asset-status">ready</div>
+  </a>
+
+  <div class="section-title">quick notes</div>
+  <div class="card">
+    <textarea class="notes-area" id="quickNotes" placeholder="jot down anything — contacts, leads, thoughts..."></textarea>
+    <button class="btn btn-primary btn-full" onclick="saveNotes()">save notes</button>
+  </div>
+</div>
+
+</div>
+
+<!-- Edit Application Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="card-title" id="editModalTitle">edit application</div>
+    <div class="form-row">
+      <label class="form-label">company</label>
+      <input class="form-input" id="editCompany">
+    </div>
+    <div class="form-row">
+      <label class="form-label">role</label>
+      <input class="form-input" id="editRole">
+    </div>
+    <div class="form-row">
+      <label class="form-label">comp range</label>
+      <input class="form-input" id="editComp">
+    </div>
+    <div class="form-row">
+      <label class="form-label">stage</label>
+      <select class="form-select" id="editStage">
+        <option value="discovered">discovered</option>
+        <option value="applied">applied</option>
+        <option value="screening">screening</option>
+        <option value="interview">interview</option>
+        <option value="offer">offer</option>
+        <option value="rejected">rejected</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">resume variant</label>
+      <select class="form-select" id="editResume">
+        <option value="gaming">🎮 Gaming Resume</option>
+        <option value="tech">💼 Tech/Product Resume</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">notes</label>
+      <input class="form-input" id="editNotes">
+    </div>
+    <div class="form-row">
+      <label class="form-label">follow-up date</label>
+      <input class="form-input" type="date" id="editFollowUp">
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveEdit()">save</button>
+      <button class="btn btn-secondary" onclick="closeEditModal()">cancel</button>
+      <button class="btn" style="background:#fee2e2; color:var(--red); margin-left:auto;" onclick="deleteApp()">delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// === DATA ===
+const MILESTONES = [
+  { emoji: '📬', label: 'GDC Follow-ups Due', date: '2026-03-13', desc: '48-hour follow-up window' },
+  { emoji: '📋', label: 'HR Notification (PFML)', date: '2026-03-21', desc: '30-day requirement before leave' },
+  { emoji: '📄', label: 'Phase 1 Target: 3-5 Apps Out', date: '2026-04-04', desc: 'Strike while hot' },
+  { emoji: '🍼', label: 'Baby Due Date', date: '2026-04-20', desc: 'Estimated arrival' },
+  { emoji: '🏢', label: 'Bend Closure (est.)', date: '2026-05-15', desc: 'Based on WARN Act 60-day timeline' },
+  { emoji: '📝', label: 'PFML Ends (est.)', date: '2026-07-13', desc: '12 weeks from baby arrival' },
+  { emoji: '🎯', label: '90-Day Plan Ends', date: '2026-06-12', desc: 'Target: offer in hand or expanding search' },
+];
+
+const PHASES = [
+  { num: 1, name: 'Strike While Hot', start: '2026-03-14', end: '2026-04-04', desc: 'Post-GDC sprint: 3-5 apps, references, HR notification. Weeks 1-3.' },
+  { num: 2, name: 'Baby Mode', start: '2026-04-05', end: '2026-05-02', desc: 'PFML active. Pipeline maintenance only — 2-3 hrs/week. Weeks 4-7.' },
+  { num: 3, name: 'The Ramp', start: '2026-05-03', end: '2026-05-23', desc: 'Full-speed re-entry. Active interviews, 3+ apps/week. Weeks 8-10.' },
+  { num: 4, name: 'Close', start: '2026-05-24', end: '2026-06-12', desc: 'Offer negotiation or search expansion. Weeks 11-13.' },
+];
+
+const INCOME_PHASES = [
+  { label: 'Current Salary', period: 'Now → ~May 2026', weekly: '$3,270', color: 'var(--green)' },
+  { label: 'Severance (est.)', period: '~May → Jun 2026', weekly: '$3,270', color: 'var(--blue)' },
+  { label: 'WA PFML', period: '~Apr → Jul 2026', weekly: '$1,647', color: 'var(--purple)' },
+  { label: 'Unemployment', period: 'After PFML', weekly: '$1,647', color: 'var(--yellow)' },
+];
+
+const ROADMAP_ACTIONS = {
+  'wk 1 (mar 14-20)': [
+    'Send personalized GDC follow-up emails (within 48hrs)',
+    'Apply to top 2 Job Discovery matches',
+    'Identify 5 potential references (3 categories)',
+    'Begin LinkedIn profile update',
+  ],
+  'wk 2 (mar 21-27)': [
+    'Notify Bend HR of baby due date (PFML)',
+    'Apply to 1-2 more positions',
+    'Confirm 3-4 references + brief them',
+    'Request 2-3 LinkedIn recommendations',
+    'Complete LinkedIn rewrite',
+  ],
+  'wk 3 (mar 28 – apr 3)': [
+    'Apply to final 1-2 positions (5 total minimum)',
+    'Follow up on any screening calls',
+    'Set up job alerts on LinkedIn/Indeed',
+    'Brief references on target companies',
+  ],
+  'wk 4-7 (apr 4 – may 2): baby mode': [
+    'Monitor pipeline (2-3 hrs/week max)',
+    'Respond to interview requests within 24hrs',
+    'Keep references updated on status',
+    'File PFML when baby arrives',
+  ],
+  'wk 8-10 (may 3-23): the ramp': [
+    'Re-engage pipeline at full speed',
+    '3+ new applications per week',
+    'Active interview preparation',
+    'Brief references: "interviews coming"',
+  ],
+  'wk 11-13 (may 24 – jun 12): close': [
+    'Negotiate offers (never accept day-of)',
+    'If no offers: expand search scope',
+    'Leverage competing offers if multiple',
+    'File unemployment after PFML if needed',
+  ],
+};
+
+// === STATE ===
+let apps = JSON.parse(localStorage.getItem('tcc-apps') || '[]');
+let actionsDone = JSON.parse(localStorage.getItem('tcc-actions') || '{}');
+let finActions = JSON.parse(localStorage.getItem('tcc-fin-actions') || '{}');
+let quickNotes = localStorage.getItem('tcc-notes') || '';
+let editingIdx = -1;
+
+// === INIT ===
+function init() {
+  document.getElementById('currentDate').textContent = formatDate(new Date());
+  setupTabs();
+  renderTimeline();
+  renderFinancial();
+  renderPipeline();
+  renderActions();
+  renderAssets();
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function daysUntil(dateStr) {
+  const target = new Date(dateStr + 'T00:00:00');
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  return Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+}
+
+// === TABS ===
+function setupTabs() {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+// === TIMELINE ===
+function renderTimeline() {
+  // Phase bar
+  const now = new Date();
+  let currentPhase = 0;
+  PHASES.forEach((p, i) => {
+    const start = new Date(p.start);
+    const end = new Date(p.end);
+    if (now >= start && now <= end) currentPhase = i + 1;
+  });
+  if (!currentPhase) currentPhase = now < new Date(PHASES[0].start) ? 1 : 4;
+
+  document.querySelectorAll('.phase-segment').forEach(seg => {
+    const phase = parseInt(seg.dataset.phase);
+    if (phase === currentPhase) seg.classList.add('current');
+    else if (phase < currentPhase) seg.classList.add('completed');
+  });
+
+  const cp = PHASES[currentPhase - 1];
+  document.getElementById('phaseDescription').innerHTML = `
+    <strong>phase ${currentPhase}: ${cp.name}</strong><br>${cp.desc}
+  `;
+
+  // Milestones
+  const container = document.getElementById('milestones');
+  container.innerHTML = MILESTONES.map(m => {
+    const days = daysUntil(m.date);
+    let countdownClass = 'countdown-ok';
+    let countdownText = `${days}d`;
+    if (days < 0) { countdownClass = 'countdown-past'; countdownText = `${Math.abs(days)}d ago`; }
+    else if (days <= 7) { countdownClass = 'countdown-urgent'; }
+    else if (days <= 21) { countdownClass = 'countdown-soon'; }
+    return `
+      <div class="milestone">
+        <div class="milestone-marker">${m.emoji}</div>
+        <div class="milestone-info">
+          <div class="milestone-label">${m.label}</div>
+          <div class="milestone-date">${m.date} · ${m.desc}</div>
+        </div>
+        <div class="milestone-countdown ${countdownClass}">${countdownText}</div>
+      </div>
+    `;
+  }).join('');
+
+  // This week summary
+  const weekNum = currentPhase <= 1 ? Math.ceil((now - new Date(PHASES[0].start)) / (7 * 24 * 60 * 60 * 1000)) + 1 : '—';
+  const appCount = apps.filter(a => a.stage !== 'rejected' && a.stage !== 'discovered').length;
+  document.getElementById('thisWeekSummary').innerHTML = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+      <div style="text-align:center; padding:12px; background:var(--tag-bg); border-radius:6px;">
+        <div style="font-family:'Space Mono',monospace; font-size:24px; font-weight:700; color:var(--orange);">${appCount}</div>
+        <div style="font-size:11px; color:var(--mid);">active apps</div>
+      </div>
+      <div style="text-align:center; padding:12px; background:var(--tag-bg); border-radius:6px;">
+        <div style="font-family:'Space Mono',monospace; font-size:24px; font-weight:700; color:var(--orange);">${daysUntil('2026-04-20')}</div>
+        <div style="font-size:11px; color:var(--mid);">days to baby</div>
+      </div>
+    </div>
+  `;
+}
+
+// === FINANCIAL ===
+function renderFinancial() {
+  // Salary remaining calc (~$170K/yr ÷ 52 = $3,269/wk)
+  const weeksToEnd = Math.max(0, Math.ceil(daysUntil('2026-05-15') / 7));
+  const salaryRemaining = weeksToEnd * 3269;
+  document.getElementById('salaryRemaining').textContent = '$' + salaryRemaining.toLocaleString();
+
+  const total = salaryRemaining + 26150 + 19764 + 42822;
+  document.getElementById('totalSafetyNet').textContent = '$' + total.toLocaleString();
+
+  // Runway bar
+  const monthsRemaining = Math.round((total / 3269) / 4.33);
+  document.getElementById('runwayMonths').textContent = monthsRemaining;
+  document.getElementById('runwayLabel').textContent = `~${monthsRemaining} months`;
+
+  // Income phases
+  const container = document.getElementById('incomePhases');
+  container.innerHTML = INCOME_PHASES.map(p => `
+    <div class="income-row">
+      <div>
+        <div class="income-source">${p.label}</div>
+        <div style="font-size:11px; color:var(--light);">${p.period}</div>
+      </div>
+      <div class="income-amount" style="color:${p.color};">${p.weekly}/wk</div>
+    </div>
+  `).join('');
+
+  // Financial actions
+  document.querySelectorAll('[data-key^="fin-"]').forEach(el => {
+    if (finActions[el.dataset.key]) {
+      el.classList.add('checked');
+      el.nextElementSibling.classList.add('done');
+    }
+  });
+}
+
+function toggleFinAction(el) {
+  const key = el.dataset.key;
+  finActions[key] = !finActions[key];
+  el.classList.toggle('checked');
+  el.nextElementSibling.classList.toggle('done');
+  localStorage.setItem('tcc-fin-actions', JSON.stringify(finActions));
+}
+
+// === PIPELINE ===
+const STAGES = ['discovered', 'applied', 'screening', 'interview', 'offer', 'rejected'];
+const STAGE_LABELS = { discovered: '🔍 Discovered', applied: '📬 Applied', screening: '📞 Screening', interview: '🎤 Interview', offer: '🎉 Offer', rejected: '❌ Rejected' };
+
+function renderPipeline() {
+  // Stage overview
+  const container = document.getElementById('pipelineStages');
+  const activeCounts = {};
+  STAGES.forEach(s => activeCounts[s] = apps.filter(a => a.stage === s).length);
+
+  container.innerHTML = STAGES.filter(s => s !== 'rejected').map(s => `
+    <div class="pipeline-stage" onclick="filterByStage('${s}')">
+      <span class="stage-name">${STAGE_LABELS[s]}</span>
+      <span class="stage-count">${activeCounts[s]}</span>
+    </div>
+  `).join('');
+
+  // App list
+  renderAppList();
+  document.getElementById('appListTitle').textContent = `all applications (${apps.length})`;
+}
+
+function renderAppList(filterStage) {
+  const list = document.getElementById('appList');
+  const filtered = filterStage ? apps.filter(a => a.stage === filterStage) : apps;
+  
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="text-align:center; padding:32px; color:var(--light);">
+      <div style="font-size:24px; margin-bottom:8px;">📋</div>
+      <div style="font-size:13px;">no applications yet</div>
+      <div style="font-size:12px; color:var(--light);">tap + add application to start tracking</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map((app, idx) => {
+    const realIdx = apps.indexOf(app);
+    const followUp = app.followUp ? ` · follow up: ${app.followUp}` : '';
+    const isOverdue = app.followUp && new Date(app.followUp) < new Date();
+    return `
+      <div class="app-item" onclick="editApp(${realIdx})" style="${isOverdue ? 'border-left:3px solid var(--red);padding-left:9px;' : ''}">
+        <div>
+          <div class="app-company">${app.company}</div>
+          <div class="app-role">${app.role}${app.comp ? ' · ' + app.comp : ''}${followUp}</div>
+          ${app.notes ? `<div class="app-role" style="font-style:italic;">${app.notes}</div>` : ''}
+        </div>
+        <span class="app-stage-badge stage-${app.stage}">${app.stage}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterByStage(stage) {
+  renderAppList(stage);
+  document.getElementById('appListTitle').textContent = `${STAGE_LABELS[stage]} (${apps.filter(a => a.stage === stage).length})`;
+}
+
+function showAddForm() {
+  document.getElementById('addForm').classList.add('visible');
+}
+
+function hideAddForm() {
+  document.getElementById('addForm').classList.remove('visible');
+  ['appCompany', 'appRole', 'appComp', 'appNotes'].forEach(id => document.getElementById(id).value = '');
+}
+
+function saveApp() {
+  const company = document.getElementById('appCompany').value.trim();
+  const role = document.getElementById('appRole').value.trim();
+  if (!company || !role) return;
+  
+  apps.push({
+    company,
+    role,
+    comp: document.getElementById('appComp').value.trim(),
+    resume: document.getElementById('appResume').value,
+    stage: document.getElementById('appStage').value,
+    notes: document.getElementById('appNotes').value.trim(),
+    date: new Date().toISOString().split('T')[0],
+    followUp: '',
+  });
+  
+  localStorage.setItem('tcc-apps', JSON.stringify(apps));
+  hideAddForm();
+  renderPipeline();
+  renderTimeline();
+}
+
+function editApp(idx) {
+  editingIdx = idx;
+  const app = apps[idx];
+  document.getElementById('editCompany').value = app.company;
+  document.getElementById('editRole').value = app.role;
+  document.getElementById('editComp').value = app.comp || '';
+  document.getElementById('editStage').value = app.stage;
+  document.getElementById('editResume').value = app.resume || 'gaming';
+  document.getElementById('editNotes').value = app.notes || '';
+  document.getElementById('editFollowUp').value = app.followUp || '';
+  document.getElementById('editModalTitle').textContent = `edit: ${app.company}`;
+  document.getElementById('editModal').classList.add('visible');
+}
+
+function saveEdit() {
+  if (editingIdx < 0) return;
+  apps[editingIdx] = {
+    ...apps[editingIdx],
+    company: document.getElementById('editCompany').value.trim(),
+    role: document.getElementById('editRole').value.trim(),
+    comp: document.getElementById('editComp').value.trim(),
+    stage: document.getElementById('editStage').value,
+    resume: document.getElementById('editResume').value,
+    notes: document.getElementById('editNotes').value.trim(),
+    followUp: document.getElementById('editFollowUp').value,
+  };
+  localStorage.setItem('tcc-apps', JSON.stringify(apps));
+  closeEditModal();
+  renderPipeline();
+  renderTimeline();
+}
+
+function deleteApp() {
+  if (editingIdx < 0) return;
+  if (confirm('Delete this application?')) {
+    apps.splice(editingIdx, 1);
+    localStorage.setItem('tcc-apps', JSON.stringify(apps));
+    closeEditModal();
+    renderPipeline();
+    renderTimeline();
+  }
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('visible');
+  editingIdx = -1;
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('editModal')) closeEditModal();
+});
+
+// === ACTIONS ===
+function renderActions() {
+  // Roadmap progress
+  const totalActions = Object.values(ROADMAP_ACTIONS).flat().length;
+  const doneCount = Object.keys(actionsDone).filter(k => actionsDone[k]).length;
+  const pct = Math.round((doneCount / totalActions) * 100);
+  
+  document.getElementById('roadmapProgress').innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <span style="font-size:13px;">${doneCount} / ${totalActions} actions completed</span>
+      <span style="font-family:'Space Mono',monospace; font-size:14px; font-weight:700; color:var(--orange);">${pct}%</span>
+    </div>
+    <div class="runway-bar" style="height:12px;">
+      <div class="runway-fill" style="width:${pct}%; background:var(--orange); height:100%;"></div>
+    </div>
+  `;
+
+  // Week-by-week actions
+  const container = document.getElementById('actionWeeks');
+  container.innerHTML = Object.entries(ROADMAP_ACTIONS).map(([week, actions]) => `
+    <div class="week-label">${week}</div>
+    <div class="card" style="margin-top:4px;">
+      ${actions.map((action, i) => {
+        const key = `${week}-${i}`;
+        const done = actionsDone[key];
+        return `
+          <div class="action-item">
+            <div class="action-check ${done ? 'checked' : ''}" onclick="toggleAction('${key}', this)" data-key="${key}"></div>
+            <span class="action-text ${done ? 'done' : ''}">${action}</span>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+function toggleAction(key, el) {
+  actionsDone[key] = !actionsDone[key];
+  el.classList.toggle('checked');
+  el.nextElementSibling.classList.toggle('done');
+  localStorage.setItem('tcc-actions', JSON.stringify(actionsDone));
+  // Update progress bar
+  const totalActions = Object.values(ROADMAP_ACTIONS).flat().length;
+  const doneCount = Object.keys(actionsDone).filter(k => actionsDone[k]).length;
+  const pct = Math.round((doneCount / totalActions) * 100);
+  document.getElementById('roadmapProgress').innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <span style="font-size:13px;">${doneCount} / ${totalActions} actions completed</span>
+      <span style="font-family:'Space Mono',monospace; font-size:14px; font-weight:700; color:var(--orange);">${pct}%</span>
+    </div>
+    <div class="runway-bar" style="height:12px;">
+      <div class="runway-fill" style="width:${pct}%; background:var(--orange); height:100%;"></div>
+    </div>
+  `;
+}
+
+// === ASSETS ===
+function renderAssets() {
+  document.getElementById('quickNotes').value = quickNotes;
+}
+
+function saveNotes() {
+  quickNotes = document.getElementById('quickNotes').value;
+  localStorage.setItem('tcc-notes', quickNotes);
+  const btn = document.querySelector('#tab-assets .btn-primary');
+  btn.textContent = 'saved ✓';
+  setTimeout(() => btn.textContent = 'save notes', 1500);
+}
+
+// === GO ===
+init();
+</script>
+</body>
+</html>
