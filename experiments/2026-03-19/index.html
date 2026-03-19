@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>michael berman // game director</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --orange: #ff7a1a;
+  --pink: #ff71ce;
+  --cyan: #01cdfe;
+  --purple: #b967ff;
+  --lemon: #fffb96;
+  --white: #ffffff;
+  --black: #0a0a0a;
+  --grid: 8px;
+  --font-mono: 'Space Mono', monospace;
+  --font-sans: 'Outfit', sans-serif;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--white);
+  color: var(--black);
+  text-transform: lowercase;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.015) 2px,
+    rgba(0, 0, 0, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* grid background */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: calc(var(--grid) * 4) calc(var(--grid) * 4);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* vaporwave gradient strip */
+.vapor-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink), var(--cyan), var(--purple), var(--orange), var(--pink));
+  background-size: 300% 100%;
+  animation: gradient-shift 8s ease infinite;
+  z-index: 10000;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* layout */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 calc(var(--grid) * 3);
+  position: relative;
+  z-index: 1;
+}
+
+/* navigation bar */
+nav {
+  position: fixed;
+  top: 3px;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: calc(var(--grid) * 2) 0;
+}
+
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+}
+
+.nav-logo .blink {
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.nav-links {
+  display: flex;
+  gap: calc(var(--grid) * 3);
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--black);
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--orange);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--orange); }
+.nav-links a:hover::after { width: 100%; }
+
+/* hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: calc(var(--grid) * 12);
+  padding-bottom: calc(var(--grid) * 8);
+  position: relative;
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--purple);
+  margin-bottom: calc(var(--grid) * 2);
+  letter-spacing: 0.15em;
+}
+
+.hero h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: calc(var(--grid) * 3);
+}
+
+.hero h1 .first-name {
+  display: block;
+  color: var(--black);
+}
+
+.hero h1 .last-name {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--orange);
+  text-stroke: 2px var(--orange);
+}
+
+.hero-title {
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: var(--black);
+  opacity: 0.6;
+  margin-bottom: calc(var(--grid) * 4);
+}
+
+.hero-stats {
+  display: flex;
+  gap: calc(var(--grid) * 5);
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--orange);
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  margin-top: 4px;
+}
+
+/* floating nostalgia shapes */
+.shape {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.08;
+}
+
+.shape-grid {
+  width: 200px;
+  height: 200px;
+  right: -40px;
+  top: 30%;
+  background:
+    linear-gradient(var(--cyan) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cyan) 1px, transparent 1px);
+  background-size: 20px 20px;
+  transform: perspective(400px) rotateX(60deg) rotateZ(-15deg);
+}
+
+.shape-sun {
+  width: 280px;
+  height: 280px;
+  right: 10%;
+  top: 15%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--pink) 0%, var(--orange) 50%, transparent 50%);
+  opacity: 0.06;
+}
+
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-bottom: 100px solid var(--purple);
+  left: -20px;
+  top: 60%;
+  opacity: 0.05;
+  transform: rotate(15deg);
+}
+
+/* section base */
+section {
+  padding: calc(var(--grid) * 10) 0;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--purple);
+  margin-bottom: calc(var(--grid) * 5);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--grid) * 2);
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--purple), transparent);
+  opacity: 0.3;
+}
+
+/* highlights / career cards */
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: calc(var(--grid) * 3);
+}
+
+.card {
+  background: var(--white);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  padding: calc(var(--grid) * 4);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--orange), var(--pink));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover::before { opacity: 1; }
+
+.card-index {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--cyan);
+  margin-bottom: calc(var(--grid) * 2);
+  letter-spacing: 0.1em;
+}
+
+.card h3 {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: calc(var(--grid) * 1);
+  line-height: 1.2;
+}
+
+.card-meta {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--orange);
+  margin-bottom: calc(var(--grid) * 2);
+  letter-spacing: 0.05em;
+}
+
+.card p {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+/* skills strip */
+.skills-strip {
+  padding: calc(var(--grid) * 6) 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.skills-track {
+  display: flex;
+  gap: calc(var(--grid) * 4);
+  animation: scroll-left 20s linear infinite;
+  width: max-content;
+}
+
+.skills-track span {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0.4;
+  transition: opacity 0.3s;
+}
+
+.skills-track span::before {
+  content: '//';
+  color: var(--orange);
+  margin-right: 8px;
+}
+
+.skills-track:hover span { opacity: 0.7; }
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* contact */
+.contact {
+  padding: calc(var(--grid) * 12) 0 calc(var(--grid) * 8);
+}
+
+.contact-inner {
+  background: var(--black);
+  color: var(--white);
+  border-radius: 2px;
+  padding: calc(var(--grid) * 6);
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--cyan), var(--purple), var(--orange));
+}
+
+.contact-inner::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  border-radius: 50%;
+  opacity: 0.08;
+}
+
+.contact h2 {
+  font-family: var(--font-sans);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  margin-bottom: calc(var(--grid) * 1);
+}
+
+.contact-sub {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  opacity: 0.5;
+  margin-bottom: calc(var(--grid) * 4);
+}
+
+.contact-links {
+  display: flex;
+  gap: calc(var(--grid) * 3);
+  flex-wrap: wrap;
+}
+
+.contact-links a {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--white);
+  text-decoration: none;
+  padding: calc(var(--grid) * 1.5) calc(var(--grid) * 3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-links a:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
+}
+
+/* footer */
+footer {
+  padding: calc(var(--grid) * 4) 0;
+  text-align: center;
+}
+
+footer p {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  opacity: 0.3;
+  letter-spacing: 0.1em;
+}
+
+/* glitch text effect on hover */
+.glitch-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-wrap:hover .glitch-text {
+  animation: glitch 0.4s ease;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-1px, 1px); filter: hue-rotate(0deg); }
+  80% { transform: translate(1px, -1px); }
+  100% { transform: translate(0); }
+}
+
+/* scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* mobile */
+@media (max-width: 640px) {
+  .hero-stats { gap: calc(var(--grid) * 3); }
+  .stat-number { font-size: 1.5rem; }
+  .nav-links { gap: calc(var(--grid) * 2); }
+  .contact-inner { padding: calc(var(--grid) * 4); }
+  .shape { display: none; }
+  .highlights-grid { grid-template-columns: 1fr; }
+}
+
+/* selection color */
+::selection {
+  background: var(--pink);
+  color: var(--white);
+}
+</style>
+</head>
+<body>
+
+<div class="vapor-strip"></div>
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="container">
+    <div class="nav-logo">mb<span class="blink">_</span></div>
+    <ul class="nav-links">
+      <li><a href="#work">work</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <div class="shape shape-sun"></div>
+    <div class="shape shape-grid"></div>
+    <div class="shape shape-triangle"></div>
+
+    <div class="hero-label">// portfolio.exe v2.026</div>
+    <h1 class="glitch-wrap">
+      <span class="first-name glitch-text">michael</span>
+      <span class="last-name">berman</span>
+    </h1>
+    <div class="hero-title">game director / design leader / systems thinker</div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-number">16</span>
+        <span class="stat-label">years in games</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">aaa</span>
+        <span class="stat-label">studio experience</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number glitch-wrap"><span class="glitch-text">&infin;</span></span>
+        <span class="stat-label">player-first mindset</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="work">
+  <div class="container">
+    <div class="section-label reveal">career highlights</div>
+
+    <div class="highlights-grid">
+      <div class="card reveal">
+        <div class="card-index">01</div>
+        <h3>sony / bend studio</h3>
+        <div class="card-meta">16 years // 2008 - present</div>
+        <p>grew from designer to director at one of playstation's core studios. shipped titles that defined open-world survival action for millions of players worldwide.</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-index">02</div>
+        <h3>game direction</h3>
+        <div class="card-meta">creative + strategic leadership</div>
+        <p>owned the creative vision end-to-end. aligned design, engineering, art, and narrative teams around a unified player experience across multi-year development cycles.</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-index">03</div>
+        <h3>product ownership</h3>
+        <div class="card-meta">roadmap // prioritization // delivery</div>
+        <p>bridged studio leadership and production. defined feature priorities, managed scope tradeoffs, and ensured the team shipped the right thing at the right quality bar.</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-index">04</div>
+        <h3>design management</h3>
+        <div class="card-meta">teams // mentorship // culture</div>
+        <p>built and led design teams. fostered a culture of rapid prototyping, honest feedback, and systems-level thinking that elevated the craft across the studio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="skills-strip">
+  <div class="skills-track" id="skills-track">
+    <span>systems design</span>
+    <span>open-world games</span>
+    <span>player experience</span>
+    <span>creative direction</span>
+    <span>team leadership</span>
+    <span>prototyping</span>
+    <span>ux strategy</span>
+    <span>agile development</span>
+    <span>cross-discipline collaboration</span>
+    <span>live operations</span>
+    <span>systems design</span>
+    <span>open-world games</span>
+    <span>player experience</span>
+    <span>creative direction</span>
+    <span>team leadership</span>
+    <span>prototyping</span>
+    <span>ux strategy</span>
+    <span>agile development</span>
+    <span>cross-discipline collaboration</span>
+    <span>live operations</span>
+  </div>
+</div>
+
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-inner reveal">
+      <h2>let's build something</h2>
+      <div class="contact-sub">// ready for the next level</div>
+      <div class="contact-links">
+        <a href="mailto:hello@michaelberman.dev">email</a>
+        <a href="https://linkedin.com/in/michaelberman" target="_blank" rel="noopener">linkedin</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 michael berman // rendered in-browser</p>
+  </div>
+</footer>
+
+<script>
+// scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+reveals.forEach(el => observer.observe(el));
+
+// smooth nav hide/show
+let lastScroll = 0;
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  const current = window.scrollY;
+  if (current > lastScroll && current > 100) {
+    nav.style.transform = 'translateY(-100%)';
+    nav.style.transition = 'transform 0.3s ease';
+  } else {
+    nav.style.transform = 'translateY(0)';
+  }
+  lastScroll = current;
+}, { passive: true });
+
+// duplicate skills track for seamless loop
+const track = document.getElementById('skills-track');
+track.innerHTML += track.innerHTML;
+</script>
+
+</body>
+</html>
