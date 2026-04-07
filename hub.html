@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MB — Site Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark:       #171410;
+      --bg-card:       #201C16;
+      --bg-section:    #272219;
+      --text-light:    #F5EFE0;
+      --text-muted:    #9A9080;
+      --accent:        #F26200;
+      --accent-dim:    #A84400;
+      --ok-green:      #3DB870;
+      --border:        #332E26;
+      --font-head:     'Barlow Condensed', sans-serif;
+      --font-body:     'Inter', sans-serif;
+      --font-mono:     'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 40px;
+      background: rgba(23, 20, 16, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-head);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-light);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--text-light);
+      border-color: var(--border);
+    }
+    .nav-links a.active {
+      color: var(--accent);
+      border-color: var(--accent-dim);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      padding: 60px 40px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .header-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-label::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--accent);
+    }
+    .header h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 560px;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      padding: 0 40px;
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { color: var(--text-light); border-color: var(--text-muted); }
+    .filter-btn.active {
+      color: var(--bg-dark);
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── SECTION ── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 48px;
+    }
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title .count {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ── CARD GRID ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      text-decoration: none;
+      color: var(--text-light);
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: var(--accent-dim);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .card:hover .card-title { color: var(--accent); }
+
+    .card-badge {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .badge-live {
+      background: rgba(61, 184, 112, 0.15);
+      color: var(--ok-green);
+      border: 1px solid rgba(61, 184, 112, 0.3);
+    }
+    .badge-version {
+      background: rgba(242, 98, 0, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(242, 98, 0, 0.2);
+    }
+    .badge-tool {
+      background: rgba(154, 144, 128, 0.1);
+      color: var(--text-muted);
+      border: 1px solid rgba(154, 144, 128, 0.2);
+    }
+    .badge-game {
+      background: rgba(100, 140, 255, 0.1);
+      color: #7BA4FF;
+      border: 1px solid rgba(100, 140, 255, 0.2);
+    }
+    .badge-legacy {
+      background: rgba(154, 144, 128, 0.06);
+      color: #6A6458;
+      border: 1px solid rgba(154, 144, 128, 0.12);
+    }
+
+    .card-title {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      transition: color 0.2s;
+    }
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .card-meta {
+      margin-top: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: #5A5448;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      padding: 40px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #4A4438;
+      letter-spacing: 0.08em;
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav { padding: 12px 20px; }
+      .nav-links { display: none; }
+      .header { padding: 40px 20px 30px; }
+      .filter-bar { padding: 0 20px; }
+      .section { padding: 0 20px 36px; }
+      .card-grid { grid-template-columns: 1fr; }
+      .footer { padding: 30px 20px; }
+    }
+
+    /* ── HIDDEN CARDS ── */
+    .card[data-hidden="true"] { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="./" class="nav-logo">M<span>B</span></a>
+    <div class="nav-links">
+      <a href="./">Portfolio</a>
+      <a href="./about.html">About</a>
+      <a href="./experience.html">Experience</a>
+      <a href="./hub.html" class="active">Hub</a>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-label">Site Hub</div>
+    <h1>All Builds & Experiments</h1>
+    <p>Every version, tool, and experiment across the portfolio. Click any card to open the live site.</p>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="live">Live Site</button>
+    <button class="filter-btn" data-filter="version">Versions</button>
+    <button class="filter-btn" data-filter="tool">Tools</button>
+    <button class="filter-btn" data-filter="experiment">Experiments</button>
+    <button class="filter-btn" data-filter="legacy">Legacy</button>
+  </div>
+
+  <!-- LIVE SITE -->
+  <div class="section">
+    <div class="section-title">Live Site <span class="count">9 pages</span></div>
+    <div class="card-grid">
+      <a href="./" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Portfolio Homepage</div>
+        <div class="card-desc">Main landing page with boot sequence, design principles, and experience timeline.</div>
+        <div class="card-meta">index.html</div>
+      </a>
+      <a href="./about.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">About</div>
+        <div class="card-desc">Bio, design philosophy, skills inventory, and eight core principles.</div>
+        <div class="card-meta">about.html</div>
+      </a>
+      <a href="./experience.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Experience</div>
+        <div class="card-desc">Full career timeline with filterable roles across 5 studios.</div>
+        <div class="card-meta">experience.html</div>
+      </a>
+      <a href="./portfolio-game.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Portfolio: Game Design</div>
+        <div class="card-desc">Game design case studies with expandable project details.</div>
+        <div class="card-meta">portfolio-game.html</div>
+      </a>
+      <a href="./portfolio-ux.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Portfolio: UX Design</div>
+        <div class="card-desc">UX portfolio framed for games-to-enterprise translation.</div>
+        <div class="card-meta">portfolio-ux.html</div>
+      </a>
+      <a href="./library.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Library</div>
+        <div class="card-desc">Curated games, books, GDC talks, and design resources.</div>
+        <div class="card-meta">library.html</div>
+      </a>
+      <a href="./blog.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Writing</div>
+        <div class="card-desc">Blog posts and design writing.</div>
+        <div class="card-meta">blog.html</div>
+      </a>
+      <a href="./contact.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Contact</div>
+        <div class="card-desc">Contact form with role targeting and resume download.</div>
+        <div class="card-meta">contact.html</div>
+      </a>
+      <a href="./versions.html" class="card" data-category="live" target="_blank">
+        <span class="card-badge badge-live">Live</span>
+        <div class="card-title">Versions Index</div>
+        <div class="card-desc">Original version archive page with password protection.</div>
+        <div class="card-meta">versions.html</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO VERSIONS -->
+  <div class="section">
+    <div class="section-title">Portfolio Versions <span class="count">v2 &ndash; v15</span></div>
+    <div class="card-grid">
+      <a href="./v15/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V15</span>
+        <div class="card-title">Version 15</div>
+        <div class="card-desc">Latest archived iteration before current live site.</div>
+        <div class="card-meta">v15/ &middot; 124 KB</div>
+      </a>
+      <a href="./v14/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V14</span>
+        <div class="card-title">Version 14</div>
+        <div class="card-desc">Portfolio iteration 14.</div>
+        <div class="card-meta">v14/</div>
+      </a>
+      <a href="./v13/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V13</span>
+        <div class="card-title">Version 13</div>
+        <div class="card-desc">Portfolio iteration 13.</div>
+        <div class="card-meta">v13/</div>
+      </a>
+      <a href="./v12/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V12</span>
+        <div class="card-title">Version 12</div>
+        <div class="card-desc">Game-focused portfolio iteration.</div>
+        <div class="card-meta">v12/</div>
+      </a>
+      <a href="./v11/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V11</span>
+        <div class="card-title">Version 11</div>
+        <div class="card-desc">Game-focused portfolio iteration.</div>
+        <div class="card-meta">v11/</div>
+      </a>
+      <a href="./v10/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V10</span>
+        <div class="card-title">Version 10</div>
+        <div class="card-desc">Portfolio iteration 10.</div>
+        <div class="card-meta">v10/</div>
+      </a>
+      <a href="./v9/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V9</span>
+        <div class="card-title">Version 9</div>
+        <div class="card-desc">Game-focused portfolio iteration.</div>
+        <div class="card-meta">v9/</div>
+      </a>
+      <a href="./v8/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V8</span>
+        <div class="card-title">Version 8</div>
+        <div class="card-desc">Portfolio iteration 8.</div>
+        <div class="card-meta">v8/</div>
+      </a>
+      <a href="./v7/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V7</span>
+        <div class="card-title">Version 7</div>
+        <div class="card-desc">Portfolio iteration 7.</div>
+        <div class="card-meta">v7/</div>
+      </a>
+      <a href="./v6/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V6</span>
+        <div class="card-title">Version 6</div>
+        <div class="card-desc">AAA game director persona with animated elements.</div>
+        <div class="card-meta">v6/ &middot; with about, experience, library</div>
+      </a>
+      <a href="./v5/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V5</span>
+        <div class="card-title">Version 5</div>
+        <div class="card-desc">Editorial aesthetic with film grain overlay.</div>
+        <div class="card-meta">v5/ &middot; full site with contact, blog, portfolio</div>
+      </a>
+      <a href="./v4/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V4</span>
+        <div class="card-title">Version 4</div>
+        <div class="card-desc">Terminal-aesthetic Claude Code build.</div>
+        <div class="card-meta">v4/ &middot; with about, experience, library</div>
+      </a>
+      <a href="./v3/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V3</span>
+        <div class="card-title">Version 3</div>
+        <div class="card-desc">Game director exploration with space palette.</div>
+        <div class="card-meta">v3/ &middot; with about, experience, library</div>
+      </a>
+      <a href="./v2/" class="card" data-category="version" target="_blank">
+        <span class="card-badge badge-version">V2</span>
+        <div class="card-title">Version 2</div>
+        <div class="card-desc">Early portfolio iteration.</div>
+        <div class="card-meta">v2/</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TOOLS & EXPERIMENTS -->
+  <div class="section">
+    <div class="section-title">Tools & Experiments <span class="count">8 projects</span></div>
+    <div class="card-grid">
+      <a href="./gdc-companion/" class="card" data-category="tool" target="_blank">
+        <span class="card-badge badge-tool">Tool</span>
+        <div class="card-title">GDC Companion</div>
+        <div class="card-desc">Game Developers Conference companion app for scheduling and notes.</div>
+        <div class="card-meta">gdc-companion/</div>
+      </a>
+      <a href="./job-discovery/" class="card" data-category="tool" target="_blank">
+        <span class="card-badge badge-tool">Tool</span>
+        <div class="card-title">Job Discovery</div>
+        <div class="card-desc">Job search and discovery application.</div>
+        <div class="card-meta">job-discovery/</div>
+      </a>
+      <a href="./offer-calculator/" class="card" data-category="tool" target="_blank">
+        <span class="card-badge badge-tool">Tool</span>
+        <div class="card-title">Offer Calculator</div>
+        <div class="card-desc">Salary and job offer evaluation tool for comparing compensation packages.</div>
+        <div class="card-meta">offer-calculator/</div>
+      </a>
+      <a href="./transition-command-center/" class="card" data-category="tool" target="_blank">
+        <span class="card-badge badge-tool">Tool</span>
+        <div class="card-title">Transition Command Center</div>
+        <div class="card-desc">Career transition planning and tracking dashboard.</div>
+        <div class="card-meta">transition-command-center/</div>
+      </a>
+      <a href="./skill-test/" class="card" data-category="experiment" target="_blank">
+        <span class="card-badge badge-game">Experiment</span>
+        <div class="card-title">Skill Test</div>
+        <div class="card-desc">Interactive skills assessment and testing tool.</div>
+        <div class="card-meta">skill-test/</div>
+      </a>
+      <a href="./gameboy/" class="card" data-category="experiment" target="_blank">
+        <span class="card-badge badge-game">Experiment</span>
+        <div class="card-title">Game Boy v1</div>
+        <div class="card-desc">Game Boy themed interactive portfolio with pixel art aesthetics.</div>
+        <div class="card-meta">gameboy/</div>
+      </a>
+      <a href="./gameboy-v2/" class="card" data-category="experiment" target="_blank">
+        <span class="card-badge badge-game">Experiment</span>
+        <div class="card-title">Game Boy v2</div>
+        <div class="card-desc">Second iteration of the Game Boy portfolio concept.</div>
+        <div class="card-meta">gameboy-v2/</div>
+      </a>
+      <a href="./gameboy-v3/" class="card" data-category="experiment" target="_blank">
+        <span class="card-badge badge-game">Experiment</span>
+        <div class="card-title">Game Boy v3</div>
+        <div class="card-desc">Third iteration of the Game Boy portfolio concept.</div>
+        <div class="card-meta">gameboy-v3/</div>
+      </a>
+      <a href="./taste-demo/" class="card" data-category="experiment" target="_blank">
+        <span class="card-badge badge-game">Experiment</span>
+        <div class="card-title">Taste Demo</div>
+        <div class="card-desc">Taste assessment demo project.</div>
+        <div class="card-meta">taste-demo/</div>
+      </a>
+      <a href="./taste-skill-demo/" class="card" data-category="experiment" target="_blank">
+        <span class="card-badge badge-game">Experiment</span>
+        <div class="card-title">Taste Skill Demo</div>
+        <div class="card-desc">Combined taste and skill assessment demo.</div>
+        <div class="card-meta">taste-skill-demo/</div>
+      </a>
+      <a href="./experiments/" class="card" data-category="experiment" target="_blank">
+        <span class="card-badge badge-game">Experiment</span>
+        <div class="card-title">Experiments</div>
+        <div class="card-desc">Experimental projects and prototypes directory.</div>
+        <div class="card-meta">experiments/</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- LEGACY -->
+  <div class="section">
+    <div class="section-title">Legacy Archive <span class="count">5 builds</span></div>
+    <div class="card-grid">
+      <a href="./legacy/v4-improved/" class="card" data-category="legacy" target="_blank">
+        <span class="card-badge badge-legacy">Legacy</span>
+        <div class="card-title">Legacy v4 (Improved)</div>
+        <div class="card-desc">Improved legacy build with 8 pages including library.</div>
+        <div class="card-meta">legacy/v4-improved/</div>
+      </a>
+      <a href="./legacy/v3-mobile/" class="card" data-category="legacy" target="_blank">
+        <span class="card-badge badge-legacy">Legacy</span>
+        <div class="card-title">Legacy v3 (Mobile)</div>
+        <div class="card-desc">Mobile-responsive legacy build with 7 pages.</div>
+        <div class="card-meta">legacy/v3-mobile/</div>
+      </a>
+      <a href="./legacy/v2/" class="card" data-category="legacy" target="_blank">
+        <span class="card-badge badge-legacy">Legacy</span>
+        <div class="card-title">Legacy v2</div>
+        <div class="card-desc">Second legacy portfolio build with 7 pages.</div>
+        <div class="card-meta">legacy/v2/</div>
+      </a>
+      <a href="./legacy/v1/" class="card" data-category="legacy" target="_blank">
+        <span class="card-badge badge-legacy">Legacy</span>
+        <div class="card-title">Legacy v1</div>
+        <div class="card-desc">Original portfolio build with 7 pages.</div>
+        <div class="card-meta">legacy/v1/</div>
+      </a>
+      <a href="./legacy/react-spa/" class="card" data-category="legacy" target="_blank">
+        <span class="card-badge badge-legacy">Legacy</span>
+        <div class="card-title">Legacy React SPA</div>
+        <div class="card-desc">Single-page application built with React.</div>
+        <div class="card-meta">legacy/react-spa/</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    MB &copy; 2026 &middot; Site Hub &middot; <a href="https://github.com/wetjuice/portfolio-main" style="color: var(--text-muted); text-decoration: none;">GitHub</a>
+  </footer>
+
+  <script>
+    // Filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.card');
+    const sections = document.querySelectorAll('.section');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+
+        cards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.setAttribute('data-hidden', 'false');
+            card.style.display = '';
+          } else {
+            card.setAttribute('data-hidden', 'true');
+            card.style.display = 'none';
+          }
+        });
+
+        // Hide empty sections
+        sections.forEach(section => {
+          const visibleCards = section.querySelectorAll('.card:not([data-hidden="true"])');
+          section.style.display = visibleCards.length > 0 ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
