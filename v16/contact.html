@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Michael Berman</title>
+  <meta name="description" content="Get in touch with Michael Berman — Game Director, Design Leader, Systems Thinker.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- Page Transition -->
+  <div class="page-transition" id="page-transition"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">M<em>B</em></a>
+    <div class="nav-links">
+      <a href="about.html" class="nav-link">About</a>
+      <a href="experience.html" class="nav-link">Experience</a>
+      <a href="portfolio.html" class="nav-link">Portfolio</a>
+      <a href="contact.html" class="nav-contact active">Contact</a>
+    </div>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav -->
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="about.html">About</a>
+    <a href="experience.html">Experience</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="contact.html" class="active">Contact</a>
+  </div>
+
+  <main class="contact-page">
+    <div class="contact-split">
+
+      <!-- LEFT SIDE -->
+      <div class="contact-left">
+        <h1 class="contact-heading">Good ideas need good <em>company.</em></h1>
+        <p class="text-muted">I'm most interested in shared principles than matched titles. Whether you're building a game, scaling a product, or rethinking how a team works &mdash; if the design thinking is the common ground, that's worth a conversation.</p>
+
+        <h3 class="contact-subheading">Best for:</h3>
+        <ul class="contact-list">
+          <li>Game Director / Creative Director roles</li>
+          <li>Senior UX / Product Design</li>
+          <li>Design leadership conversations</li>
+          <li>Advisory or consulting on game systems</li>
+        </ul>
+
+        <div class="contact-links">
+          <a href="mailto:MBerman47@gmail.com" class="contact-link-item">
+            <span class="contact-link-icon">&check;</span> MBerman47@gmail.com
+          </a>
+          <a href="https://www.linkedin.com/in/bermandesign" target="_blank" class="contact-link-item">
+            <span class="contact-link-icon">&nearr;</span> linkedin.com/in/bermandesign
+          </a>
+          <a href="#" class="contact-link-item">
+            <span class="contact-link-icon">&darr;</span> Download Resume
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="contact-right">
+        <form class="contact-form" action="#" method="POST">
+          <div class="form-group">
+            <input type="text" class="form-input" name="name" placeholder=" " required>
+            <label class="form-label">Name</label>
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-input" name="email" placeholder=" " required>
+            <label class="form-label">Email</label>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-input" name="subject" placeholder=" ">
+            <label class="form-label">Subject</label>
+          </div>
+          <div class="form-group">
+            <textarea class="form-input" name="message" placeholder=" " rows="5" required></textarea>
+            <label class="form-label">Message</label>
+          </div>
+          <button type="submit" class="btn btn-primary form-submit">Send Message &rarr;</button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    /* ── CUSTOM CURSOR ── */
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.left = mouseX + 'px';
+      dot.style.top = mouseY + 'px';
+    });
+
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      ring.style.left = ringX + 'px';
+      ring.style.top = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button, .form-input').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+    });
+
+    /* ── SCROLL REVEALS ── */
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ── PAGE TRANSITIONS ── */
+    const transition = document.getElementById('page-transition');
+    document.querySelectorAll('a[href$=".html"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('http')) {
+          e.preventDefault();
+          transition.classList.add('active');
+          setTimeout(() => { window.location.href = href; }, 400);
+        }
+      });
+    });
+
+    /* ── HAMBURGER ── */
+    const hamburger = document.getElementById('hamburger');
+    const navMobile = document.getElementById('nav-mobile');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      navMobile.classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
