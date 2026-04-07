@@ -584,21 +584,22 @@
         btn.classList.add('active');
         const filter = btn.dataset.filter;
 
+        // Reset all sections visible first
+        sections.forEach(section => { section.style.display = ''; });
+
         cards.forEach(card => {
-          if (filter === 'all' || card.dataset.category === filter) {
-            card.setAttribute('data-hidden', 'false');
-            card.style.display = '';
-          } else {
-            card.setAttribute('data-hidden', 'true');
-            card.style.display = 'none';
-          }
+          const show = filter === 'all' || card.dataset.category === filter;
+          card.style.display = show ? '' : 'none';
+          card.setAttribute('data-hidden', show ? 'false' : 'true');
         });
 
-        // Hide empty sections
-        sections.forEach(section => {
-          const visibleCards = section.querySelectorAll('.card:not([data-hidden="true"])');
-          section.style.display = visibleCards.length > 0 ? '' : 'none';
-        });
+        // Hide sections with no visible cards (only when filtering)
+        if (filter !== 'all') {
+          sections.forEach(section => {
+            const visibleCards = section.querySelectorAll('.card:not([data-hidden="true"])');
+            section.style.display = visibleCards.length > 0 ? '' : 'none';
+          });
+        }
       });
     });
   </script>
