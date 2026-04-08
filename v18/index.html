@@ -326,14 +326,9 @@
     glowEl.style.top = e.clientY + 'px';
   });
 
-  /* ── 3D SCENE TILT (applied per grid-inner) ── */
-  const gridInners = document.querySelectorAll('.hex-grid-inner');
+  /* ── AMBIENT GLOW FOLLOW ── */
   function updateSceneTilt() {
-    const rx = (mouseY - 0.5) * -2;
-    const ry = (mouseX - 0.5) * 3;
-    gridInners.forEach(inner => {
-      inner.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-    });
+    // No scene tilt — handled per-hex on hover
   }
 
   /* ── PARALLAX ON SCROLL ── */
@@ -350,7 +345,7 @@
     });
   }
 
-  /* ── HEX HOVER 3D TILT + SPOTLIGHT ── */
+  /* ── HEX HOVER — SCALE + SPOTLIGHT ── */
   document.querySelectorAll('.hex-interactive').forEach(hex => {
     const inner = hex.querySelector('.hex-inner');
 
@@ -358,17 +353,6 @@
       const rect = hex.getBoundingClientRect();
       const nx = (e.clientX - rect.left) / rect.width;
       const ny = (e.clientY - rect.top) / rect.height;
-      const cx = nx - 0.5;
-      const cy = ny - 0.5;
-
-      // 3D tilt within the hover scale
-      const baseX = parseFloat(hex.style.getPropertyValue('--x')) || 0;
-      const baseY = parseFloat(hex.style.getPropertyValue('--y')) || 0;
-      hex.style.transform =
-        `translate3d(${baseX}px, ${baseY}px, 0)
-         translateZ(60px)
-         rotateY(${cx * 16}deg) rotateX(${cy * -16}deg)
-         scale(1.22)`;
 
       // Spotlight follows cursor inside hex
       inner.style.setProperty('--spotlight-x', (nx * 100) + '%');
@@ -376,7 +360,6 @@
     });
 
     hex.addEventListener('mouseleave', () => {
-      hex.style.transform = '';
       inner.style.setProperty('--spotlight-x', '50%');
       inner.style.setProperty('--spotlight-y', '50%');
     });
