@@ -55,7 +55,6 @@ a { color: inherit; text-decoration: none; }
   min-height: 100vh;
   perspective: 1200px;
   perspective-origin: 50% 50%;
-  overflow: hidden;
 }
 
 .scene-inner {

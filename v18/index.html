@@ -127,12 +127,19 @@
     return el;
   }
 
-  /* ── GRID DIMENSIONS ── */
-  function setGridSize(inner, cols, rows, maxScale) {
-    const w = cols * (HEX_BASE * maxScale + GAP) + HEX_BASE * maxScale;
-    const h = rows * (HEX_H * maxScale * 0.75 + GAP) + HEX_H * maxScale * 0.5;
-    inner.style.width = w + 'px';
-    inner.style.height = h + 'px';
+  /* ── GRID DIMENSIONS (auto-fit to actual hex positions) ── */
+  function fitGrid(inner) {
+    let maxR = 0, maxB = 0;
+    inner.querySelectorAll('.hex').forEach(el => {
+      const l = parseFloat(el.style.left) || 0;
+      const t = parseFloat(el.style.top) || 0;
+      const w = parseFloat(el.style.width) || 0;
+      const h = parseFloat(el.style.height) || 0;
+      if (l + w > maxR) maxR = l + w;
+      if (t + h > maxB) maxB = t + h;
+    });
+    inner.style.width = (maxR + 10) + 'px';
+    inner.style.height = (maxB + 10) + 'px';
   }
 
   /* ═══════════════════════════════════
@@ -162,10 +169,10 @@
              <h1 class="hex-title">Creative<br>Director</h1>
              <p class="hex-body">Building systems that think.</p>` },
   ];
-  setGridSize(heroInner, 6, 3, 2.2);
   heroHexes.forEach(h => {
     heroInner.appendChild(createHex(hexPos(h.col, h.row, h.s), h.html || '', h.cls, h.depth));
   });
+  fitGrid(heroInner);
 
   /* ── ABOUT ── */
   const aboutInner = document.getElementById('inner-about');
@@ -199,10 +206,10 @@
       html: '<div class="hex-num">08</div><div class="hex-principle-text">Clarity = Kindness</div>' },
     { col: 3.8, row: 2.4, s: 0.5, depth: 'far', cls: 'hex-empty' },
   ];
-  setGridSize(aboutInner, 5, 3, 1.7);
   aboutHexes.forEach(h => {
     aboutInner.appendChild(createHex(hexPos(h.col, h.row, h.s), h.html || '', h.cls, h.depth || 'near'));
   });
+  fitGrid(aboutInner);
 
   /* ── WORK ── */
   const workInner = document.getElementById('inner-work');
@@ -236,10 +243,10 @@
              <div class="hex-tags"><span class="hex-tag">RTS</span><span class="hex-tag">MOBA</span></div>` },
     { col: 4.3, row: 1.6, s: 0.5, depth: 'far', cls: 'hex-empty' },
   ];
-  setGridSize(workInner, 5, 2.5, 1.8);
   workHexes.forEach(h => {
     workInner.appendChild(createHex(hexPos(h.col, h.row, h.s), h.html || '', h.cls, h.depth || 'near'));
   });
+  fitGrid(workInner);
 
   /* ── SKILLS ── */
   const skillsInner = document.getElementById('inner-skills');
@@ -275,10 +282,10 @@
     { col: 4.8, row: 1.3, s: 0.4, depth: 'far', cls: 'hex-empty' },
     { col: 0, row: 3.1, s: 0.4, depth: 'far', cls: 'hex-empty' },
   ];
-  setGridSize(skillsInner, 5, 4, 1.2);
   skillHexes.forEach(h => {
     skillsInner.appendChild(createHex(hexPos(h.col, h.row, h.s), h.html || '', h.cls, h.depth || 'near'));
   });
+  fitGrid(skillsInner);
 
   /* ── CONTACT ── */
   const contactInner = document.getElementById('inner-contact');
@@ -296,10 +303,10 @@
     { col: 0.5, row: 1, s: 0.45, depth: 'far', cls: 'hex-empty' },
     { col: 3.8, row: 1, s: 0.5, depth: 'far', cls: 'hex-empty' },
   ];
-  setGridSize(contactInner, 5, 2, 2.2);
   contactHexes.forEach(h => {
     contactInner.appendChild(createHex(hexPos(h.col, h.row, h.s), h.html || '', h.cls, h.depth || 'near'));
   });
+  fitGrid(contactInner);
 
 
   /* ═══════════════════════════════════
