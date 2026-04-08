@@ -375,9 +375,11 @@
 
   /* ── SCROLL REVEAL ── */
   function revealOnScroll() {
+    const vh = window.innerHeight;
     document.querySelectorAll('.reveal-hex:not(.visible)').forEach(el => {
       const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight + 80 && rect.bottom > -80) {
+      // Generous trigger zone: 200px below viewport to 200px above
+      if (rect.top < vh + 200 && rect.bottom > -200) {
         el.classList.add('visible');
       }
     });
@@ -434,6 +436,12 @@
       el.style.transitionDelay = (i * 0.04) + 's';
     });
     revealOnScroll();
+    // Fallback: force-reveal everything after 2s in case observer missed
+    setTimeout(() => {
+      document.querySelectorAll('.reveal-hex:not(.visible)').forEach(el => {
+        el.classList.add('visible');
+      });
+    }, 2500);
   });
 
 })();
