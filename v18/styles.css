@@ -1,0 +1,626 @@
+/* ============================================
+   HIVEMIND v18 — Hexagonal Portfolio System
+
+   Every element lives in a hex cell.
+   The page IS the honeycomb.
+   ============================================ */
+
+/* ── TOKENS ── */
+:root {
+  --bg:          #0A0E17;
+  --bg-hex:      #0F1420;
+  --bg-hex-hover:#151C2E;
+  --bg-hex-glow: #1A2235;
+
+  --teal:        #00D2C8;
+  --teal-dim:    #007872;
+  --teal-glow:   rgba(0, 210, 200, 0.25);
+
+  --amber:       #F5A623;
+  --amber-dim:   #8A5E14;
+  --amber-glow:  rgba(245, 166, 35, 0.2);
+
+  --rose:        #FF4F81;
+  --rose-dim:    #8A2B46;
+  --rose-glow:   rgba(255, 79, 129, 0.2);
+
+  --text:        #E8ECF4;
+  --text-mid:    #8892A8;
+  --text-dim:    #4A5268;
+
+  --border-hex:  rgba(0, 210, 200, 0.1);
+  --border-hex-hover: rgba(0, 210, 200, 0.3);
+
+  --font-display:'Outfit', sans-serif;
+  --font-mono:   'Space Mono', monospace;
+
+  --hex-clip:    polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font-display);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--teal); color: var(--bg); }
+
+/* ── BACKGROUND HEX GRID ── */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ── AMBIENT GLOW (follows cursor) ── */
+.ambient-glow {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--teal-glow) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  transition: left 0.3s ease-out, top 0.3s ease-out;
+  opacity: 0.5;
+  mix-blend-mode: screen;
+}
+
+@media (pointer: coarse) {
+  .ambient-glow { display: none; }
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 12px 28px;
+  background: rgba(10, 14, 23, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-hex);
+  border-radius: 50px;
+  animation: fadeDown 0.8s var(--ease) 0.2s both;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.nav-brand {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  gap: 4px;
+}
+.nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+.nav-link:hover { color: var(--text); }
+.nav-link.active {
+  color: var(--teal);
+  background: rgba(0, 210, 200, 0.08);
+}
+
+@media (max-width: 640px) {
+  .nav { gap: 12px; padding: 10px 16px; }
+  .nav-link { padding: 6px 8px; font-size: 0.55rem; }
+  .nav-brand { font-size: 0.65rem; }
+}
+
+/* ── ACCENT COLOR ── */
+.accent { color: var(--teal); }
+
+/* ══════════════════════════════════
+   HEX SYSTEM — the core of everything
+   ══════════════════════════════════ */
+
+.hex {
+  position: relative;
+  transition: transform 0.4s var(--ease), filter 0.4s;
+  will-change: transform;
+}
+
+/* Hex shape via clip-path on inner */
+.hex-inner {
+  width: 100%;
+  height: 100%;
+  clip-path: var(--hex-clip);
+  background: var(--bg-hex);
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* Hex border glow — pseudo element slightly larger */
+.hex::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  clip-path: var(--hex-clip);
+  background: linear-gradient(135deg, var(--border-hex), transparent 50%, var(--border-hex));
+  z-index: -1;
+  transition: all 0.4s;
+}
+.hex:hover::before {
+  inset: -3px;
+  background: linear-gradient(135deg, var(--border-hex-hover), transparent 40%, var(--border-hex-hover));
+}
+.hex:hover .hex-inner {
+  background: var(--bg-hex-hover);
+}
+
+/* Hex content centered */
+.hex-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 12%;
+  position: relative;
+  z-index: 2;
+}
+
+/* Empty hex (decorative) */
+.hex-empty {
+  background: transparent;
+}
+.hex-empty::after { display: none; }
+
+/* ── HEX SIZES ── */
+/* All hexes maintain ~1.155:1 height:width ratio for perfect hex */
+.hex-giant {
+  width: clamp(320px, 42vw, 480px);
+  aspect-ratio: 1 / 1.155;
+}
+.hex-lg {
+  width: clamp(260px, 32vw, 380px);
+  aspect-ratio: 1 / 1.155;
+}
+.hex-md {
+  width: clamp(200px, 24vw, 280px);
+  aspect-ratio: 1 / 1.155;
+}
+.hex-sm {
+  width: clamp(120px, 14vw, 170px);
+  aspect-ratio: 1 / 1.155;
+}
+.hex-xs {
+  width: clamp(60px, 7vw, 90px);
+  aspect-ratio: 1 / 1.155;
+}
+
+/* ── HEX GLOW VARIANTS ── */
+.hex-glow-teal::before {
+  background: linear-gradient(135deg, rgba(0, 210, 200, 0.2), transparent 50%, rgba(0, 210, 200, 0.15)) !important;
+}
+.hex-glow-teal:hover::before {
+  background: linear-gradient(135deg, rgba(0, 210, 200, 0.4), transparent 40%, rgba(0, 210, 200, 0.3)) !important;
+  filter: drop-shadow(0 0 20px var(--teal-glow));
+}
+
+.hex-glow-amber::before {
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.2), transparent 50%, rgba(245, 166, 35, 0.15)) !important;
+}
+.hex-glow-amber:hover::before {
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.4), transparent 40%, rgba(245, 166, 35, 0.3)) !important;
+  filter: drop-shadow(0 0 20px var(--amber-glow));
+}
+
+.hex-glow-rose::before {
+  background: linear-gradient(135deg, rgba(255, 79, 129, 0.2), transparent 50%, rgba(255, 79, 129, 0.15)) !important;
+}
+.hex-glow-rose:hover::before {
+  background: linear-gradient(135deg, rgba(255, 79, 129, 0.4), transparent 40%, rgba(255, 79, 129, 0.3)) !important;
+  filter: drop-shadow(0 0 20px var(--rose-glow));
+}
+
+/* ── HEX CONTENT TYPOGRAPHY ── */
+.hex-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 0.7vw, 0.65rem);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+.hex-heading {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.hex-subhead {
+  font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.hex-body {
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+.hex-body-sm {
+  font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+.hex-num {
+  font-family: var(--font-mono);
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 700;
+  color: var(--teal);
+  opacity: 0.5;
+  margin-bottom: 4px;
+}
+.hex-stat {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.hex-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+}
+
+/* ══════════════════════════════════
+   SECTIONS
+   ══════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(80px, 12vh, 140px) clamp(16px, 4vw, 48px);
+}
+
+.section-intro {
+  text-align: center;
+  margin-bottom: clamp(40px, 6vh, 80px);
+}
+.section-title {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ── HERO ── */
+.hero-hex-cluster {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.hex-hero-main {
+  animation: hexFloat 0.8s var(--ease) 0.4s both;
+}
+@keyframes hexFloat {
+  from { opacity: 0; transform: scale(0.85) translateY(30px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+.hero-sub {
+  font-size: clamp(0.75rem, 1.1vw, 0.95rem);
+  color: var(--text-mid);
+  font-weight: 400;
+}
+
+/* Orbit hexes around the hero */
+.hex-orbit {
+  position: absolute;
+}
+.hex-orbit-1 { top: -8%;  left: -18%; animation: orbitIn 0.6s var(--ease) 0.7s both; }
+.hex-orbit-2 { top: -12%; right: -15%; animation: orbitIn 0.6s var(--ease) 0.85s both; }
+.hex-orbit-3 { bottom: -8%; left: -20%; animation: orbitIn 0.6s var(--ease) 1.0s both; }
+.hex-orbit-4 { bottom: -10%; right: -18%; animation: orbitIn 0.6s var(--ease) 1.15s both; }
+.hex-orbit-5 { top: 50%;  left: -30%; transform: translateY(-50%); animation: orbitIn 0.6s var(--ease) 1.3s both; }
+.hex-orbit-6 { top: 20%;  right: -28%; animation: orbitIn 0.6s var(--ease) 1.4s both; }
+
+@keyframes orbitIn {
+  from { opacity: 0; scale: 0.5; }
+  to { opacity: 1; scale: 1; }
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: clamp(20px, 4vh, 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  animation: fadeDown 0.8s var(--ease) 1.8s both;
+}
+.scroll-hint svg {
+  animation: bobDown 2s ease-in-out infinite;
+}
+@keyframes bobDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* ── ABOUT ── */
+.hex-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1vw, 12px);
+  flex-wrap: wrap;
+}
+
+/* ── PRINCIPLES STRIP ── */
+.hex-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 0.8vw, 10px);
+  margin-top: clamp(12px, 2vh, 24px);
+  max-width: 900px;
+}
+.hex-principle {
+  cursor: pointer;
+}
+.hex-principle-text {
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-mid);
+  transition: color 0.3s;
+}
+.hex-principle:hover .hex-principle-text { color: var(--teal); }
+.hex-principle:hover::before {
+  background: linear-gradient(135deg, rgba(0, 210, 200, 0.3), transparent 50%, rgba(0, 210, 200, 0.2)) !important;
+}
+.hex-principle.hex-active::before {
+  background: linear-gradient(135deg, rgba(0, 210, 200, 0.5), transparent 40%, rgba(0, 210, 200, 0.4)) !important;
+  filter: drop-shadow(0 0 16px var(--teal-glow));
+}
+.hex-principle.hex-active .hex-num { opacity: 1; }
+.hex-principle.hex-active .hex-principle-text { color: var(--text); }
+
+/* ── HONEYCOMB (Work grid) ── */
+.honeycomb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(4px, 0.8vw, 10px);
+  max-width: 1000px;
+}
+.hex-project {
+  width: clamp(180px, 22vw, 260px);
+  aspect-ratio: 1 / 1.155;
+  cursor: pointer;
+}
+.hex-project-featured {
+  width: clamp(220px, 28vw, 320px);
+}
+.hex-project-title {
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.hex-project-role {
+  font-size: clamp(0.55rem, 0.7vw, 0.7rem);
+  color: var(--text-mid);
+  margin-bottom: 8px;
+}
+.hex-project-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.hex-tag {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border: 1px solid var(--border-hex);
+  border-radius: 3px;
+  color: var(--text-dim);
+}
+.hex-project:hover .hex-tag {
+  border-color: var(--teal-dim);
+  color: var(--teal);
+}
+.hex-project-metric {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 800;
+  color: var(--amber);
+  margin-top: 4px;
+}
+
+.hex-project:hover::before {
+  background: linear-gradient(135deg, rgba(0, 210, 200, 0.3), transparent 40%, rgba(0, 210, 200, 0.2)) !important;
+  filter: drop-shadow(0 0 24px var(--teal-glow));
+}
+
+/* Decorative empty hexes in honeycomb */
+.hex-deco { opacity: 0.3; }
+.hex-deco-1 { align-self: flex-end; }
+.hex-deco-2 { align-self: flex-start; }
+.hex-deco-3 { align-self: center; }
+
+/* ── SKILLS HIVE ── */
+.skills-hive {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(24px, 4vw, 48px);
+}
+.skill-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(3px, 0.5vw, 6px);
+  max-width: 280px;
+}
+.hex-skill-header {
+  width: 100%;
+  margin-bottom: 4px;
+}
+.hex-skill-cat {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+.hex-skill-name {
+  font-size: clamp(0.5rem, 0.7vw, 0.65rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-mid);
+}
+.hex-skill:hover .hex-skill-name { color: var(--text); }
+.hex-skill:hover::before {
+  background: linear-gradient(135deg, rgba(0, 210, 200, 0.2), transparent 50%, rgba(0, 210, 200, 0.15)) !important;
+}
+
+/* ── CONTACT ── */
+.contact-cluster {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hex-contact .hex-heading {
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+}
+.contact-links {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.contact-link {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  color: var(--text-mid);
+  padding: 6px 14px;
+  border: 1px solid var(--border-hex);
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+.contact-link:hover {
+  color: var(--teal);
+  border-color: var(--teal-dim);
+  background: rgba(0, 210, 200, 0.05);
+}
+
+.hex-orbit-c1 { position: absolute; top: -12%; left: -16%; }
+.hex-orbit-c2 { position: absolute; top: -8%; right: -20%; }
+.hex-orbit-c3 { position: absolute; bottom: -10%; left: -22%; }
+
+/* ── FOOTER ── */
+.footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding: 24px clamp(16px, 4vw, 48px);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border-hex);
+}
+
+/* ── REVEAL ANIMATIONS ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-d1 { transition-delay: 0.15s; }
+.reveal-d2 { transition-delay: 0.3s; }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 640px) {
+  .hex-giant { width: clamp(260px, 80vw, 340px); }
+  .hex-lg { width: clamp(220px, 70vw, 300px); }
+  .hex-md { width: clamp(180px, 60vw, 240px); }
+  .hex-orbit { display: none; }
+  .hex-row { flex-direction: column; }
+  .hex-project { width: clamp(200px, 70vw, 280px); }
+  .hex-project-featured { width: clamp(240px, 80vw, 320px); }
+  .skill-cluster { max-width: 220px; }
+}
