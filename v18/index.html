@@ -326,12 +326,14 @@
     glowEl.style.top = e.clientY + 'px';
   });
 
-  /* ── 3D SCENE TILT (mouse-driven) ── */
+  /* ── 3D SCENE TILT (applied per grid-inner) ── */
+  const gridInners = document.querySelectorAll('.hex-grid-inner');
   function updateSceneTilt() {
-    const rx = (mouseY - 0.5) * -3;  // subtle vertical tilt
-    const ry = (mouseX - 0.5) * 4;   // horizontal tilt
-    sceneInner.style.transform =
-      `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    const rx = (mouseY - 0.5) * -2;
+    const ry = (mouseX - 0.5) * 3;
+    gridInners.forEach(inner => {
+      inner.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
   }
 
   /* ── PARALLAX ON SCROLL ── */
@@ -344,7 +346,7 @@
       const rect = grid.getBoundingClientRect();
       const center = rect.top + rect.height / 2;
       const offset = (center - window.innerHeight / 2) * factor;
-      grid.style.transform = `translateZ(${offset}px)`;
+      grid.style.transform = `translateY(${offset}px)`;
     });
   }
 
