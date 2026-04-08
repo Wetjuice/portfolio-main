@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — Michael Berman</title>
+  <meta name="description" content="Selected work from 16+ years across Sony Bend, Volition, Pocket Gems, and more.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-trail" id="cursor-trail"></div>
+
+  <!-- Page Transition -->
+  <div class="page-transition" id="page-transition"></div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progress-bar"></div>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <span class="glitch-text" data-text="BERMAN">BERMAN</span>
+    </a>
+    <div class="nav-links">
+      <a href="about.html" class="nav-link">About</a>
+      <a href="experience.html" class="nav-link">Experience</a>
+      <a href="portfolio.html" class="nav-link active">Portfolio</a>
+      <a href="contact.html" class="nav-cta"><span>Contact</span></a>
+    </div>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="about.html">About</a>
+    <a href="experience.html">Experience</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main>
+    <!-- ═══ CHAPTER HEADER ═══ -->
+    <section class="chapter reveal">
+      <div class="chapter-label">Portfolio</div>
+      <h2 class="chapter-heading">
+        The work that <span class="gold">shipped.</span>
+      </h2>
+    </section>
+
+    <!-- ═══ PORTFOLIO GRID ═══ -->
+    <section class="portfolio-grid">
+
+      <!-- Card 1: Sony Bend -->
+      <div class="pf-card" onclick="this.classList.toggle('open'); const t=this.querySelector('.pf-toggle'); if(t) t.textContent=this.classList.contains('open')?'Close −':'View Details +';">
+        <div class="pf-card-studio">Sony Interactive Entertainment &middot; Bend Studio</div>
+        <h3 class="pf-card-title">Unannounced Title</h3>
+        <p class="pf-card-role">Game Director &middot; PC / Console</p>
+        <p class="pf-card-body">Currently leading creative vision, aligning multidisciplinary teams, and driving development from concept toward production.</p>
+        <div class="exp-card-tags">
+          <span class="tag">Game Direction</span>
+          <span class="tag">Creative Leadership</span>
+          <span class="tag">Progression Systems</span>
+          <span class="tag">Multiplayer</span>
+        </div>
+        <div class="pf-toggle">View Details +</div>
+        <div class="pf-card-expand">
+          <p>Setting creative vision for an unannounced title. Managing 6 direct reports. Using Sony's Player Segments research.</p>
+        </div>
+      </div>
+
+      <!-- Card 2: Deep Silver Volition -->
+      <div class="pf-card" onclick="this.classList.toggle('open'); const t=this.querySelector('.pf-toggle'); if(t) t.textContent=this.classList.contains('open')?'Close −':'View Details +';">
+        <div class="pf-card-studio">Deep Silver Volition</div>
+        <h3 class="pf-card-title">Saints Row</h3>
+        <p class="pf-card-role">Design Director &middot; PC &amp; Console</p>
+        <p class="pf-card-body">Developed product and design strategy to modernize the Saints Row franchise for improved long-tail engagement.</p>
+        <div class="exp-card-tags">
+          <span class="tag">Design Direction</span>
+          <span class="tag">UX Design</span>
+          <span class="tag">Systems Design</span>
+          <span class="tag">Prototyping</span>
+          <span class="tag">Open World</span>
+        </div>
+        <div class="pf-toggle">View Details +</div>
+        <div class="pf-card-expand">
+          <p>Led 10-13 developers. Served as Product Owner of &ldquo;Boss Factory&rdquo; demo. Built ambient life systems including AI, spawning, vignette scenes.</p>
+        </div>
+      </div>
+
+      <!-- Card 3: Pocket Gems -->
+      <div class="pf-card" onclick="this.classList.toggle('open'); const t=this.querySelector('.pf-toggle'); if(t) t.textContent=this.classList.contains('open')?'Close −':'View Details +';">
+        <div class="pf-card-studio">Pocket Gems</div>
+        <h3 class="pf-card-title">War Dragons</h3>
+        <p class="pf-card-role">Game Designer &middot; Mobile</p>
+        <p class="pf-card-body">Led progression and gameplay systems from pre-production to live.</p>
+        <div class="pf-card-metric">+12%</div>
+        <div class="pf-card-metric-label">D3 Player Retention</div>
+        <div class="exp-card-tags">
+          <span class="tag">Game Design</span>
+          <span class="tag">Progression</span>
+          <span class="tag">Mobile</span>
+          <span class="tag">Live Ops</span>
+        </div>
+        <div class="pf-toggle">View Details +</div>
+        <div class="pf-card-expand">
+          <p>Led pod of 10 developers. Redesigned progression post geo-beta. Developed camera, controls, character systems.</p>
+        </div>
+      </div>
+
+      <!-- Card 4: Outact -->
+      <div class="pf-card" onclick="this.classList.toggle('open'); const t=this.querySelector('.pf-toggle'); if(t) t.textContent=this.classList.contains('open')?'Close −':'View Details +';">
+        <div class="pf-card-studio">Outact</div>
+        <h3 class="pf-card-title">Unannounced ARPG</h3>
+        <p class="pf-card-role">Lead Designer &middot; PC</p>
+        <p class="pf-card-body">Directed cross-functional team during early-stage production. Created pitch decks securing publisher funding.</p>
+        <div class="exp-card-tags">
+          <span class="tag">Systems Design</span>
+          <span class="tag">Combat Design</span>
+          <span class="tag">Progression</span>
+          <span class="tag">Tooling</span>
+        </div>
+        <div class="pf-toggle">View Details +</div>
+        <div class="pf-card-expand">
+        </div>
+      </div>
+
+      <!-- Card 5: Petroglyph -->
+      <div class="pf-card" onclick="this.classList.toggle('open'); const t=this.querySelector('.pf-toggle'); if(t) t.textContent=this.classList.contains('open')?'Close −':'View Details +';">
+        <div class="pf-card-studio">Petroglyph Games</div>
+        <h3 class="pf-card-title">Rise of Immortals / End of Nations / Star Wars MOBA</h3>
+        <p class="pf-card-role">Game Designer &middot; PC</p>
+        <p class="pf-card-body">Game Designer across multiple PC titles including RTS and MOBA genres. Foundational experience in game systems and balance.</p>
+        <div class="exp-card-tags">
+          <span class="tag">Game Design</span>
+          <span class="tag">RTS</span>
+          <span class="tag">MOBA</span>
+          <span class="tag">Production</span>
+        </div>
+        <div class="pf-toggle">View Details +</div>
+        <div class="pf-card-expand">
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══ CTA ═══ -->
+    <section class="cta-section reveal">
+      <h2 class="cta-heading">
+        See the full<br>
+        <span class="chromatic" data-text="picture.">picture.</span>
+      </h2>
+      <p class="cta-body">
+        16 years of design philosophy, systems thinking, and creative leadership &mdash; distilled into principles and practice.
+      </p>
+      <div class="cta-buttons">
+        <a href="about.html" class="btn btn-primary">The Philosophy <span class="arrow">&rarr;</span></a>
+        <a href="experience.html" class="btn btn-ghost">Full Timeline</a>
+        <a href="contact.html" class="btn btn-ghost">Get in Touch</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-left">&copy; 2026 Michael Berman</div>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/bermandesign" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:MBerman47@gmail.com">Email</a>
+    </div>
+  </footer>
+
+  <script>
+    /* ─── CUSTOM CURSOR ─── */
+    const cursor = document.getElementById('cursor');
+    const trail = document.getElementById('cursor-trail');
+    let mx = 0, my = 0, tx = 0, ty = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animTrail() {
+      tx += (mx - tx) * 0.12;
+      ty += (my - ty) * 0.12;
+      trail.style.left = tx + 'px';
+      trail.style.top = ty + 'px';
+      requestAnimationFrame(animTrail);
+    }
+    animTrail();
+
+    document.querySelectorAll('a, button, .pf-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    /* ─── SCROLL PROGRESS BAR ─── */
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrollH = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = (window.scrollY / scrollH) * 100;
+      progressBar.style.width = pct + '%';
+    });
+
+    /* ─── SCROLL REVEALS ─── */
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ─── PAGE TRANSITIONS ─── */
+    const transition = document.getElementById('page-transition');
+    document.querySelectorAll('a[href$=".html"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('http')) {
+          e.preventDefault();
+          transition.classList.add('active');
+          setTimeout(() => window.location.href = href, 500);
+        }
+      });
+    });
+
+    /* ─── HAMBURGER ─── */
+    const hamburger = document.getElementById('hamburger');
+    const navMobile = document.getElementById('nav-mobile');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      navMobile.classList.toggle('open');
+    });
+
+    /* ─── PORTFOLIO CARD TOGGLE ─── */
+    document.querySelectorAll('.pf-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const wasOpen = card.classList.contains('open');
+        card.classList.toggle('open');
+        const toggle = card.querySelector('.pf-toggle');
+        if (toggle) toggle.textContent = wasOpen ? 'View Details +' : 'Close −';
+      });
+    });
+  </script>
+</body>
+</html>

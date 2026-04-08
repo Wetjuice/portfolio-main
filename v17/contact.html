@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Michael Berman</title>
+  <meta name="description" content="Get in touch with Michael Berman — Game Director, Design Leader.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-trail" id="cursor-trail"></div>
+
+  <!-- Page Transition -->
+  <div class="page-transition" id="page-transition"></div>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <span class="glitch-text" data-text="BERMAN">BERMAN</span>
+    </a>
+    <div class="nav-links">
+      <a href="about.html" class="nav-link">About</a>
+      <a href="experience.html" class="nav-link">Experience</a>
+      <a href="portfolio.html" class="nav-link">Portfolio</a>
+      <a href="contact.html" class="nav-cta" style="border-bottom: 2px solid var(--gold, #CA8A04);"><span>Contact</span></a>
+    </div>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="about.html">About</a>
+    <a href="experience.html">Experience</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main>
+    <section class="contact-split">
+
+      <!-- LEFT -->
+      <div class="contact-left">
+        <h1 class="contact-heading reveal">
+          GOOD IDEAS NEED GOOD <span class="highlight">COMPANY.</span>
+        </h1>
+
+        <p class="text-secondary reveal reveal-d2">
+          I'm most interested in shared principles than matched titles. Whether you're building a game, scaling a product, or rethinking how a team works &mdash; if the design thinking is the common ground, that's worth a conversation.
+        </p>
+
+        <p class="reveal reveal-d2" style="margin-top: 24px;"><strong>Best for:</strong></p>
+        <ul class="text-secondary reveal reveal-d2" style="margin-top: 8px; padding-left: 20px; line-height: 2;">
+          <li>Game Director / Creative Director roles</li>
+          <li>Senior UX / Product Design</li>
+          <li>Design leadership conversations</li>
+          <li>Advisory or consulting on game systems</li>
+        </ul>
+
+        <div class="contact-links reveal reveal-d3">
+          <a href="mailto:MBerman47@gmail.com" class="contact-link-item">&check; MBerman47@gmail.com</a>
+          <a href="https://www.linkedin.com/in/bermandesign" target="_blank" rel="noopener" class="contact-link-item">&nearr; linkedin.com/in/bermandesign</a>
+          <a href="#" class="contact-link-item">&darr; Download Resume</a>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="contact-right reveal reveal-d2">
+        <form class="contact-form" onsubmit="return false;">
+          <div class="form-group">
+            <input type="text" class="form-input" id="name" placeholder=" " required>
+            <label class="form-label" for="name">Name</label>
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-input" id="email" placeholder=" " required>
+            <label class="form-label" for="email">Email</label>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-input" id="subject" placeholder=" ">
+            <label class="form-label" for="subject">Subject</label>
+          </div>
+          <div class="form-group">
+            <textarea class="form-input" id="message" placeholder=" " rows="5" required></textarea>
+            <label class="form-label" for="message">Message</label>
+          </div>
+          <button class="btn btn-primary" type="submit" style="margin-top:8px;">Send Message &rarr;</button>
+        </form>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    /* --- CUSTOM CURSOR --- */
+    const cursor = document.getElementById('cursor');
+    const trail = document.getElementById('cursor-trail');
+    let mx = 0, my = 0, tx = 0, ty = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animTrail() {
+      tx += (mx - tx) * 0.12;
+      ty += (my - ty) * 0.12;
+      trail.style.left = tx + 'px';
+      trail.style.top = ty + 'px';
+      requestAnimationFrame(animTrail);
+    }
+    animTrail();
+
+    document.querySelectorAll('a, button, .exp-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    /* --- Form input cursor hover effect --- */
+    document.querySelectorAll('.form-input').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    /* --- SCROLL REVEALS --- */
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* --- PAGE TRANSITIONS --- */
+    const transition = document.getElementById('page-transition');
+    document.querySelectorAll('a[href$=".html"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('http')) {
+          e.preventDefault();
+          transition.classList.add('active');
+          setTimeout(() => window.location.href = href, 500);
+        }
+      });
+    });
+
+    /* --- HAMBURGER --- */
+    const hamburger = document.getElementById('hamburger');
+    const navMobile = document.getElementById('nav-mobile');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      navMobile.classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
