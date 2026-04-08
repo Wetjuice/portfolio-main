@@ -319,6 +319,7 @@
     });
 
     /* ─── SCROLL REVEALS ─── */
+    const revealEls = document.querySelectorAll('.reveal');
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -326,8 +327,26 @@
           obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    }, { threshold: 0.01, rootMargin: '100px 0px 100px 0px' });
+    revealEls.forEach(el => obs.observe(el));
+
+    /* Fallback: check reveals on every scroll in case observer missed them */
+    function checkReveals() {
+      revealEls.forEach(el => {
+        if (el.classList.contains('visible')) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 100 && rect.bottom > -100) {
+          el.classList.add('visible');
+        }
+      });
+    }
+    window.addEventListener('scroll', checkReveals, { passive: true });
+    /* Also check after smooth scroll finishes */
+    let scrollTimer;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(checkReveals, 150);
+    }, { passive: true });
 
     /* ─── ACTIVE NAV ON SCROLL ─── */
     const sections = document.querySelectorAll('.section');
@@ -340,7 +359,7 @@
           if (link) link.classList.add('active');
         }
       });
-    }, { threshold: 0.3 });
+    }, { threshold: 0.15, rootMargin: '0px 0px -20% 0px' });
     sections.forEach(s => navObs.observe(s));
 
     /* ─── HEX HOVER TILT ─── */
