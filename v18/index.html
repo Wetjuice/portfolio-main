@@ -10,10 +10,10 @@
 </head>
 <body>
 
-  <!-- Ambient glow that follows cursor -->
+  <!-- Ambient cursor glow -->
   <div class="ambient-glow" id="ambientGlow"></div>
 
-  <!-- ═══ FLOATING NAV ═══ -->
+  <!-- Nav -->
   <nav class="nav">
     <div class="nav-brand">HIVE<span class="accent">MIND</span></div>
     <div class="nav-links">
@@ -25,301 +25,386 @@
     </div>
   </nav>
 
-  <main>
+  <!-- ═══════════════════════════════════════
+       THE HIVE — One continuous honeycomb
+       ═══════════════════════════════════════ -->
+  <div class="hive" id="hero">
 
-    <!-- ═══ HERO: Giant hex cluster ═══ -->
-    <section class="section section-hero" id="hero">
-      <div class="hero-hex-cluster">
-        <!-- Central giant hex -->
-        <div class="hex hex-giant hex-hero-main">
-          <div class="hex-inner">
-            <div class="hex-content">
-              <div class="hex-label">Portfolio 2026</div>
-              <h1 class="hero-title">Creative<br>Director</h1>
-              <p class="hero-sub">Building systems that think.</p>
-            </div>
+    <!-- ──── ROW 1: Hero intro ──── -->
+    <div class="hive-row reveal">
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-2-5x hex-interactive hex-glow-teal" id="heroHex">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">Portfolio 2026</div>
+          <h1 class="hex-title">Creative<br>Director</h1>
+          <p class="hex-body">Building systems that think.</p>
+        </div></div>
+      </div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
+
+    <!-- ──── ROW 2: Stats ──── -->
+    <div class="hive-row reveal reveal-d1">
+      <div class="hex hex-1x hex-interactive hex-glow-teal">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-stat">16+</div>
+          <div class="hex-stat-label">Years</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive hex-glow-amber">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-stat">5</div>
+          <div class="hex-stat-label">Studios</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive hex-glow-teal">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-stat">10+</div>
+          <div class="hex-stat-label">Products</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive hex-glow-amber">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-stat">6+</div>
+          <div class="hex-stat-label">Leading</div>
+        </div></div>
+      </div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
+
+    <!-- ──── ROW 3: About section intro ──── -->
+    <div class="hive-row reveal reveal-d2" id="about">
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-2x hex-interactive hex-glow-teal">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">About</div>
+          <h2 class="hex-heading">The best design<br>is invisible.</h2>
+          <p class="hex-body">It earns trust by making the right choice obvious — then gets out of the way.</p>
+        </div></div>
+      </div>
+      <div class="hex hex-1-5x hex-interactive hex-glow-amber">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">Philosophy</div>
+          <h3 class="hex-subhead">Build for players,<br>not designers.</h3>
+        </div></div>
+      </div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
+
+    <!-- ──── ROW 4: Principles ──── -->
+    <div class="hive-row reveal reveal-d3">
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">01</div>
+          <div class="hex-principle-text">Systems Over Scale</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">02</div>
+          <div class="hex-principle-text">Validate First</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">03</div>
+          <div class="hex-principle-text">Execute &gt; Ideate</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">04</div>
+          <div class="hex-principle-text">Select, Don't Invent</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">05</div>
+          <div class="hex-principle-text">Emergent Play</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ──── ROW 5: More principles + Work section header ──── -->
+    <div class="hive-row reveal reveal-d4">
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">06</div>
+          <div class="hex-principle-text">Sustainable Systems</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">07</div>
+          <div class="hex-principle-text">Strong POV</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-num">08</div>
+          <div class="hex-principle-text">Clarity = Kindness</div>
+        </div></div>
+      </div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
+
+    <!-- ──── Section divider: Work ──── -->
+    <div class="hex-section-label" id="work">
+      <div class="section-label-text reveal">Selected Work</div>
+      <h2 class="section-title reveal reveal-d1">The <span class="accent">Honeycomb.</span></h2>
+    </div>
+
+    <!-- ──── ROW 6: Projects top ──── -->
+    <div class="hive-row reveal">
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-2x hex-interactive hex-glow-teal">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">2022 &rarr; Current</div>
+          <h3 class="hex-heading">Project Alpha</h3>
+          <p class="hex-project-role">Creative Director</p>
+          <div class="hex-project-tags">
+            <span class="hex-tag">Leadership</span>
+            <span class="hex-tag">Systems</span>
           </div>
-        </div>
-
-        <!-- Orbiting satellite hexes -->
-        <div class="hex hex-sm hex-orbit hex-orbit-1 hex-glow-teal">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-stat">16+</div>
-            <div class="hex-stat-label">Years</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-orbit hex-orbit-2 hex-glow-amber">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-stat">5</div>
-            <div class="hex-stat-label">Studios</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-orbit hex-orbit-3 hex-glow-teal">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-stat">10+</div>
-            <div class="hex-stat-label">Products</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-orbit hex-orbit-4 hex-glow-amber">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-stat">6+</div>
-            <div class="hex-stat-label">Leading</div>
-          </div></div>
-        </div>
-        <div class="hex hex-xs hex-orbit hex-orbit-5">
-          <div class="hex-inner"><div class="hex-content hex-empty"></div></div>
-        </div>
-        <div class="hex hex-xs hex-orbit hex-orbit-6">
-          <div class="hex-inner"><div class="hex-content hex-empty"></div></div>
-        </div>
+        </div></div>
       </div>
-
-      <div class="scroll-hint">
-        <span>Explore the hive</span>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M10 4v12M4 10l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </div>
-    </section>
-
-    <!-- ═══ ABOUT: Hex split layout ═══ -->
-    <section class="section section-about" id="about">
-      <div class="hex-row reveal">
-        <div class="hex hex-lg hex-glow-teal hex-about-main">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">About</div>
-            <h2 class="hex-heading">The best design is invisible.</h2>
-            <p class="hex-body">It doesn't announce itself. It earns trust by making the right choice obvious — then gets out of the way. Placeholder bio text for the design phase.</p>
-          </div></div>
-        </div>
-        <div class="hex hex-md hex-glow-amber hex-about-philosophy">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">Philosophy</div>
-            <h3 class="hex-subhead">Build for players,<br>not designers.</h3>
-            <p class="hex-body-sm">Systems that respect intelligence. Progression that earns its keep.</p>
-          </div></div>
-        </div>
-      </div>
-
-      <!-- Principles as hex strip -->
-      <div class="hex-strip reveal reveal-d2">
-        <div class="hex hex-sm hex-principle" data-num="01">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">01</div>
-            <div class="hex-principle-text">Systems Over Scale</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-principle" data-num="02">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">02</div>
-            <div class="hex-principle-text">Validate First</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-principle" data-num="03">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">03</div>
-            <div class="hex-principle-text">Execute > Ideate</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-principle" data-num="04">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">04</div>
-            <div class="hex-principle-text">Select, Don't Invent</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-principle" data-num="05">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">05</div>
-            <div class="hex-principle-text">Emergent Play</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-principle" data-num="06">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">06</div>
-            <div class="hex-principle-text">Sustainable Systems</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-principle" data-num="07">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">07</div>
-            <div class="hex-principle-text">Strong POV</div>
-          </div></div>
-        </div>
-        <div class="hex hex-sm hex-principle" data-num="08">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-num">08</div>
-            <div class="hex-principle-text">Clarity = Kindness</div>
-          </div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ WORK: Honeycomb project grid ═══ -->
-    <section class="section section-work" id="work">
-      <div class="section-intro reveal">
-        <div class="hex-label">Selected Work</div>
-        <h2 class="section-title">The <span class="accent">Honeycomb.</span></h2>
-      </div>
-
-      <div class="honeycomb reveal reveal-d1">
-        <div class="hex hex-project hex-project-featured" data-project="1">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">2022 → Current</div>
-            <h3 class="hex-project-title">Project Alpha</h3>
-            <p class="hex-project-role">Creative Director</p>
-            <div class="hex-project-tags">
-              <span class="hex-tag">Leadership</span>
-              <span class="hex-tag">Systems</span>
-            </div>
-          </div></div>
-        </div>
-        <div class="hex hex-project" data-project="2">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">2019 → 2022</div>
-            <h3 class="hex-project-title">Project Beta</h3>
-            <p class="hex-project-role">Design Director</p>
-            <div class="hex-project-tags">
-              <span class="hex-tag">UX</span>
-              <span class="hex-tag">Open World</span>
-            </div>
-          </div></div>
-        </div>
-        <div class="hex hex-project" data-project="3">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">2015 → 2019</div>
-            <h3 class="hex-project-title">Project Gamma</h3>
-            <p class="hex-project-role">Lead Designer</p>
-            <div class="hex-project-tags">
-              <span class="hex-tag">Combat</span>
-              <span class="hex-tag">ARPG</span>
-            </div>
-          </div></div>
-        </div>
-        <div class="hex hex-project" data-project="4">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">2013 → 2015</div>
-            <h3 class="hex-project-title">Project Delta</h3>
-            <p class="hex-project-role">Game Designer</p>
-            <div class="hex-project-metric">+12%</div>
-          </div></div>
-        </div>
-        <div class="hex hex-project" data-project="5">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">2009 → 2013</div>
-            <h3 class="hex-project-title">Project Echo</h3>
-            <p class="hex-project-role">Systems Designer</p>
-            <div class="hex-project-tags">
-              <span class="hex-tag">RTS</span>
-              <span class="hex-tag">MOBA</span>
-            </div>
-          </div></div>
-        </div>
-        <!-- Decorative empty hexes -->
-        <div class="hex hex-xs hex-deco hex-deco-1"><div class="hex-inner"><div class="hex-content hex-empty"></div></div></div>
-        <div class="hex hex-xs hex-deco hex-deco-2"><div class="hex-inner"><div class="hex-content hex-empty"></div></div></div>
-        <div class="hex hex-xs hex-deco hex-deco-3"><div class="hex-inner"><div class="hex-content hex-empty"></div></div></div>
-      </div>
-    </section>
-
-    <!-- ═══ SKILLS: Hex cluster per category ═══ -->
-    <section class="section section-skills" id="skills">
-      <div class="section-intro reveal">
-        <div class="hex-label">Capabilities</div>
-        <h2 class="section-title">Skill <span class="accent">Cells.</span></h2>
-      </div>
-
-      <div class="skills-hive reveal reveal-d1">
-        <!-- Design cluster -->
-        <div class="skill-cluster">
-          <div class="hex hex-sm hex-skill hex-skill-header hex-glow-teal">
-            <div class="hex-inner"><div class="hex-content">
-              <div class="hex-skill-cat">Design</div>
-            </div></div>
+      <div class="hex hex-1-5x hex-interactive hex-glow-amber">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">2019 &rarr; 2022</div>
+          <h3 class="hex-subhead">Project Beta</h3>
+          <p class="hex-project-role">Design Director</p>
+          <div class="hex-project-tags">
+            <span class="hex-tag">UX</span>
+            <span class="hex-tag">Open World</span>
           </div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Systems</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">UX</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Progression</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Combat</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Open World</span></div></div></div>
-        </div>
-
-        <!-- Leadership cluster -->
-        <div class="skill-cluster">
-          <div class="hex hex-sm hex-skill hex-skill-header hex-glow-amber">
-            <div class="hex-inner"><div class="hex-content">
-              <div class="hex-skill-cat">Leadership</div>
-            </div></div>
-          </div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Direction</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Mentorship</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Product</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Roadmap</span></div></div></div>
-        </div>
-
-        <!-- Tools cluster -->
-        <div class="skill-cluster">
-          <div class="hex hex-sm hex-skill hex-skill-header hex-glow-rose">
-            <div class="hex-inner"><div class="hex-content">
-              <div class="hex-skill-cat">Tools</div>
-            </div></div>
-          </div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Unreal</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Unity</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Figma</span></div></div></div>
-          <div class="hex hex-xs hex-skill"><div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Jira</span></div></div></div>
-        </div>
+        </div></div>
       </div>
-    </section>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
 
-    <!-- ═══ CONTACT: Single hex CTA ═══ -->
-    <section class="section section-contact" id="contact">
-      <div class="contact-cluster reveal">
-        <div class="hex hex-giant hex-glow-teal hex-contact">
-          <div class="hex-inner"><div class="hex-content">
-            <div class="hex-label">Get in Touch</div>
-            <h2 class="hex-heading">Let's build<br>something.</h2>
-            <div class="contact-links">
-              <a href="#" class="contact-link">✉ Email</a>
-              <a href="#" class="contact-link">↗ LinkedIn</a>
-              <a href="#" class="contact-link">↓ Resume</a>
-            </div>
-          </div></div>
-        </div>
-        <!-- Orbiting decorative hexes -->
-        <div class="hex hex-xs hex-orbit hex-orbit-c1"><div class="hex-inner"><div class="hex-content hex-empty"></div></div></div>
-        <div class="hex hex-xs hex-orbit hex-orbit-c2"><div class="hex-inner"><div class="hex-content hex-empty"></div></div></div>
-        <div class="hex hex-xs hex-orbit hex-orbit-c3"><div class="hex-inner"><div class="hex-content hex-empty"></div></div></div>
+    <!-- ──── ROW 7: Projects bottom ──── -->
+    <div class="hive-row reveal reveal-d1">
+      <div class="hex hex-1-5x hex-interactive hex-glow-rose">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">2015 &rarr; 2019</div>
+          <h3 class="hex-subhead">Project Gamma</h3>
+          <p class="hex-project-role">Lead Designer</p>
+          <div class="hex-project-tags">
+            <span class="hex-tag">Combat</span>
+            <span class="hex-tag">ARPG</span>
+          </div>
+        </div></div>
       </div>
-    </section>
+      <div class="hex hex-1x hex-interactive hex-glow-amber">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">2013 &rarr; 2015</div>
+          <h3 class="hex-project-title">Project Delta</h3>
+          <p class="hex-project-role">Game Designer</p>
+          <div class="hex-metric">+12%</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">2009 &rarr; 2013</div>
+          <h3 class="hex-project-title">Project Echo</h3>
+          <p class="hex-project-role">Systems Designer</p>
+          <div class="hex-project-tags">
+            <span class="hex-tag">RTS</span>
+            <span class="hex-tag">MOBA</span>
+          </div>
+        </div></div>
+      </div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
 
-  </main>
+    <!-- ──── Section divider: Skills ──── -->
+    <div class="hex-section-label" id="skills">
+      <div class="section-label-text reveal">Capabilities</div>
+      <h2 class="section-title reveal reveal-d1">Skill <span class="accent">Cells.</span></h2>
+    </div>
+
+    <!-- ──── ROW 8: Skill headers ──── -->
+    <div class="hive-row reveal">
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-1-5x hex-interactive hex-glow-teal">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-skill-cat">Design</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1-5x hex-interactive hex-glow-amber">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-skill-cat">Leadership</div>
+        </div></div>
+      </div>
+      <div class="hex hex-1-5x hex-interactive hex-glow-rose">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-skill-cat">Tools</div>
+        </div></div>
+      </div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
+
+    <!-- ──── ROW 9: Design skills ──── -->
+    <div class="hive-row reveal reveal-d1">
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Systems Design</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">UX Design</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Progression</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Direction</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Unreal</span></div></div>
+      </div>
+    </div>
+
+    <!-- ──── ROW 10: More skills ──── -->
+    <div class="hive-row reveal reveal-d2">
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Combat</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Open World</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Mentorship</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Product</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Unity</span></div></div>
+      </div>
+    </div>
+
+    <!-- ──── ROW 11: Final skills ──── -->
+    <div class="hive-row reveal reveal-d3">
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Economy</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Live Ops</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Roadmap</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Figma</span></div></div>
+      </div>
+      <div class="hex hex-1x hex-interactive">
+        <div class="hex-inner"><div class="hex-content"><span class="hex-skill-name">Jira</span></div></div>
+      </div>
+    </div>
+
+    <!-- ──── Section divider: Contact ──── -->
+    <div class="hex-section-label" id="contact">
+      <div class="section-label-text reveal">Get in Touch</div>
+    </div>
+
+    <!-- ──── ROW 12: Contact ──── -->
+    <div class="hive-row reveal">
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-2-5x hex-interactive hex-glow-teal">
+        <div class="hex-inner"><div class="hex-content">
+          <div class="hex-label">Connect</div>
+          <h2 class="hex-heading">Let's build<br>something.</h2>
+          <div class="contact-links">
+            <a href="#" class="contact-link">&check; Email</a>
+            <a href="#" class="contact-link">&nearr; LinkedIn</a>
+            <a href="#" class="contact-link">&darr; Resume</a>
+          </div>
+        </div></div>
+      </div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
+
+    <!-- ──── ROW 13: Footer decoration ──── -->
+    <div class="hive-row reveal reveal-d1">
+      <div class="hex hex-1x hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-1x hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-sm hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+      <div class="hex hex-1x hex-empty"><div class="hex-inner"><div class="hex-content"></div></div></div>
+    </div>
+
+  </div>
 
   <footer class="footer">
-    <span>&copy; 2026 — Design Prototype</span>
+    <span>&copy; 2026 &mdash; Design Prototype</span>
     <span class="accent">Hivemind v18</span>
   </footer>
 
-  <!-- Background hex grid pattern (SVG) -->
+  <!-- Background hex grid -->
   <svg class="bg-grid" aria-hidden="true">
     <defs>
-      <pattern id="hexPattern" width="56" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
-        <path d="M28 2L54 18V50L28 66L2 50V18Z" fill="none" stroke="rgba(0,210,200,0.04)" stroke-width="0.5"/>
-        <path d="M28 34L54 50V82L28 98L2 82V50Z" fill="none" stroke="rgba(0,210,200,0.04)" stroke-width="0.5"/>
+      <pattern id="hexP" width="56" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
+        <path d="M28 2L54 18V50L28 66L2 50V18Z" fill="none" stroke="rgba(0,210,200,0.035)" stroke-width="0.5"/>
+        <path d="M28 34L54 50V82L28 98L2 82V50Z" fill="none" stroke="rgba(0,210,200,0.035)" stroke-width="0.5"/>
       </pattern>
     </defs>
-    <rect width="100%" height="100%" fill="url(#hexPattern)"/>
+    <rect width="100%" height="100%" fill="url(#hexP)"/>
   </svg>
 
   <script>
-    /* ─── AMBIENT GLOW ─── */
+    /* ───────────────────────────────────────
+       AMBIENT CURSOR GLOW
+       ─────────────────────────────────────── */
     const glow = document.getElementById('ambientGlow');
+    let mx = 0, my = 0;
     document.addEventListener('mousemove', e => {
-      glow.style.left = e.clientX + 'px';
-      glow.style.top = e.clientY + 'px';
+      mx = e.clientX;
+      my = e.clientY;
+      glow.style.left = mx + 'px';
+      glow.style.top = my + 'px';
     });
 
-    /* ─── SCROLL REVEALS ─── */
+    /* ───────────────────────────────────────
+       PREMIUM HEX TILT + INNER GLOW
+       Tracks mouse position within each hex
+       for 3D tilt and radial glow follow
+       ─────────────────────────────────────── */
+    document.querySelectorAll('.hex-interactive').forEach(hex => {
+      const inner = hex.querySelector('.hex-inner');
+
+      hex.addEventListener('mousemove', e => {
+        const rect = hex.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const cx = x - 0.5;
+        const cy = y - 0.5;
+
+        // 3D tilt
+        hex.style.transform =
+          `perspective(600px) rotateY(${cx * 14}deg) rotateX(${cy * -14}deg) scale(1.18) translateY(-4px)`;
+
+        // Inner glow follows cursor
+        if (inner) {
+          inner.style.setProperty('--mx', (x * 100) + '%');
+          inner.style.setProperty('--my', (y * 100) + '%');
+        }
+      });
+
+      hex.addEventListener('mouseleave', () => {
+        hex.style.transform = '';
+        if (inner) {
+          inner.style.setProperty('--mx', '50%');
+          inner.style.setProperty('--my', '50%');
+        }
+      });
+    });
+
+    /* ───────────────────────────────────────
+       SCROLL REVEALS
+       IntersectionObserver + scroll fallback
+       ─────────────────────────────────────── */
     const revealEls = document.querySelectorAll('.reveal');
+
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -327,69 +412,49 @@
           obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.01, rootMargin: '100px 0px 100px 0px' });
+    }, { threshold: 0.01, rootMargin: '120px 0px 120px 0px' });
     revealEls.forEach(el => obs.observe(el));
 
-    /* Fallback: check reveals on every scroll in case observer missed them */
     function checkReveals() {
       revealEls.forEach(el => {
         if (el.classList.contains('visible')) return;
         const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight + 100 && rect.bottom > -100) {
+        if (rect.top < window.innerHeight + 120 && rect.bottom > -120) {
           el.classList.add('visible');
         }
       });
     }
     window.addEventListener('scroll', checkReveals, { passive: true });
-    /* Also check after smooth scroll finishes */
-    let scrollTimer;
-    window.addEventListener('scroll', () => {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(checkReveals, 150);
-    }, { passive: true });
+    // Run on load
+    checkReveals();
 
-    /* ─── ACTIVE NAV ON SCROLL ─── */
-    const sections = document.querySelectorAll('.section');
+    /* ───────────────────────────────────────
+       ACTIVE NAV ON SCROLL
+       ─────────────────────────────────────── */
+    const navAnchors = document.querySelectorAll('[id]');
     const navLinks = document.querySelectorAll('.nav-link');
-    const navObs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          navLinks.forEach(l => l.classList.remove('active'));
-          const link = document.querySelector(`.nav-link[data-section="${e.target.id}"]`);
-          if (link) link.classList.add('active');
-        }
-      });
-    }, { threshold: 0.15, rootMargin: '0px 0px -20% 0px' });
-    sections.forEach(s => navObs.observe(s));
 
-    /* ─── HEX HOVER TILT ─── */
-    document.querySelectorAll('.hex:not(.hex-xs):not(.hex-deco)').forEach(hex => {
-      hex.addEventListener('mousemove', e => {
-        const rect = hex.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        hex.style.transform = `perspective(800px) rotateY(${x * 8}deg) rotateX(${y * -8}deg) scale(1.03)`;
+    function updateNav() {
+      const scrollY = window.scrollY + window.innerHeight * 0.35;
+      let current = '';
+      navAnchors.forEach(el => {
+        if (el.id && el.offsetTop <= scrollY) current = el.id;
       });
-      hex.addEventListener('mouseleave', () => {
-        hex.style.transform = '';
+      navLinks.forEach(l => {
+        l.classList.toggle('active', l.dataset.section === current);
       });
-    });
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
 
-    /* ─── SMOOTH SCROLL NAV ─── */
+    /* ───────────────────────────────────────
+       SMOOTH SCROLL NAV
+       ─────────────────────────────────────── */
     navLinks.forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();
         const target = document.getElementById(link.dataset.section);
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-
-    /* ─── PRINCIPLE HEX EXPAND ─── */
-    document.querySelectorAll('.hex-principle').forEach(hex => {
-      hex.addEventListener('click', () => {
-        const wasActive = hex.classList.contains('hex-active');
-        document.querySelectorAll('.hex-principle').forEach(h => h.classList.remove('hex-active'));
-        if (!wasActive) hex.classList.add('hex-active');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
   </script>
