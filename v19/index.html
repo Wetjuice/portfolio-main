@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael Berman — Creative Director</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Marble texture -->
+  <div class="marble-bg" aria-hidden="true"></div>
+
+  <!-- Hex pattern background -->
+  <svg class="hex-pattern" aria-hidden="true">
+    <defs>
+      <pattern id="hexP" width="56" height="96" patternUnits="userSpaceOnUse" patternTransform="scale(2)">
+        <path d="M28 2L54 16V46L28 60L2 46V16Z" fill="none" stroke="rgba(184,155,94,0.06)" stroke-width="0.5"/>
+        <path d="M28 50L54 64V94L28 108L2 94V64Z" fill="none" stroke="rgba(184,155,94,0.06)" stroke-width="0.5"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#hexP)"/>
+  </svg>
+
+  <!-- Cursor glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-brand">Aurum</div>
+    <div class="nav-links">
+      <a href="#hero" class="nav-link active" data-nav="hero">Home</a>
+      <a href="#about" class="nav-link" data-nav="about">About</a>
+      <a href="#work" class="nav-link" data-nav="work">Work</a>
+      <a href="#skills" class="nav-link" data-nav="skills">Skills</a>
+      <a href="#contact" class="nav-link" data-nav="contact">Contact</a>
+    </div>
+  </nav>
+
+  <div class="content">
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <div class="hero-text reveal">
+          <div class="hero-eyebrow">Portfolio 2026</div>
+          <h1 class="hero-title">Creative<br><em>Director</em></h1>
+          <p class="hero-subtitle">Building game systems that think. 16 years of shaping interactive experiences that players remember.</p>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-num">16+</div>
+              <div class="stat-label">Years</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">5</div>
+              <div class="stat-label">Studios</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">10+</div>
+              <div class="stat-label">Products</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-hex-group reveal" style="transition-delay: 0.15s">
+          <div class="deco-hex deco-hex--marble hero-hex-5"></div>
+          <div class="deco-hex deco-hex--outline hero-hex-1"></div>
+          <div class="deco-hex deco-hex--gold hero-hex-2"></div>
+          <div class="deco-hex deco-hex--outline hero-hex-3"></div>
+          <div class="deco-hex deco-hex--marble hero-hex-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DIVIDER ═══ -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-hex"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ═══ ABOUT ═══ -->
+    <section class="section" id="about">
+      <div class="section-header reveal">
+        <div class="section-label">About</div>
+        <h2 class="section-title">The best design is <em>invisible.</em></h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <h3>It earns trust by making the right choice obvious.</h3>
+          <p>I build systems, not just features. My work spans combat design, open-world systems, progression architectures, and team leadership across AAA studios.</p>
+          <p>Every system I design starts with one question: does this make the player's experience better? If a design needs a tutorial to explain itself, it needs more work.</p>
+        </div>
+        <div class="principles reveal" style="transition-delay: 0.1s">
+          <div class="principle">
+            <div class="principle-num">1</div>
+            <div class="principle-text">Systems over scale — depth beats breadth</div>
+          </div>
+          <div class="principle">
+            <div class="principle-num">2</div>
+            <div class="principle-text">Validate first — test before you invest</div>
+          </div>
+          <div class="principle">
+            <div class="principle-num">3</div>
+            <div class="principle-text">Execute over ideate — ship, don't dream</div>
+          </div>
+          <div class="principle">
+            <div class="principle-num">4</div>
+            <div class="principle-text">Select, don't invent — leverage proven patterns</div>
+          </div>
+          <div class="principle">
+            <div class="principle-num">5</div>
+            <div class="principle-text">Emergent play — let systems surprise you</div>
+          </div>
+          <div class="principle">
+            <div class="principle-num">6</div>
+            <div class="principle-text">Sustainable pace — marathons, not sprints</div>
+          </div>
+          <div class="principle">
+            <div class="principle-num">7</div>
+            <div class="principle-text">Strong POV — lead with conviction</div>
+          </div>
+          <div class="principle">
+            <div class="principle-num">8</div>
+            <div class="principle-text">Clarity is kindness — communicate with precision</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DIVIDER ═══ -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-hex"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ═══ WORK ═══ -->
+    <section class="section" id="work">
+      <div class="section-header reveal">
+        <div class="section-label">Selected Work</div>
+        <h2 class="section-title">The <em>Portfolio.</em></h2>
+      </div>
+      <div class="work-grid">
+        <div class="work-hex reveal">
+          <div class="hex-card" style="width:100%;height:100%">
+            <div class="hex-card-content">
+              <div class="work-role">2022 — Present</div>
+              <div class="work-title">Unannounced AAA</div>
+              <div class="work-studio">Sony Bend Studio</div>
+              <div class="work-tags">
+                <span class="work-tag">Direction</span>
+                <span class="work-tag">Systems</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="work-hex reveal" style="transition-delay: 0.08s">
+          <div class="hex-card" style="width:100%;height:100%">
+            <div class="hex-card-content">
+              <div class="work-role">2019 — 2022</div>
+              <div class="work-title">Days Gone 2</div>
+              <div class="work-studio">Sony Bend Studio</div>
+              <div class="work-tags">
+                <span class="work-tag">Open World</span>
+                <span class="work-tag">UX</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="work-hex reveal" style="transition-delay: 0.16s">
+          <div class="hex-card" style="width:100%;height:100%">
+            <div class="hex-card-content">
+              <div class="work-role">2015 — 2019</div>
+              <div class="work-title">AAA Combat</div>
+              <div class="work-studio">Major Studio</div>
+              <div class="work-tags">
+                <span class="work-tag">Combat</span>
+                <span class="work-tag">ARPG</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="work-hex reveal" style="transition-delay: 0.24s">
+          <div class="hex-card" style="width:100%;height:100%">
+            <div class="hex-card-content">
+              <div class="work-role">2013 — 2015</div>
+              <div class="work-title">Systems Design</div>
+              <div class="work-studio">Mid-Size Studio</div>
+              <div class="work-tags">
+                <span class="work-tag">Progression</span>
+                <span class="work-tag">Economy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="work-hex reveal" style="transition-delay: 0.32s">
+          <div class="hex-card" style="width:100%;height:100%">
+            <div class="hex-card-content">
+              <div class="work-role">2009 — 2013</div>
+              <div class="work-title">Multiplayer</div>
+              <div class="work-studio">Various Studios</div>
+              <div class="work-tags">
+                <span class="work-tag">RTS</span>
+                <span class="work-tag">MOBA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DIVIDER ═══ -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-hex"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ═══ SKILLS ═══ -->
+    <section class="section" id="skills">
+      <div class="section-header reveal">
+        <div class="section-label">Capabilities</div>
+        <h2 class="section-title">Skill <em>Set.</em></h2>
+      </div>
+      <div class="skills-layout">
+        <div class="skill-category reveal">
+          <div class="skill-cat-title">Design</div>
+          <div class="skill-pills">
+            <span class="skill-pill">Systems Design</span>
+            <span class="skill-pill">UX Design</span>
+            <span class="skill-pill">Combat Design</span>
+            <span class="skill-pill">Progression Systems</span>
+            <span class="skill-pill">Open World</span>
+            <span class="skill-pill">Economy Design</span>
+            <span class="skill-pill">Level Design</span>
+          </div>
+        </div>
+        <div class="skill-category reveal" style="transition-delay: 0.08s">
+          <div class="skill-cat-title">Leadership</div>
+          <div class="skill-pills">
+            <span class="skill-pill">Creative Direction</span>
+            <span class="skill-pill">Team Management</span>
+            <span class="skill-pill">Mentorship</span>
+            <span class="skill-pill">Product Strategy</span>
+            <span class="skill-pill">Roadmap Planning</span>
+            <span class="skill-pill">Stakeholder Comms</span>
+          </div>
+        </div>
+        <div class="skill-category reveal" style="transition-delay: 0.16s">
+          <div class="skill-cat-title">Tools</div>
+          <div class="skill-pills">
+            <span class="skill-pill">Unreal Engine</span>
+            <span class="skill-pill">Unity</span>
+            <span class="skill-pill">Figma</span>
+            <span class="skill-pill">Jira / Confluence</span>
+            <span class="skill-pill">Miro</span>
+            <span class="skill-pill">Perforce</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DIVIDER ═══ -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-hex"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ═══ CONTACT ═══ -->
+    <section class="section" id="contact">
+      <div class="contact-inner reveal">
+        <div class="section-label">Get in Touch</div>
+        <h2>Let's build something <em>extraordinary.</em></h2>
+        <p>Always interested in ambitious projects that push interactive entertainment forward.</p>
+        <div class="contact-links">
+          <a href="mailto:michael@example.com" class="contact-btn contact-btn--primary">Email Me</a>
+          <a href="#" class="contact-btn">LinkedIn</a>
+          <a href="#" class="contact-btn">Resume</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer-text">&copy; 2026 Michael Berman</span>
+    <span class="footer-brand">Aurum</span>
+  </footer>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ── CURSOR GLOW ── */
+  const glow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  /* ── NAV ACTIVE STATE ── */
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section[id]');
+
+  function updateNav() {
+    const scrollY = window.scrollY + window.innerHeight * 0.35;
+    let current = '';
+    sections.forEach(section => {
+      if (section.offsetTop <= scrollY) current = section.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.nav === current);
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  /* ── SMOOTH NAV SCROLL ── */
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.getElementById(link.dataset.nav);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* ── HEX HOVER PARALLAX ── */
+  document.querySelectorAll('.hex-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 6;
+      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 6;
+      card.style.transform = `scale(1.06) rotateY(${x}deg) rotateX(${-y}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
